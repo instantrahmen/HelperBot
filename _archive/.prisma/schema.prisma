@@ -1,0 +1,74 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  name     String?
+  password String
+}
+
+// export type Command = {
+//   name: string;
+//   description: string;
+//   options?: CommandOption[];
+//   do: (interaction: CommandInteraction) => Promise<void>;
+// };
+
+model Command {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  payloadType String
+  payload     String
+  // options     OptionType
+  Option      Option[]
+}
+
+// export type CommandOption = {
+//   type: OptionType; // value of application command option type
+//   name: string; // 1-32 lowercase character name matching ^[\w-]{1,32}$
+//   description: string; // 1-100 character description
+//   required: boolean; // if the parameter is required or optional--default false
+//   choices?: ApplicationCommandOptionChoice[]; // choices for string and int types for the user to pick from
+//   options?: CommandOption[]; // if the option is a subcommand or subcommand group type, this nested options will be the parameters
+// };
+
+model Option {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  // type        OptionType
+  required    Boolean
+  // choices     Json
+
+
+  commandId String
+  command   Command @relation(fields: [commandId], references: [id])
+}
+
+// enum OptionType {
+//   NONE
+//   SUB_COMMAND
+//   SUB_COMMAND_GROUP
+//   STRING
+//   INTEGER
+//   BOOLEAN
+//   USER
+//   CHANNEL
+//   ROLE
+//   MENTIONABLE
+// }
+
+model Server {
+  id                String @id @default(uuid())
+  serverDisplayName String
+  discordServerID   String
+  commandPrefix     String
+}

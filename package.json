@@ -1,0 +1,10 @@
+{
+  "name": "fynbot",
+  "version": "0.0.1a",
+  "description": "Monorepo for Fynbot",
+  "author": "Erika Cudd",
+  "private": true,
+  "workspaces": [
+    "./packages/*"
+  ]
+}
