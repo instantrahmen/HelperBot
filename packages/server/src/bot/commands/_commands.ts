@@ -3,7 +3,9 @@ import config from '../config';
 import { jsonBlock } from './helpers';
 
 import hug from './hug';
-import musicCommands from './music';
+import _old_musicCommands, { initializeMusicCommands } from './music';
+
+const musicCommands = initializeMusicCommands();
 
 registerCommands([
   {
@@ -55,5 +57,6 @@ registerCommands([
 ]);
 
 const commands = getCommands();
+console.log({ commands });
 
 export default commands;

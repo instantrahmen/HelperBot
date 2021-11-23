@@ -1,19 +1,180 @@
 import { VoiceConnection } from '@discordjs/voice';
 import { CommandInteraction, Interaction } from 'discord.js';
 import { createAudioResource, createAudioPlayer } from '@discordjs/voice';
+import { createCommand, OptionType } from '../helpers/_commandState';
+
 import config from '../../config';
 import join from './join';
 import play from './play';
-
-export const player = createAudioPlayer();
+import { getMusicPlayer, initializeMusicPlayers } from './music-player';
+import { format } from 'path/posix';
 
 const { guilds } = config;
 
-player.on('stateChange', (oldState, newState) => {
-  console.log(
-    `Audio player transitioned from ${oldState.status} to ${newState.status}`
-  );
-});
+export const initializeMusicCommands = () => {
+  initializeMusicPlayers();
+
+  return [
+    join(),
+    play(),
+    createCommand({
+      name: 'pause',
+      description: 'Pause music',
+      do: async (interaction: CommandInteraction) => {
+        const mp = getMusicPlayer(interaction.guildId!);
+        mp.pause();
+
+        interaction.reply(`Music paused`);
+      },
+    }),
+
+    createCommand({
+      name: 'unpause',
+      description: 'Unpause music',
+      do: async (interaction: CommandInteraction) => {
+        const mp = getMusicPlayer(interaction.guildId!);
+        mp.unpause();
+
+        interaction.reply(`Music unpaused`);
+      },
+    }),
+
+    createCommand({
+      name: 'playerstatus',
+      description: 'Get music player status',
+      do: async (interaction: CommandInteraction) => {
+        const mp = getMusicPlayer(interaction.guildId!);
+        // interaction.reply(`\`\`\`json ${mp.toString()}\`\`\``);
+        interaction.reply(
+          `Current status: ${mp.getPlayerStatus()} \n Song: ${
+            mp.getCurrentSong().title
+          }`
+        );
+      },
+    }),
+
+    createCommand({
+      name: 'skip',
+      description: 'Skip to next track',
+      do: async (interaction: CommandInteraction) => {
+        const mp = getMusicPlayer(interaction.guildId!);
+        mp.nextSong();
+
+        interaction.reply(`Skipped song`);
+      },
+    }),
+
+    createCommand({
+      name: 'prev',
+      description: 'Go back to previous track',
+      do: async (interaction: CommandInteraction) => {
+        const mp = getMusicPlayer(interaction.guildId!);
+        mp.prevSong();
+
+        interaction.reply(`Playing previous song`);
+      },
+    }),
+    createCommand({
+      name: 'replay',
+      description: 'Replay this track',
+      do: async (interaction: CommandInteraction) => {
+        const mp = getMusicPlayer(interaction.guildId!);
+        mp.prevSong();
+        mp.nextSong();
+        interaction.reply(`Playing this song again`);
+      },
+    }),
+
+    createCommand({
+      name: 'queue',
+      description: 'List the items in queue',
+      do: async (interaction: CommandInteraction) => {
+        const mp = getMusicPlayer(interaction.guildId!);
+        const formatted = mp.queue
+          .map((item, index) => {
+            if (index === mp.nowPlaying) {
+              return `**\\> [${index + 1}] - ${item.title}** [now playing]`;
+            }
+            return `[${index + 1}] - ${item.title}`;
+          })
+          .join('\n');
+
+        interaction.reply(`**SONG QUEUE**: \n ${formatted} `);
+      },
+    }),
+
+    // intro
+    createCommand({
+      name: 'intro',
+      description: 'Let me introduce myself~',
+      do: async (interaction: CommandInteraction) => {
+        const intro = /*md*/ `
+Hi there, let me introduce myself~! 
+**Name:** Obviously my name is Fynbot dummy!
+**Birthday:** TBA (not live yet, still in development)
+**Gender:** I'm a bot, but use she/her pronouns!
+**Sexuality:** Asexual bc I'm a robot!
+**Looking for:** I'm just here cuz I wanna be! Not to help everyone or anything like that... 
+**Setup:** Mostly typescript
+**Games:** I'm a bot, dummy~
+**Dm policy:** Try all you want, I won't respond~
+**Other Info:** Created by Aria and I can do all sorts of cool things like music and... well just music for now but more in the future!
+`;
+        interaction.reply({
+          content: intro,
+
+          files: [
+            'https://media.discordapp.net/attachments/862794834800410657/888465266302910464/Fynbot_Smug.png',
+          ],
+        });
+      },
+    }),
+
+    createCommand({
+      name: 'sayhi',
+      description: 'Hi theeere~',
+      do: async (interaction: CommandInteraction) => {
+        interaction.reply({
+          content: '> Yoooo~',
+
+          files: [
+            'https://media.discordapp.net/attachments/862794834800410657/888465761499238470/download20210905174538.png',
+          ],
+        });
+      },
+    }),
+
+    createCommand({
+      name: 'blush',
+      description: `I- I don't blush, sillyyy`,
+      do: async (interaction: CommandInteraction) => {
+        interaction.reply({
+          content: '> *Fynbot blushes slightly*',
+
+          files: [
+            'https://media.discordapp.net/attachments/862794834800410657/888467277140348958/download20210905175139.png',
+          ],
+        });
+      },
+    }),
+
+    createCommand({
+      name: 'cuteresponse',
+      description: `C-cute?! Who are you calling cute, dummy?!`,
+      do: async (interaction: CommandInteraction) => {
+        interaction.reply({
+          content: '> C-cute?! Who are you calling *cute*, dummy?!',
+
+          files: [
+            'https://media.discordapp.net/attachments/862794834800410657/888465348473524254/Fynbot_Yell.png',
+          ],
+        });
+      },
+    }),
+  ];
+};
+
+// Most below here should be removed later when no longer needed
 
 // Runs whenever the bot connects to a discord server
 export const onConnect = (
@@ -33,18 +194,11 @@ export const onDisconnect = (
   // connection.
 };
 
+export const player = createAudioPlayer();
 export default [
-  join,
-  play,
-  {
-    name: 'pause',
-    description: 'Pause audio',
-    do: async (interaction: CommandInteraction) => {
-      player.pause();
+  // join,
+  // play,
 
-      interaction.reply(`paused: ${player.state.status}`);
-    },
-  },
   {
     name: 'unpause',
     description: 'Unpause audio',

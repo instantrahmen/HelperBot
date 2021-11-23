@@ -6,15 +6,18 @@ import config from './config';
 import { generateSlashCommands } from './commands';
 import { deployCommandsAllGuilds } from './commands/helpers/_deployCommands';
 
+import { indexArrayByKey } from './commands/helpers';
+import FynbotGlobalController from './utils/fynbot-controller';
+import { log } from './utils/log';
+
+process.on('uncaughtException', function (err) {
+  console.log(err);
+});
+
 export const initializeBot = () => {
   // Create a new client instance
   const client = new Client({
-    intents: [
-      Intents.FLAGS.GUILDS,
-      Intents.FLAGS.GUILD_PRESENCES,
-      Intents.FLAGS.GUILD_MEMBERS,
-      Intents.FLAGS.GUILD_VOICE_STATES,
-    ],
+    intents: config.intents,
   });
 
   generateSlashCommands(client);
@@ -29,7 +32,34 @@ export const initializeBot = () => {
     console.log('Ready.');
   });
 
-  // Login to Discord with your client's token
+  // Handle messages other than slash commands
+
+  // const responseControllers = indexArrayByKey(
+  //   config.guilds.map((guildId) => ({
+  //     guildId,
+  //     controller: new EmotionController(guildId),
+  //   })),
+  //   'guildId'
+  // );
+  // const FynbotResponder = new EmotionController();
+  const FynbotController = new FynbotGlobalController(client);
+
+  client.on('messageCreate', (message) => {
+    // const guildId = message.guildId;
+    const lowerCaseMsg = message.content.toLocaleLowerCase();
+    // log({
+    //   message: {
+    //     content: message.content,
+    //     author: message.author.username,
+    //     lowerCaseMsg,
+    //     message,
+    //   },
+    // });
+
+    FynbotController.handleMentions(message);
+  });
+
+  // Login to Discord with token
   client.login(config.botToken);
 
   return client;

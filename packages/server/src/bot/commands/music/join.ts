@@ -8,70 +8,57 @@ import {
 } from '@discordjs/voice';
 import { VoiceChannel } from 'discord.js';
 
-type VCOptions = JoinVoiceChannelOptions & CreateVoiceConnectionOptions;
+import { getMusicPlayer } from './music-player';
 
-import { onConnect } from './index';
+export default () =>
+  createCommand({
+    name: 'join',
+    description: 'Join a channel',
+    options: [
+      {
+        type: OptionType.CHANNEL,
+        name: 'channel',
+        description: 'Which channel should I join?',
+        required: true,
+      },
+    ],
+    do: async (interaction) => {
+      // const target = interaction.options.get('target')?.value?.toString();
+      const channel = interaction.options.getChannel(
+        'channel',
+        true
+      ) as VoiceChannel;
+      const { id: channelId, guild, guildId } = channel;
+      const musicPlayer = getMusicPlayer(guildId);
 
-export default createCommand({
-  name: 'join',
-  description: 'Join a channel',
-  options: [
-    {
-      type: OptionType.CHANNEL,
-      name: 'channel',
-      description: 'Which channel should I join?',
-      required: true,
-    },
-  ],
-  do: async (interaction) => {
-    // const target = interaction.options.get('target')?.value?.toString();
-    const channel = interaction.options.getChannel(
-      'channel',
-      true
-    ) as VoiceChannel;
-    const { id: channelId, guild, guildId } = channel;
-    const { voiceAdapterCreator: adapterCreator } = guild;
+      if (channel.type !== 'GUILD_VOICE') {
+        return await interaction.reply({
+          content: `Can't do that, SCUM. ${channel.toString()} isn't even a voice channel!`,
+        });
+      }
 
-    if (channel.type !== 'GUILD_VOICE')
-      return await interaction.reply({
-        content: `Unable to join ${channel.toString()} because it isn't a voice channel!`,
+      await interaction.reply({
+        content: `I'll tryyyy to join ${channel.toString()}... no promises though.`,
       });
 
-    await interaction.reply({
-      content: `Joining channel ${channel.toString()}! \n \`\`\`json${JSON.stringify(
-        channel,
-        null,
-        2
-      )}}\`\`\``,
-    });
+      try {
+        await musicPlayer.connectToChannel(channel);
 
-    const connection = joinVoiceChannel({
-      channelId,
-      guildId,
-      adapterCreator: channel.guild.voiceAdapterCreator,
-    });
+        interaction.editReply(
+          `DJ Fynbot in the house~ (joined ${channel.toString()})~`
+        );
 
-    // setTimeout(() => {
-    //   console.log('voice channel connected');
+        const gif = 'https://c.tenor.com/bOR-CXcBQ8QAAAAC/djaymano-dj.gif';
 
-    //   onConnect(interaction, connection);
-    // }, 2000);
-
-    connection.on('stateChange', (oldState, newState) => {
-      console.log(
-        `Connection transitioned from ${oldState.status} to ${newState.status}`
-      );
-    });
-
-    connection.on(VoiceConnectionStatus.Ready, () => {
-      console.log('voice channel connected');
-
-      onConnect(interaction, connection);
-    });
-    connection.on(VoiceConnectionStatus.Signalling, () => {
-      console.log('voice channel connected');
-
-      onConnect(interaction, connection);
-    });
-  },
-});
+        await interaction.editReply({
+          // content: `${interaction.user.toString()} gives <@${target}> a hug!`,
+          content: `DJ Fynbot in the house~ (joined ${channel.toString()})~`,
+          files: [gif],
+        });
+      } catch (e: any) {
+        interaction.editReply(
+          `Failed to join channel ${channel.toString()}! \n error: ${e.message}`
+        );
+      }
+    },
+  });

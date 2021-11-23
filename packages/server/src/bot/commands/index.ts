@@ -6,6 +6,7 @@ import { getIndexedCommands } from './helpers/_commandState';
 
 export const generateSlashCommands = (client: Client) => {
   client.on('interactionCreate', async (interaction) => {
+    // console.log({ interaction });
     if (!interaction.isCommand()) return;
 
     const { commandName } = interaction;

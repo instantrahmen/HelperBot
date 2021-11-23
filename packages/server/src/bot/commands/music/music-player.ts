@@ -1,4 +1,4 @@
-import { User, VoiceChannel } from 'discord.js';
+import { Guild, User, VoiceChannel } from 'discord.js';
 import youtubedl from 'youtube-dl-exec';
 import {
   AudioPlayer,
@@ -11,8 +11,11 @@ import {
   joinVoiceChannel,
   entersState,
 } from '@discordjs/voice';
-
 import ytdl from 'ytdl-core-discord';
+import ytpl from 'ytpl';
+
+import config from '../../config';
+import { indexWithinArray } from '../helpers';
 
 type QueueItem = {
   title: string;
@@ -27,14 +30,21 @@ type GuildQueue = QueueItem[];
 
 type PlayersByGuild = { [guildId: string]: MusicPlayer };
 
-export const allPlayers: PlayersByGuild = {};
+enum RepeatMethod {
+  NONE,
+  REPEAT_ONE,
+  REPEAT_ALL,
+}
+
+const allPlayers: PlayersByGuild = {};
 
 class MusicPlayer {
-  private queue: GuildQueue = [];
+  queue: GuildQueue = [];
 
   guildId: string;
   nowPlaying: number = 0;
-  player: AudioPlayer = createAudioPlayer();
+  private player: AudioPlayer = createAudioPlayer();
+  repeatMethod: RepeatMethod = RepeatMethod.NONE;
 
   constructor(guildId: string) {
     this.guildId = guildId;
@@ -52,12 +62,30 @@ class MusicPlayer {
     this.player.on(AudioPlayerStatus.Playing, () => {
       console.log('The audio player has started playing!');
     });
+
+    this.player.on(AudioPlayerStatus.Idle, () => {
+      console.log('The audio player has started playing!');
+    });
+
+    this.player.on('stateChange', (oldState, newState) => {
+      console.log(
+        `Audio player transitioned from ${oldState.status} to ${newState.status}`
+      );
+      if (
+        oldState.status === AudioPlayerStatus.Playing &&
+        newState.status === AudioPlayerStatus.Idle
+      ) {
+        // Play next song
+        this.nextSong();
+      }
+    });
   }
 
   private registerConnectionEventHandlers() {
     const connection = this.getConnection()!;
 
     connection.on(VoiceConnectionStatus.Ready, () => {
+      connection.subscribe(this.getPlayer());
       console.log(
         'The connection has entered the Ready state - ready to play audio!'
       );
@@ -85,11 +113,32 @@ class MusicPlayer {
     });
   }
 
-  // Control Methods
+  toString() {
+    const { guildId, nowPlaying, repeatMethod, queue } = this;
+    return JSON.stringify(
+      {
+        guildId,
+        nowPlaying,
+        queue,
+        repeatMethod,
+        playerStatus: this.getPlayerStatus(),
+      },
+      null,
+      2
+    );
+  }
+  // #region Control Methods
 
   // Play current song
   async play() {
-    if (!this.canPlay()) return;
+    if (!this.canPlay())
+      return new Error(
+        'I must be in a voice channel in order to play music, sorry! \n Please use the `/join` command to send me to a channel.'
+      );
+
+    if (this.getPlayerStatus() === AudioPlayerStatus.Paused) {
+      return this.unpause();
+    }
 
     const song = this.getCurrentSong();
 
@@ -116,16 +165,43 @@ class MusicPlayer {
   }
 
   nextSong() {
+    const nextSongIndex = this.nowPlaying + 1;
     this.stop();
-    this.nowPlaying = this.nowPlaying + 1;
+
+    if (this.repeatMethod === RepeatMethod.REPEAT_ONE) {
+      this.play();
+      return true;
+    }
+
+    const finalSong = this.queue.length - 1;
+
+    if (nextSongIndex > finalSong) {
+      if (this.repeatMethod === RepeatMethod.NONE) {
+        return false;
+      } else if (this.repeatMethod === RepeatMethod.REPEAT_ALL) {
+        this.nowPlaying = 0;
+      }
+    } else {
+      this.nowPlaying = nextSongIndex;
+    }
+
     this.play();
+    return true;
   }
 
   prevSong() {
-    this.nowPlaying = this.nowPlaying - 1;
+    const prevSongIndex = this.nowPlaying - 1;
+
+    this.nowPlaying = prevSongIndex >= 0 ? prevSongIndex : 0;
     this.play();
   }
 
+  gotoSong(index: number) {
+    if (indexWithinArray(this.queue, index)) {
+      this.nowPlaying = index;
+      this.play();
+    }
+  }
   async connectToChannel(channel: VoiceChannel) {
     const { id: channelId, guild, guildId } = channel;
 
@@ -147,20 +223,57 @@ class MusicPlayer {
 
   // Add a song to queue
   async add(song: QueueItem | url, user: User): Promise<number> {
-    if (typeof song === 'string') {
-      this.queue = [...this.queue, await this.getYTVideo(song, user)];
-    } else {
-      this.queue = [...this.queue, song];
+    const oldQueue = [...this.queue];
+    try {
+      if (typeof song === 'string') {
+        if (!song.includes('youtu') || !song.includes('googlevideo')) {
+          throw new Error(`Not a youtube domain: ${song}`);
+        }
+
+        if (song.includes('playlist')) {
+          throw new Error(
+            `This is a playlist link and I can't play it yet, dummy!`
+          );
+        }
+
+        this.queue = [...this.queue, { url: song, title: 'Loading', user }];
+        const position = this.queue.length - 1;
+
+        const queueItem = await this.getYTVideo(song, user);
+
+        this.queue[position] = queueItem;
+      } else {
+        this.queue = [...this.queue, song];
+      }
+
+      const status = this.getPlayerStatus();
+      if (
+        status === AudioPlayerStatus.Idle ||
+        status === AudioPlayerStatus.Paused
+      ) {
+        this.play();
+      }
+
+      return this.queue.length - 1;
+    } catch (e: any) {
+      this.queue = oldQueue;
+      throw new Error(`Unknown error adding song to queue ${e.message}`);
     }
-    return this.queue.length - 1;
   }
 
+  async addPlaylist(playlistUrl: url) {
+    ytdl(playlistUrl, {});
+
+    // ytdl.downloadOptions()
+  }
   // Remove a song from queue
   remove(index: number) {
     this.queue = this.removeElementFromArray(this.queue, index);
   }
 
-  // Helper Methods
+  // #endregion
+
+  // #region Helpers
 
   async getYTVideo(url: url, user: User): Promise<QueueItem> {
     try {
@@ -206,4 +319,24 @@ class MusicPlayer {
       connection && connection.state.status === VoiceConnectionStatus.Ready
     );
   };
+
+  //#endregion
 }
+
+const createMusicPlayersForAllGuilds = () => {
+  config.guilds.forEach((guildId) => {
+    if (!allPlayers[guildId]) {
+      new MusicPlayer(guildId);
+    } else {
+      console.log('guild already has music player');
+    }
+  });
+
+  console.log({ allPlayers });
+};
+
+export const initializeMusicPlayers = () => {
+  createMusicPlayersForAllGuilds();
+};
+
+export const getMusicPlayer = (guildId: string) => allPlayers[guildId];
