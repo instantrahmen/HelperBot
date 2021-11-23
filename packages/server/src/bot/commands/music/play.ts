@@ -33,9 +33,7 @@ export default () =>
           } to queue! Added at position ${songIndex + 1}`
         );
       } catch (e: any) {
-        interaction.editReply(
-          `Error adding song to queue! \n Error: ${e.message}`
-        );
+        interaction.editReply(`${e.message}`);
       }
     },
   });

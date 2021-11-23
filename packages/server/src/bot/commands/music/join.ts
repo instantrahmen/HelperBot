@@ -1,11 +1,5 @@
 import { createCommand, OptionType } from '../helpers/_commandState';
-import {
-  getVoiceConnection,
-  VoiceConnectionStatus,
-  joinVoiceChannel,
-  JoinVoiceChannelOptions,
-  CreateVoiceConnectionOptions,
-} from '@discordjs/voice';
+
 import { VoiceChannel } from 'discord.js';
 
 import { getMusicPlayer } from './music-player';
@@ -31,10 +25,12 @@ export default () =>
       const { id: channelId, guild, guildId } = channel;
       const musicPlayer = getMusicPlayer(guildId);
 
+      console.log('Fynni joining channel');
+
       if (channel.type !== 'GUILD_VOICE') {
-        return await interaction.reply({
-          content: `Can't do that, SCUM. ${channel.toString()} isn't even a voice channel!`,
-        });
+        throw new Error(
+          `Can't do that, dummy! ${channel.toString()} isn't even a voice channel!`
+        );
       }
 
       await interaction.reply({
@@ -45,20 +41,28 @@ export default () =>
         await musicPlayer.connectToChannel(channel);
 
         interaction.editReply(
-          `DJ Fynbot in the house~ (joined ${channel.toString()})~`
+          `DJ Fynni in the house~ (joined ${channel.toString()})~`
         );
 
         const gif = 'https://c.tenor.com/bOR-CXcBQ8QAAAAC/djaymano-dj.gif';
 
         await interaction.editReply({
           // content: `${interaction.user.toString()} gives <@${target}> a hug!`,
-          content: `DJ Fynbot in the house~ (joined ${channel.toString()})~`,
+          content: `DJ Fynni in the house~ (joined ${channel.toString()})~`,
           files: [gif],
         });
       } catch (e: any) {
-        interaction.editReply(
-          `Failed to join channel ${channel.toString()}! \n error: ${e.message}`
-        );
+        const replyText = `Failed to join channel ${channel.toString()}! \n ${
+          e.message
+        }`;
+
+        if (interaction.replied) {
+          interaction.editReply(replyText);
+        } else {
+          return await interaction.reply({
+            content: replyText,
+          });
+        }
       }
     },
   });

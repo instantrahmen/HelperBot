@@ -12,11 +12,14 @@ import {
   entersState,
 } from '@discordjs/voice';
 import ytdl from 'ytdl-core-discord';
+
+// ytpl for handling playlist links
 import ytpl from 'ytpl';
 
 import config from '../../config';
 import { indexWithinArray } from '../helpers';
 
+// Types and Enums
 type QueueItem = {
   title: string;
   resource?: any; // Optional for, we'll probably end up grabbing the resource at the last minute when played
@@ -38,6 +41,7 @@ enum RepeatMethod {
 
 const allPlayers: PlayersByGuild = {};
 
+// MusicPlayer class to handle music and shit
 class MusicPlayer {
   queue: GuildQueue = [];
 
@@ -46,6 +50,8 @@ class MusicPlayer {
   private player: AudioPlayer = createAudioPlayer();
   repeatMethod: RepeatMethod = RepeatMethod.NONE;
 
+  addingSong = false;
+
   constructor(guildId: string) {
     this.guildId = guildId;
 
@@ -53,6 +59,7 @@ class MusicPlayer {
       console.warn(
         'Two music players created for the same guild. This is likely in error. Replacing old one with new one'
       );
+
     allPlayers[guildId] = this;
 
     this.registerPlayerEventHandlers();
@@ -165,6 +172,7 @@ class MusicPlayer {
   }
 
   nextSong() {
+    console.log('Playing next song in queue');
     const nextSongIndex = this.nowPlaying + 1;
     this.stop();
 
@@ -202,6 +210,7 @@ class MusicPlayer {
       this.play();
     }
   }
+
   async connectToChannel(channel: VoiceChannel) {
     const { id: channelId, guild, guildId } = channel;
 
@@ -221,12 +230,38 @@ class MusicPlayer {
     }
   }
 
+  checkIfYTLink(link: string) {
+    const youtubeSubstrings = [
+      'youtube',
+      'youtu.be',
+      'googlevideo.com',
+      'gvt1.com',
+      'video.google.com',
+      'youtube.googleapis.com',
+    ];
+
+    for (let substr of youtubeSubstrings) {
+      if (link.includes(substr)) {
+        return true;
+      }
+    }
+    return false;
+  }
   // Add a song to queue
   async add(song: QueueItem | url, user: User): Promise<number> {
     const oldQueue = [...this.queue];
     try {
       if (typeof song === 'string') {
-        if (!song.includes('youtu') || !song.includes('googlevideo')) {
+        if (song.includes('spotify')) {
+          throw new Error('Spotify support coming soon!');
+        }
+
+        if (!song.includes('youtu') && !song.includes('googlevideo')) {
+          console.log({
+            song,
+            incl: song.includes('youtu'),
+            error: 'not yt domain',
+          });
           throw new Error(`Not a youtube domain: ${song}`);
         }
 
@@ -257,14 +292,12 @@ class MusicPlayer {
       return this.queue.length - 1;
     } catch (e: any) {
       this.queue = oldQueue;
-      throw new Error(`Unknown error adding song to queue ${e.message}`);
+      throw new Error(e);
     }
   }
 
   async addPlaylist(playlistUrl: url) {
     ytdl(playlistUrl, {});
-
-    // ytdl.downloadOptions()
   }
   // Remove a song from queue
   remove(index: number) {
@@ -289,7 +322,7 @@ class MusicPlayer {
       };
     } catch (e: any) {
       console.warn(e.message);
-      return { title: `error: ${e.message}`, user, url };
+      return { title: `${e.message}`, user, url };
     }
   }
 
