@@ -7,9 +7,9 @@ import config from '../../config';
 import join from './join';
 import play from './play';
 import { getMusicPlayer, initializeMusicPlayers } from './music-player';
-import { format } from 'path/posix';
+// import { format } from 'path/posix';
 
-const { guilds } = config;
+// const { guilds } = config;
 
 export const initializeMusicCommands = () => {
   initializeMusicPlayers();
@@ -24,7 +24,9 @@ export const initializeMusicCommands = () => {
         const mp = getMusicPlayer(interaction.guildId!);
         mp.pause();
 
-        interaction.reply(`Music paused`);
+        interaction.reply(
+          `The music has been paused, but please hurry I'm getting impatient!`
+        );
       },
     }),
 
@@ -35,7 +37,7 @@ export const initializeMusicCommands = () => {
         const mp = getMusicPlayer(interaction.guildId!);
         mp.unpause();
 
-        interaction.reply(`Music unpaused`);
+        interaction.reply(`You ready again? Let's gooooo~`);
       },
     }),
 
@@ -74,6 +76,7 @@ export const initializeMusicCommands = () => {
         interaction.reply(`Playing previous song`);
       },
     }),
+
     createCommand({
       name: 'replay',
       description: 'Replay this track',
@@ -100,6 +103,18 @@ export const initializeMusicCommands = () => {
           .join('\n');
 
         interaction.reply(`**SONG QUEUE**: \n ${formatted} `);
+      },
+    }),
+
+    createCommand({
+      name: 'clearqueue',
+      description: 'List the items in queue',
+      do: async (interaction: CommandInteraction) => {
+        const mp = getMusicPlayer(interaction.guildId!);
+
+        mp.clearQueue();
+
+        interaction.reply('Queue Cleared');
       },
     }),
 

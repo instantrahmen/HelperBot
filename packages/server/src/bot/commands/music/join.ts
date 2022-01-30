@@ -25,12 +25,14 @@ export default () =>
       const { id: channelId, guild, guildId } = channel;
       const musicPlayer = getMusicPlayer(guildId);
 
-      console.log('Fynni joining channel');
+      console.log('Fynni joining channel', {
+        channel,
+      });
 
       if (channel.type !== 'GUILD_VOICE') {
-        throw new Error(
-          `Can't do that, dummy! ${channel.toString()} isn't even a voice channel!`
-        );
+        const errorResponse = `Can't do that, dummy! ${channel.toString()} isn't even a voice channel!`;
+
+        await interaction.reply(errorResponse);
       }
 
       await interaction.reply({

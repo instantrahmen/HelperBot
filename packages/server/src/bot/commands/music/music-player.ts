@@ -74,6 +74,7 @@ class MusicPlayer {
       console.log('The audio player has started playing!');
     });
 
+    // Whenever song changes, play next song
     this.player.on('stateChange', (oldState, newState) => {
       console.log(
         `Audio player transitioned from ${oldState.status} to ${newState.status}`
@@ -150,9 +151,10 @@ class MusicPlayer {
     const song = this.getCurrentSong();
 
     try {
-      // this.player.play(stream!);
       // Get player resource and play it
-      const resource = createAudioResource(await ytdl(song.url));
+      const resource = createAudioResource(
+        await ytdl(song.url, { highWaterMark: 1 << 25 })
+      );
       this.player.play(resource);
     } catch (e: any) {
       throw new Error(`Unable to play song: ${e.message}`);
@@ -211,6 +213,12 @@ class MusicPlayer {
     }
   }
 
+  clearQueue() {
+    this.stop();
+    this.nowPlaying = 0;
+    this.queue = [];
+  }
+
   async connectToChannel(channel: VoiceChannel) {
     const { id: channelId, guild, guildId } = channel;
 
@@ -265,18 +273,22 @@ class MusicPlayer {
           throw new Error(`Not a youtube domain: ${song}`);
         }
 
-        if (song.includes('playlist')) {
-          throw new Error(
-            `This is a playlist link and I can't play it yet, dummy!`
-          );
-        }
+        // if (song.includes('playlist')) {
+        //   throw new Error(
+        //     `This is a playlist link and I can't play it yet, dummy!`
+        //   );
+        // }
 
         this.queue = [...this.queue, { url: song, title: 'Loading', user }];
         const position = this.queue.length - 1;
 
         const queueItem = await this.getYTVideo(song, user);
 
-        this.queue[position] = queueItem;
+        if (!Array.isArray(queueItem)) {
+          this.queue[position] = queueItem;
+        } else {
+          this.queue = [...this.queue, ...queueItem];
+        }
       } else {
         this.queue = [...this.queue, song];
       }
@@ -288,6 +300,8 @@ class MusicPlayer {
       ) {
         this.play();
       }
+
+      console.log({ oldQueue, current: this.queue });
 
       return this.queue.length - 1;
     } catch (e: any) {
@@ -308,13 +322,24 @@ class MusicPlayer {
 
   // #region Helpers
 
-  async getYTVideo(url: url, user: User): Promise<QueueItem> {
+  async getYTVideo(url: url, user: User): Promise<QueueItem | QueueItem[]> {
+    console.log('getYTVideo', {
+      url,
+    });
     try {
       const title = await youtubedl(url, {
         skipDownload: true,
         getTitle: true,
       });
+      console.log({ title });
 
+      if ((title as unknown as string).split('\n').length > 1) {
+        // It's a playlist
+        const playlist = ytpl(url);
+        console.log({ playlist });
+        // return
+      }
+      // if (titl)
       return {
         title: title as unknown as string,
         user,

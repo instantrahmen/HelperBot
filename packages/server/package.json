@@ -27,6 +27,7 @@
     "fastify": "^3.21.0",
     "graphql": "^15.5.2",
     "libsodium-wrappers": "^0.7.9",
+    "play-dl": "^1.8.2",
     "streamlink": "^1.0.4",
     "youtube-dl-exec": "^1.2.6",
     "ytdl-core": "^4.9.1",

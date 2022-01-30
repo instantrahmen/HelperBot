@@ -2369,6 +2369,18 @@ pino@^6.13.0:
     quick-format-unescaped "^4.0.3"
     sonic-boom "^1.0.2"
 
+play-audio@^0.4.3:
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/play-audio/-/play-audio-0.4.9.tgz#74f3ad053d02e0464fce1a28887b2b99da75a76b"
+  integrity sha512-An88OAvbCcFZH00n9eq6+t2LmJUPJgBCz8ycKXdvUWQz3GcZ3U4o1ZsSHfVFIuoiKuovX+ue5gKNcfSs4ophew==
+
+play-dl@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/play-dl/-/play-dl-1.8.2.tgz#daeb59cb40399d45384885346ebce32285338ab8"
+  integrity sha512-W42wgAqTHC+LvVmUIMiSMKqh834XfI3xz+AjVUSGwOYWYQnMIL+OxEJfttRHQeDKI3KIPOAKFC/5i2AyEkVTKg==
+  dependencies:
+    play-audio "^0.4.3"
+
 pluralize@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-8.0.0.tgz#1a6fa16a38d12a1901e0320fa017051c539ce3b1"
