@@ -83,14 +83,14 @@ export default class FynbotGlobalController {
     this.client = client;
 
     const _updateTimer = setInterval(async () => {
-      console.log('updating status...');
+      // console.log('updating status...');
       this.updateStatus();
     }, seconds(15));
   }
 
   updateStatus() {
     const mood = GlobalState.getCurrentMood();
-    console.log({ mood: GlobalState.moodValues });
+    // console.log({ mood: GlobalState.moodValues });
     if (mood === 'neutral') {
       this.client.user?.setStatus('online');
       this.client.user?.setActivity({
