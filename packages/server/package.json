@@ -1,6 +1,7 @@
 {
   "name": "@fynni/server",
   "license": "MIT",
+  "version": "0.0.1",
   "devDependencies": {
     "@types/node": "^16.9.0",
     "@types/node-fetch": "^3.0.3",
