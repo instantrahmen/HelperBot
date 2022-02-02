@@ -1,5 +1,4 @@
-import { Guild, User, VoiceChannel } from 'discord.js';
-import youtubedl from 'youtube-dl-exec';
+import { User, VoiceChannel } from 'discord.js';
 import {
   AudioPlayer,
   createAudioPlayer,
@@ -20,36 +19,9 @@ import config from '../../config';
 import { indexWithinArray } from '../helpers';
 import { url } from 'inspector';
 
-// Types and Enums
-type QueueItem = {
-  title: string;
-  resource?: any; // Optional for, we'll probably end up grabbing the resource at the last minute when played
-  user: User;
-  url: string;
-  thumbnail?: Thumbnail;
-  artist?: string;
-};
-
-type Thumbnail = {
-  url: string;
-  width: number;
-  height: number;
-};
-type url = string;
-
-type GuildQueue = QueueItem[];
-
-type PlayersByGuild = { [guildId: string]: MusicPlayer };
-
-enum RepeatMethod {
-  NONE,
-  REPEAT_ONE,
-  REPEAT_ALL,
-}
-
 const allPlayers: PlayersByGuild = {};
 
-// MusicPlayer class to handle music and shit
+// MusicPlayer class to handle music playback
 export class MusicPlayer {
   queue: GuildQueue = [];
 
@@ -425,3 +397,31 @@ export const initializeMusicPlayers = () => {
 };
 
 export const getMusicPlayer = (guildId: string) => allPlayers[guildId];
+
+// Types and Enums
+type QueueItem = {
+  title: string;
+  resource?: any; // Optional for, we'll probably end up grabbing the resource at the last minute when played
+  user: User;
+  url: string;
+  thumbnail?: Thumbnail;
+  artist?: string;
+};
+
+type Thumbnail = {
+  url: string;
+  width: number;
+  height: number;
+};
+
+type url = string;
+
+type GuildQueue = QueueItem[];
+
+type PlayersByGuild = { [guildId: string]: MusicPlayer };
+
+enum RepeatMethod {
+  NONE,
+  REPEAT_ONE,
+  REPEAT_ALL,
+}
