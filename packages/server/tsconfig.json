@@ -4,6 +4,9 @@
     "outDir": "dist",
     "strict": true,
     "lib": ["esnext", "dom"],
-    "esModuleInterop": true
+    "target": "ES5",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true
   }
 }

@@ -167,6 +167,7 @@ export default class FynbotGlobalController {
     if (
       msgContainsFullWord('hi') ||
       msgContains('hey') ||
+      msgContains('hee') ||
       msgContains('hello') ||
       msgContains('greetings') ||
       msgContainsFullWord('hai') ||
@@ -211,7 +212,7 @@ export default class FynbotGlobalController {
     }
 
     if (
-      msgContainsFullWord('> is') ||
+      msgContainsFullWord(`${this.client.user} is`) ||
       msgContains('you are ') ||
       msgContains(`you're `) ||
       msgContains(`bot you `)

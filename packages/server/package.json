@@ -1,8 +1,9 @@
 {
-  "name": "@fynbot/server",
+  "name": "@fynni/server",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^16.9.0",
+    "@types/node-fetch": "^3.0.3",
     "nodemon": "^2.0.12",
     "prisma": "2.30.2",
     "prisma-schema-to-graphql": "^1.0.0",
@@ -11,6 +12,7 @@
   },
   "scripts": {
     "dev": "nodemon src/index.ts",
+    "build": "rimraf ./dist && tsc",
     "bot-only": "nodemon src/bot/index.ts",
     "deploy-commands": "ts-node src/actions/action-deploy-commands.ts"
   },
@@ -28,6 +30,7 @@
     "graphql": "^15.5.2",
     "libsodium-wrappers": "^0.7.9",
     "play-dl": "^1.8.2",
+    "rimraf": "^3.0.2",
     "streamlink": "^1.0.4",
     "youtube-dl-exec": "^1.2.6",
     "ytdl-core": "^4.9.1",
