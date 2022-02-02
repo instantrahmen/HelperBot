@@ -26,7 +26,7 @@ export default () =>
       const musicPlayer = getMusicPlayer(guildId);
 
       console.log('Fynni joining channel', {
-        channel,
+        // channel,
       });
 
       if (channel.type !== 'GUILD_VOICE') {
