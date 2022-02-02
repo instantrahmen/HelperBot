@@ -29,7 +29,7 @@ module.exports = {
    */
   deploy: {
     production: {
-      user: 'root',
+      user: 'erika',
       host: 'pointsmap.com',
       ref: 'origin/main',
       repo: 'git@github.com:instantrahmen/fynni-bot.git',
