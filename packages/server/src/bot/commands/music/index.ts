@@ -118,76 +118,36 @@ export const initializeMusicCommands = () => {
       },
     }),
 
-    // intro
-    createCommand({
-      name: 'intro',
-      description: 'Let me introduce myself~',
-      do: async (interaction: CommandInteraction) => {
-        const intro = /*md*/ `
-Hi there, let me introduce myself~! 
-**Name:** Obviously my name is Fynbot dummy!
-**Birthday:** TBA (not live yet, still in development)
-**Gender:** I'm a bot, but use she/her pronouns!
-**Sexuality:** Asexual bc I'm a robot!
-**Looking for:** I'm just here cuz I wanna be! Not to help everyone or anything like that... 
-**Setup:** Mostly typescript
-**Games:** I'm a bot, dummy~
-**Dm policy:** Try all you want, I won't respond~
-**Other Info:** Created by Aria and I can do all sorts of cool things like music and... well just music for now but more in the future!
-`;
-        interaction.reply({
-          content: intro,
+    //     // intro
+    //     createCommand({
+    //       name: 'intro',
+    //       description: 'Let me introduce myself~',
+    //       do: async (interaction: CommandInteraction) => {
+    //         const intro = /*md*/ `
+    // Hi there, let me introduce myself~!
+    // **Name:** Obviously my name is Fynbot dummy!
+    // **Birthday:** TBA (not live yet, still in development)
+    // **Gender:** I'm a bot, but use she/her pronouns!
+    // **Sexuality:** Asexual bc I'm a robot!
+    // **Looking for:** I'm just here cuz I wanna be! Not to help everyone or anything like that...
+    // **Setup:** Mostly typescript
+    // **Games:** I'm a bot, dummy~
+    // **Dm policy:** Try all you want, I won't respond~
+    // **Other Info:** Created by Aria and I can do all sorts of cool things like music and... well just music for now but more in the future!
+    // `;
+    //         interaction.reply({
+    //           content: intro,
 
-          files: [
-            'https://media.discordapp.net/attachments/862794834800410657/888465266302910464/Fynbot_Smug.png',
-          ],
-        });
-      },
-    }),
-
-    createCommand({
-      name: 'sayhi',
-      description: 'Hi theeere~',
-      do: async (interaction: CommandInteraction) => {
-        interaction.reply({
-          content: '> Yoooo~',
-
-          files: [
-            'https://media.discordapp.net/attachments/862794834800410657/888465761499238470/download20210905174538.png',
-          ],
-        });
-      },
-    }),
-
-    createCommand({
-      name: 'blush',
-      description: `I- I don't blush, sillyyy`,
-      do: async (interaction: CommandInteraction) => {
-        interaction.reply({
-          content: '> *Fynbot blushes slightly*',
-
-          files: [
-            'https://media.discordapp.net/attachments/862794834800410657/888467277140348958/download20210905175139.png',
-          ],
-        });
-      },
-    }),
-
-    createCommand({
-      name: 'cuteresponse',
-      description: `C-cute?! Who are you calling cute, dummy?!`,
-      do: async (interaction: CommandInteraction) => {
-        interaction.reply({
-          content: '> C-cute?! Who are you calling *cute*, dummy?!',
-
-          files: [
-            'https://media.discordapp.net/attachments/862794834800410657/888465348473524254/Fynbot_Yell.png',
-          ],
-        });
-      },
-    }),
+    //           files: [
+    //             'https://media.discordapp.net/attachments/862794834800410657/888465266302910464/Fynbot_Smug.png',
+    //           ],
+    //         });
+    //       },
+    //     }),
   ];
 };
+
+export const player = createAudioPlayer();
 
 // Most below here should be removed later when no longer needed
 
@@ -208,26 +168,3 @@ export const onDisconnect = (
   console.log('onDisconnect', { interaction, connection });
   // connection.
 };
-
-export const player = createAudioPlayer();
-export default [
-  // join,
-  // play,
-
-  {
-    name: 'unpause',
-    description: 'Unpause audio',
-    do: async (interaction: CommandInteraction) => {
-      player.unpause();
-
-      interaction.reply(`unpaused: ${player.state.status}`);
-    },
-  },
-  {
-    name: 'status',
-    description: 'Get audio player status',
-    do: async (interaction: CommandInteraction) => {
-      interaction.reply(`status: ${player.state.status}`);
-    },
-  },
-];
