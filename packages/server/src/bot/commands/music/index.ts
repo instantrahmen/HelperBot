@@ -17,6 +17,7 @@ export const initializeMusicCommands = () => {
   return [
     join(),
     play(),
+    // pause
     createCommand({
       name: 'pause',
       description: 'Pause music',
@@ -30,6 +31,7 @@ export const initializeMusicCommands = () => {
       },
     }),
 
+    // unpause
     createCommand({
       name: 'unpause',
       description: 'Unpause music',
@@ -41,6 +43,7 @@ export const initializeMusicCommands = () => {
       },
     }),
 
+    // playerstatus
     createCommand({
       name: 'playerstatus',
       description: 'Get music player status',
@@ -55,6 +58,7 @@ export const initializeMusicCommands = () => {
       },
     }),
 
+    // skip
     createCommand({
       name: 'skip',
       description: 'Skip to next track',
@@ -66,6 +70,7 @@ export const initializeMusicCommands = () => {
       },
     }),
 
+    // prev
     createCommand({
       name: 'prev',
       description: 'Go back to previous track',
@@ -77,6 +82,7 @@ export const initializeMusicCommands = () => {
       },
     }),
 
+    // replay
     createCommand({
       name: 'replay',
       description: 'Replay this track',
@@ -88,6 +94,7 @@ export const initializeMusicCommands = () => {
       },
     }),
 
+    // queue
     createCommand({
       name: 'queue',
       description: 'List the items in queue',
@@ -102,10 +109,17 @@ export const initializeMusicCommands = () => {
           })
           .join('\n');
 
-        interaction.reply(`**SONG QUEUE**: \n ${formatted} `);
+        const embed1 = mp.createCurrentSongEmbed();
+
+        const embed2 = mp.createQueueEmbed();
+        // interaction.reply(`**SONG QUEUE**: \n ${formatted} `);
+        interaction.reply({
+          embeds: [embed1, embed2],
+        });
       },
     }),
 
+    // clearqueue
     createCommand({
       name: 'clearqueue',
       description: 'List the items in queue',
@@ -117,41 +131,12 @@ export const initializeMusicCommands = () => {
         interaction.reply('Queue Cleared');
       },
     }),
-
-    //     // intro
-    //     createCommand({
-    //       name: 'intro',
-    //       description: 'Let me introduce myself~',
-    //       do: async (interaction: CommandInteraction) => {
-    //         const intro = /*md*/ `
-    // Hi there, let me introduce myself~!
-    // **Name:** Obviously my name is Fynbot dummy!
-    // **Birthday:** TBA (not live yet, still in development)
-    // **Gender:** I'm a bot, but use she/her pronouns!
-    // **Sexuality:** Asexual bc I'm a robot!
-    // **Looking for:** I'm just here cuz I wanna be! Not to help everyone or anything like that...
-    // **Setup:** Mostly typescript
-    // **Games:** I'm a bot, dummy~
-    // **Dm policy:** Try all you want, I won't respond~
-    // **Other Info:** Created by Aria and I can do all sorts of cool things like music and... well just music for now but more in the future!
-    // `;
-    //         interaction.reply({
-    //           content: intro,
-
-    //           files: [
-    //             'https://media.discordapp.net/attachments/862794834800410657/888465266302910464/Fynbot_Smug.png',
-    //           ],
-    //         });
-    //       },
-    //     }),
   ];
 };
 
 export const player = createAudioPlayer();
 
-// Most below here should be removed later when no longer needed
-
-// Runs whenever the bot connects to a discord server
+// Runs whenever Fynni connects to a VC
 export const onConnect = (
   interaction: CommandInteraction,
   connection: VoiceConnection
@@ -166,5 +151,4 @@ export const onDisconnect = (
   connection: VoiceConnection
 ) => {
   console.log('onDisconnect', { interaction, connection });
-  // connection.
 };
