@@ -18,6 +18,7 @@ import ytpl from 'ytpl';
 
 import config from '../../config';
 import { indexWithinArray } from '../helpers';
+import { url } from 'inspector';
 
 // Types and Enums
 type QueueItem = {
@@ -25,8 +26,15 @@ type QueueItem = {
   resource?: any; // Optional for, we'll probably end up grabbing the resource at the last minute when played
   user: User;
   url: string;
+  thumbnail?: Thumbnail;
+  artist?: string;
 };
 
+type Thumbnail = {
+  url: string;
+  width: number;
+  height: number;
+};
 type url = string;
 
 type GuildQueue = QueueItem[];
@@ -135,6 +143,40 @@ export class MusicPlayer {
       2
     );
   }
+
+  createCurrentSongEmbed() {
+    const currentSong = this.queue[this.nowPlaying];
+    return {
+      type: 'rich',
+      title: `${currentSong.title}`,
+      description: '',
+      color: 0x04a9f5,
+      image: currentSong.thumbnail,
+      author: {
+        name: `Now Playing:`,
+      },
+      url: currentSong.url,
+    };
+  }
+
+  createQueueEmbed() {
+    // const upNext = this.this.queue[this.nowPlaying];
+    const futureSongs = this.queue
+      .filter((__, i) => i > this.nowPlaying)
+      .map((song) => ({
+        name: `**${song.title}**`,
+        value: song.artist ? `- ${song.artist}` : '\u200B',
+      }));
+
+    return {
+      type: 'rich',
+      title: `Up Next:`,
+      description: ``,
+      color: 0x04a9f5,
+      fields: [...futureSongs],
+      // thumbnail: currentSong.thumbnail,
+    };
+  }
   // #region Control Methods
 
   // Play current song
@@ -238,34 +280,18 @@ export class MusicPlayer {
     }
   }
 
-  checkIfYTLink(link: string) {
-    const youtubeSubstrings = [
-      'youtube',
-      'youtu.be',
-      'googlevideo.com',
-      'gvt1.com',
-      'video.google.com',
-      'youtube.googleapis.com',
-    ];
-
-    for (let substr of youtubeSubstrings) {
-      if (link.includes(substr)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   createQueueItem(song: string, user: User) {
     if (song.includes('spotify')) {
       throw new Error('Spotify support coming soon!');
     }
 
-    if (!song.includes('youtu') && !song.includes('googlevideo')) {
+    // validate youtube link
+    const validYTUrl = ytdl.validateURL(song);
+    if (validYTUrl) {
       throw new Error(`Not a youtube domain: ${song}`);
     }
 
-    return this.getYTVideo(song, user);
+    return this.getVideoInfoAsQueueItem(song, user);
   }
 
   // Add a song to queue
@@ -296,8 +322,6 @@ export class MusicPlayer {
         this.play();
       }
 
-      console.log({ oldQueue, current: this.queue });
-
       return this.queue.length - 1;
     } catch (e: any) {
       this.queue = oldQueue;
@@ -310,15 +334,18 @@ export class MusicPlayer {
     const playlistRes = await ytpl(playlistUrl, {});
     console.log({ playlistUrl, playlistRes });
 
-    const songPromises = playlistRes.items.map(({ title, url }) =>
-      this.add(
-        {
-          title,
-          user,
-          url,
-        } as QueueItem,
-        user
-      )
+    const songPromises = playlistRes.items.map(
+      ({ title, url, thumbnails, author }) =>
+        this.add(
+          {
+            title,
+            user,
+            url,
+            thumbnail: thumbnails[thumbnails.length - 1],
+            artist: author.name,
+          } as QueueItem,
+          user
+        )
     );
 
     console.log('Adding songs...');
@@ -335,32 +362,19 @@ export class MusicPlayer {
 
   // #region Helpers
 
-  async getYTVideo(url: url, user: User): Promise<QueueItem | QueueItem[]> {
-    console.log('getYTVideo', {
-      url,
-    });
+  async getVideoInfoAsQueueItem(url: url, user: User): Promise<QueueItem> {
     try {
-      const title = await youtubedl(url, {
-        skipDownload: true,
-        getTitle: true,
-      });
-      console.log({ title });
+      const { videoDetails } = await ytdl.getInfo(url);
 
-      if ((title as unknown as string).split('\n').length > 1) {
-        // It's a playlist
-        const playlist = ytpl(url);
-        console.log({ playlist });
-        // return
-      }
-      // if (titl)
       return {
-        title: title as unknown as string,
+        title: videoDetails.title,
         user,
         url,
+        artist: videoDetails.author.name,
+        thumbnail: videoDetails.thumbnails[videoDetails.thumbnails.length - 1],
       };
     } catch (e: any) {
-      console.warn(e.message);
-      return { title: `${e.message}`, user, url };
+      throw new Error(`Unable to get video details for ${url}`);
     }
   }
 
