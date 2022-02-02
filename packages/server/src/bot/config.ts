@@ -26,7 +26,7 @@ const config = {
   status: 'starting',
   guilds: [
     // Fyn's PP
-    '872562843688517693',
+    // '872562843688517693',
 
     // Bestie Server
     '862794834800410654',

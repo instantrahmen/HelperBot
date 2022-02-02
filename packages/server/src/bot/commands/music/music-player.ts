@@ -42,7 +42,7 @@ enum RepeatMethod {
 const allPlayers: PlayersByGuild = {};
 
 // MusicPlayer class to handle music and shit
-class MusicPlayer {
+export class MusicPlayer {
   queue: GuildQueue = [];
 
   guildId: string;
@@ -255,34 +255,29 @@ class MusicPlayer {
     }
     return false;
   }
+
+  createQueueItem(song: string, user: User) {
+    if (song.includes('spotify')) {
+      throw new Error('Spotify support coming soon!');
+    }
+
+    if (!song.includes('youtu') && !song.includes('googlevideo')) {
+      throw new Error(`Not a youtube domain: ${song}`);
+    }
+
+    return this.getYTVideo(song, user);
+  }
+
   // Add a song to queue
   async add(song: QueueItem | url, user: User): Promise<number> {
     const oldQueue = [...this.queue];
     try {
       if (typeof song === 'string') {
-        if (song.includes('spotify')) {
-          throw new Error('Spotify support coming soon!');
-        }
+        this.queue = [...this.queue, { url: song, title: 'Loading...', user }];
 
-        if (!song.includes('youtu') && !song.includes('googlevideo')) {
-          console.log({
-            song,
-            incl: song.includes('youtu'),
-            error: 'not yt domain',
-          });
-          throw new Error(`Not a youtube domain: ${song}`);
-        }
-
-        // if (song.includes('playlist')) {
-        //   throw new Error(
-        //     `This is a playlist link and I can't play it yet, dummy!`
-        //   );
-        // }
-
-        this.queue = [...this.queue, { url: song, title: 'Loading', user }];
         const position = this.queue.length - 1;
 
-        const queueItem = await this.getYTVideo(song, user);
+        const queueItem = await this.createQueueItem(song, user);
 
         if (!Array.isArray(queueItem)) {
           this.queue[position] = queueItem;
@@ -310,8 +305,26 @@ class MusicPlayer {
     }
   }
 
-  async addPlaylist(playlistUrl: url) {
-    ytdl(playlistUrl, {});
+  async addPlaylist(playlistUrl: url, user: User) {
+    // ytdl(playlistUrl, {});
+    const playlistRes = await ytpl(playlistUrl, {});
+    console.log({ playlistUrl, playlistRes });
+
+    const songPromises = playlistRes.items.map(({ title, url }) =>
+      this.add(
+        {
+          title,
+          user,
+          url,
+        } as QueueItem,
+        user
+      )
+    );
+
+    console.log('Adding songs...');
+    const songs = await Promise.all(songPromises);
+
+    console.log({ songs });
   }
   // Remove a song from queue
   remove(index: number) {
