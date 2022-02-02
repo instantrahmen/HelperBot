@@ -1,5 +1,4 @@
-import { Guild, User, VoiceChannel } from 'discord.js';
-import youtubedl from 'youtube-dl-exec';
+import { User, VoiceChannel } from 'discord.js';
 import {
   AudioPlayer,
   createAudioPlayer,
@@ -18,31 +17,12 @@ import ytpl from 'ytpl';
 
 import config from '../../config';
 import { indexWithinArray } from '../helpers';
-
-// Types and Enums
-type QueueItem = {
-  title: string;
-  resource?: any; // Optional for, we'll probably end up grabbing the resource at the last minute when played
-  user: User;
-  url: string;
-};
-
-type url = string;
-
-type GuildQueue = QueueItem[];
-
-type PlayersByGuild = { [guildId: string]: MusicPlayer };
-
-enum RepeatMethod {
-  NONE,
-  REPEAT_ONE,
-  REPEAT_ALL,
-}
+import { url } from 'inspector';
 
 const allPlayers: PlayersByGuild = {};
 
-// MusicPlayer class to handle music and shit
-class MusicPlayer {
+// MusicPlayer class to handle music playback
+export class MusicPlayer {
   queue: GuildQueue = [];
 
   guildId: string;
@@ -51,6 +31,7 @@ class MusicPlayer {
   repeatMethod: RepeatMethod = RepeatMethod.NONE;
 
   addingSong = false;
+  skipping = false;
 
   constructor(guildId: string) {
     this.guildId = guildId;
@@ -84,7 +65,9 @@ class MusicPlayer {
         newState.status === AudioPlayerStatus.Idle
       ) {
         // Play next song
-        this.nextSong();
+        if (!this.skipping) {
+          this.nextSong();
+        }
       }
     });
   }
@@ -135,10 +118,46 @@ class MusicPlayer {
       2
     );
   }
+
+  createCurrentSongEmbed() {
+    const currentSong = this.queue[this.nowPlaying];
+    return {
+      type: 'rich',
+      title: `${currentSong.title}`,
+      description: `- ${currentSong.artist}`,
+      color: 0x04a9f5,
+      image: currentSong.thumbnail,
+      author: {
+        name: `Now Playing:`,
+      },
+      url: currentSong.url,
+    };
+  }
+
+  createQueueEmbed() {
+    // const upNext = this.this.queue[this.nowPlaying];
+    const futureSongs = this.queue
+      .map((song, trackNumber) => ({ song, trackNumber }))
+      .filter((__, i) => i > this.nowPlaying)
+      .map(({ song, trackNumber }) => ({
+        name: `${trackNumber + 1}. **${song.title}**`,
+        value: song.artist ? `- ${song.artist}` : '\u200B',
+      }));
+
+    return {
+      type: 'rich',
+      title: `Up Next:`,
+      description: ``,
+      color: 0x04a9f5,
+      fields: [...futureSongs],
+      // thumbnail: currentSong.thumbnail,
+    };
+  }
   // #region Control Methods
 
   // Play current song
   async play() {
+    console.log('play()');
     if (!this.canPlay())
       return new Error(
         'I must be in a voice channel in order to play music, sorry! \n Please use the `/join` command to send me to a channel.'
@@ -173,44 +192,42 @@ class MusicPlayer {
     return this.player.stop();
   }
 
-  nextSong() {
-    console.log('Playing next song in queue');
-    const nextSongIndex = this.nowPlaying + 1;
-    this.stop();
-
-    if (this.repeatMethod === RepeatMethod.REPEAT_ONE) {
-      this.play();
-      return true;
-    }
-
-    const finalSong = this.queue.length - 1;
-
-    if (nextSongIndex > finalSong) {
-      if (this.repeatMethod === RepeatMethod.NONE) {
-        return false;
-      } else if (this.repeatMethod === RepeatMethod.REPEAT_ALL) {
-        this.nowPlaying = 0;
-      }
-    } else {
-      this.nowPlaying = nextSongIndex;
-    }
-
-    this.play();
-    return true;
-  }
-
   prevSong() {
-    const prevSongIndex = this.nowPlaying - 1;
-
-    this.nowPlaying = prevSongIndex >= 0 ? prevSongIndex : 0;
-    this.play();
+    this.gotoSong(this.nowPlaying - 1);
   }
 
-  gotoSong(index: number) {
-    if (indexWithinArray(this.queue, index)) {
-      this.nowPlaying = index;
-      this.play();
-    }
+  nextSong() {
+    this.gotoSong(this.nowPlaying + 1);
+  }
+
+  clamp(max: number, num: number) {
+    if (num < 0) return 0;
+    if (num > max) return max;
+    return num;
+  }
+
+  wrap(max: number, num: number) {
+    return num >= 0 ? num % max : ((num % max) + max) % max;
+  }
+
+  wrapWithinArray(arr: Array<any>, value: number) {
+    return this.wrap(arr.length, value);
+  }
+  clampWithinArray(arr: Array<any>, value: number) {
+    return this.clamp(arr.length - 1, value);
+  }
+
+  async gotoSong(index: number, method: 'wrap' | 'clamp' = 'wrap') {
+    this.skipping = true;
+    const newIndex =
+      method === 'wrap'
+        ? this.wrapWithinArray(this.queue, index)
+        : this.clampWithinArray(this.queue, index);
+
+    this.stop();
+    this.nowPlaying = newIndex;
+    await this.play();
+    this.skipping = false;
   }
 
   clearQueue() {
@@ -238,51 +255,34 @@ class MusicPlayer {
     }
   }
 
-  checkIfYTLink(link: string) {
-    const youtubeSubstrings = [
-      'youtube',
-      'youtu.be',
-      'googlevideo.com',
-      'gvt1.com',
-      'video.google.com',
-      'youtube.googleapis.com',
-    ];
-
-    for (let substr of youtubeSubstrings) {
-      if (link.includes(substr)) {
-        return true;
-      }
+  createQueueItem(song: string, user: User) {
+    if (song.includes('spotify')) {
+      throw new Error('Spotify support coming soon!');
     }
-    return false;
+
+    // validate youtube link
+    const validYTUrl = ytdl.validateURL(song);
+    if (!validYTUrl) {
+      throw new Error(`Not a youtube domain: ${song}`);
+    }
+
+    return this.getVideoInfoAsQueueItem(song, user);
   }
+
   // Add a song to queue
-  async add(song: QueueItem | url, user: User): Promise<number> {
+  async add(
+    song: QueueItem | url,
+    user: User,
+    skipPlay = false
+  ): Promise<number> {
     const oldQueue = [...this.queue];
     try {
       if (typeof song === 'string') {
-        if (song.includes('spotify')) {
-          throw new Error('Spotify support coming soon!');
-        }
+        this.queue = [...this.queue, { url: song, title: 'Loading...', user }];
 
-        if (!song.includes('youtu') && !song.includes('googlevideo')) {
-          console.log({
-            song,
-            incl: song.includes('youtu'),
-            error: 'not yt domain',
-          });
-          throw new Error(`Not a youtube domain: ${song}`);
-        }
-
-        // if (song.includes('playlist')) {
-        //   throw new Error(
-        //     `This is a playlist link and I can't play it yet, dummy!`
-        //   );
-        // }
-
-        this.queue = [...this.queue, { url: song, title: 'Loading', user }];
         const position = this.queue.length - 1;
 
-        const queueItem = await this.getYTVideo(song, user);
+        const queueItem = await this.createQueueItem(song, user);
 
         if (!Array.isArray(queueItem)) {
           this.queue[position] = queueItem;
@@ -298,10 +298,10 @@ class MusicPlayer {
         status === AudioPlayerStatus.Idle ||
         status === AudioPlayerStatus.Paused
       ) {
-        this.play();
+        if (!skipPlay) {
+          this.play();
+        }
       }
-
-      console.log({ oldQueue, current: this.queue });
 
       return this.queue.length - 1;
     } catch (e: any) {
@@ -310,8 +310,35 @@ class MusicPlayer {
     }
   }
 
-  async addPlaylist(playlistUrl: url) {
-    ytdl(playlistUrl, {});
+  async addPlaylist(playlistUrl: url, user: User) {
+    const playlistRes = await ytpl(playlistUrl, {});
+
+    const songPromises = playlistRes.items.map(
+      ({ title, url, thumbnails, author, bestThumbnail }) =>
+        this.add(
+          {
+            title,
+            user,
+            url,
+            thumbnail: bestThumbnail,
+            artist: author.name,
+          } as QueueItem,
+          user,
+          true
+        )
+    );
+
+    console.log('Adding songs...');
+    const songs = await Promise.all(songPromises);
+
+    if (
+      this.getPlayerStatus() === AudioPlayerStatus.Idle ||
+      this.getPlayerStatus() === AudioPlayerStatus.Paused
+    ) {
+      this.play();
+    }
+
+    return songs;
   }
   // Remove a song from queue
   remove(index: number) {
@@ -322,32 +349,19 @@ class MusicPlayer {
 
   // #region Helpers
 
-  async getYTVideo(url: url, user: User): Promise<QueueItem | QueueItem[]> {
-    console.log('getYTVideo', {
-      url,
-    });
+  async getVideoInfoAsQueueItem(url: url, user: User): Promise<QueueItem> {
     try {
-      const title = await youtubedl(url, {
-        skipDownload: true,
-        getTitle: true,
-      });
-      console.log({ title });
+      const { videoDetails } = await ytdl.getInfo(url);
 
-      if ((title as unknown as string).split('\n').length > 1) {
-        // It's a playlist
-        const playlist = ytpl(url);
-        console.log({ playlist });
-        // return
-      }
-      // if (titl)
       return {
-        title: title as unknown as string,
+        title: videoDetails.title,
         user,
         url,
+        artist: videoDetails.author.name,
+        thumbnail: videoDetails.thumbnails[videoDetails.thumbnails.length - 1],
       };
     } catch (e: any) {
-      console.warn(e.message);
-      return { title: `${e.message}`, user, url };
+      throw new Error(`Unable to get video details for ${url}`);
     }
   }
 
@@ -398,3 +412,31 @@ export const initializeMusicPlayers = () => {
 };
 
 export const getMusicPlayer = (guildId: string) => allPlayers[guildId];
+
+// Types and Enums
+type QueueItem = {
+  title: string;
+  resource?: any; // Optional for, we'll probably end up grabbing the resource at the last minute when played
+  user: User;
+  url: string;
+  thumbnail?: Thumbnail;
+  artist?: string;
+};
+
+type Thumbnail = {
+  url: string;
+  width: number;
+  height: number;
+};
+
+type url = string;
+
+type GuildQueue = QueueItem[];
+
+type PlayersByGuild = { [guildId: string]: MusicPlayer };
+
+enum RepeatMethod {
+  NONE,
+  REPEAT_ONE,
+  REPEAT_ALL,
+}
