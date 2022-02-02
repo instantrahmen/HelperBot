@@ -31,6 +31,7 @@ export class MusicPlayer {
   repeatMethod: RepeatMethod = RepeatMethod.NONE;
 
   addingSong = false;
+  skipping = false;
 
   constructor(guildId: string) {
     this.guildId = guildId;
@@ -64,7 +65,9 @@ export class MusicPlayer {
         newState.status === AudioPlayerStatus.Idle
       ) {
         // Play next song
-        this.nextSong();
+        if (!this.skipping) {
+          this.nextSong();
+        }
       }
     });
   }
@@ -121,7 +124,7 @@ export class MusicPlayer {
     return {
       type: 'rich',
       title: `${currentSong.title}`,
-      description: '',
+      description: `- ${currentSong.artist}`,
       color: 0x04a9f5,
       image: currentSong.thumbnail,
       author: {
@@ -134,9 +137,10 @@ export class MusicPlayer {
   createQueueEmbed() {
     // const upNext = this.this.queue[this.nowPlaying];
     const futureSongs = this.queue
+      .map((song, trackNumber) => ({ song, trackNumber }))
       .filter((__, i) => i > this.nowPlaying)
-      .map((song) => ({
-        name: `**${song.title}**`,
+      .map(({ song, trackNumber }) => ({
+        name: `${trackNumber + 1}. **${song.title}**`,
         value: song.artist ? `- ${song.artist}` : '\u200B',
       }));
 
@@ -153,6 +157,7 @@ export class MusicPlayer {
 
   // Play current song
   async play() {
+    console.log('play()');
     if (!this.canPlay())
       return new Error(
         'I must be in a voice channel in order to play music, sorry! \n Please use the `/join` command to send me to a channel.'
@@ -187,44 +192,42 @@ export class MusicPlayer {
     return this.player.stop();
   }
 
-  nextSong() {
-    console.log('Playing next song in queue');
-    const nextSongIndex = this.nowPlaying + 1;
-    this.stop();
-
-    if (this.repeatMethod === RepeatMethod.REPEAT_ONE) {
-      this.play();
-      return true;
-    }
-
-    const finalSong = this.queue.length - 1;
-
-    if (nextSongIndex > finalSong) {
-      if (this.repeatMethod === RepeatMethod.NONE) {
-        return false;
-      } else if (this.repeatMethod === RepeatMethod.REPEAT_ALL) {
-        this.nowPlaying = 0;
-      }
-    } else {
-      this.nowPlaying = nextSongIndex;
-    }
-
-    this.play();
-    return true;
-  }
-
   prevSong() {
-    const prevSongIndex = this.nowPlaying - 1;
-
-    this.nowPlaying = prevSongIndex >= 0 ? prevSongIndex : 0;
-    this.play();
+    this.gotoSong(this.nowPlaying - 1);
   }
 
-  gotoSong(index: number) {
-    if (indexWithinArray(this.queue, index)) {
-      this.nowPlaying = index;
-      this.play();
-    }
+  nextSong() {
+    this.gotoSong(this.nowPlaying + 1);
+  }
+
+  clamp(max: number, num: number) {
+    if (num < 0) return 0;
+    if (num > max) return max;
+    return num;
+  }
+
+  wrap(max: number, num: number) {
+    return num >= 0 ? num % max : ((num % max) + max) % max;
+  }
+
+  wrapWithinArray(arr: Array<any>, value: number) {
+    return this.wrap(arr.length, value);
+  }
+  clampWithinArray(arr: Array<any>, value: number) {
+    return this.clamp(arr.length - 1, value);
+  }
+
+  async gotoSong(index: number, method: 'wrap' | 'clamp' = 'wrap') {
+    this.skipping = true;
+    const newIndex =
+      method === 'wrap'
+        ? this.wrapWithinArray(this.queue, index)
+        : this.clampWithinArray(this.queue, index);
+
+    this.stop();
+    this.nowPlaying = newIndex;
+    await this.play();
+    this.skipping = false;
   }
 
   clearQueue() {
@@ -259,7 +262,7 @@ export class MusicPlayer {
 
     // validate youtube link
     const validYTUrl = ytdl.validateURL(song);
-    if (validYTUrl) {
+    if (!validYTUrl) {
       throw new Error(`Not a youtube domain: ${song}`);
     }
 
@@ -267,7 +270,11 @@ export class MusicPlayer {
   }
 
   // Add a song to queue
-  async add(song: QueueItem | url, user: User): Promise<number> {
+  async add(
+    song: QueueItem | url,
+    user: User,
+    skipPlay = false
+  ): Promise<number> {
     const oldQueue = [...this.queue];
     try {
       if (typeof song === 'string') {
@@ -291,7 +298,9 @@ export class MusicPlayer {
         status === AudioPlayerStatus.Idle ||
         status === AudioPlayerStatus.Paused
       ) {
-        this.play();
+        if (!skipPlay) {
+          this.play();
+        }
       }
 
       return this.queue.length - 1;
@@ -302,28 +311,34 @@ export class MusicPlayer {
   }
 
   async addPlaylist(playlistUrl: url, user: User) {
-    // ytdl(playlistUrl, {});
     const playlistRes = await ytpl(playlistUrl, {});
-    console.log({ playlistUrl, playlistRes });
 
     const songPromises = playlistRes.items.map(
-      ({ title, url, thumbnails, author }) =>
+      ({ title, url, thumbnails, author, bestThumbnail }) =>
         this.add(
           {
             title,
             user,
             url,
-            thumbnail: thumbnails[thumbnails.length - 1],
+            thumbnail: bestThumbnail,
             artist: author.name,
           } as QueueItem,
-          user
+          user,
+          true
         )
     );
 
     console.log('Adding songs...');
     const songs = await Promise.all(songPromises);
 
-    console.log({ songs });
+    if (
+      this.getPlayerStatus() === AudioPlayerStatus.Idle ||
+      this.getPlayerStatus() === AudioPlayerStatus.Paused
+    ) {
+      this.play();
+    }
+
+    return songs;
   }
   // Remove a song from queue
   remove(index: number) {

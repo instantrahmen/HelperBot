@@ -30,7 +30,7 @@ export const initializeBot = () => {
     console.log('deployed commands');
 
     console.log('Ready.');
-    console.log({ config });
+    // console.log({ config });
   });
 
   // Handle messages other than slash commands

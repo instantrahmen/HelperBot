@@ -19,7 +19,6 @@ export default () =>
     ],
     do: async (interaction) => {
       const url = interaction.options.getString('url', true);
-      const user = interaction.user;
       const guildId = interaction.guildId!;
 
       const musicPlayer = getMusicPlayer(guildId);

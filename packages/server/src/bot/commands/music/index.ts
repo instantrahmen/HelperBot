@@ -65,8 +65,34 @@ export const initializeMusicCommands = () => {
       do: async (interaction: CommandInteraction) => {
         const mp = getMusicPlayer(interaction.guildId!);
         mp.nextSong();
+        // interaction.reply(`Skipped to track ${mp.nowPlaying}`);
+        interaction.reply({
+          content: `Skipped to track ${mp.nowPlaying}`,
+          embeds: [mp.createCurrentSongEmbed()],
+        });
+      },
+    }),
 
-        interaction.reply(`Skipped song`);
+    createCommand({
+      name: 'skipto',
+      description: 'Skip to specific track',
+      options: [
+        {
+          type: OptionType.INTEGER,
+          name: 'track',
+          description: 'Track # you want to play',
+          required: true,
+        },
+      ],
+      do: async (interaction: CommandInteraction) => {
+        const track = interaction.options.getInteger('track', true);
+        const mp = getMusicPlayer(interaction.guildId!);
+        mp.gotoSong(track - 1);
+        // interaction.reply(`Skipped to track ${mp.nowPlaying}`);
+        interaction.reply({
+          content: `Skipped to track ${mp.nowPlaying}`,
+          embeds: [mp.createCurrentSongEmbed()],
+        });
       },
     }),
 
@@ -78,7 +104,11 @@ export const initializeMusicCommands = () => {
         const mp = getMusicPlayer(interaction.guildId!);
         mp.prevSong();
 
-        interaction.reply(`Playing previous song`);
+        // interaction.reply(`Playing previous song (track ${mp.nowPlaying})`);
+        interaction.reply({
+          content: `Playing previous song (track ${mp.nowPlaying})`,
+          embeds: [mp.createCurrentSongEmbed()],
+        });
       },
     }),
 
