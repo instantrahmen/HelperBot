@@ -31,7 +31,7 @@ module.exports = {
     production: {
       user: 'erika',
       host: 'pointsmap.com',
-      ref: 'origin/main',
+      ref: 'origin/prod',
       repo: 'git@github.com:instantrahmen/fynni-bot.git',
       path: '/var/www/rahmen/fynni-bot',
       'post-deploy':
