@@ -8,6 +8,7 @@
     "./packages/server"
   ],
   "scripts": {
+    "install": "yarn workspace @fynni/server install && echo Finished installing",
     "build": "yarn workspace @fynni/server build"
   }
 }
