@@ -1,13 +1,14 @@
 {
   "name": "fynni",
-  "version": "0.0.1a",
-  "description": "Monorepo for Fynbot",
+  "version": "1.0.0",
+  "description": "Monorepo for Fynni",
   "author": "Erika Cudd",
   "private": true,
   "workspaces": [
     "./packages/server"
   ],
   "scripts": {
+    "dev": "yarn workspace @fynni/server dev",
     "install": "yarn workspace @fynni/server install && echo Finished installing",
     "build": "yarn workspace @fynni/server build"
   },
