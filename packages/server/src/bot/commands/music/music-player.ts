@@ -134,7 +134,7 @@ export class MusicPlayer {
     };
   }
 
-  createQueueEmbed() {
+  createQueueEmbed(includePlayedSongs = false) {
     // const upNext = this.this.queue[this.nowPlaying];
     const futureSongs = this.queue
       .map((song, trackNumber) => ({ song, trackNumber }))
@@ -144,10 +144,31 @@ export class MusicPlayer {
         value: song.artist ? `- ${song.artist}` : '\u200B',
       }));
 
+    const currentSong = this.queue[this.nowPlaying];
+
+    const playedSongs = this.queue
+      .map((song, trackNumber) => ({ song, trackNumber }))
+      .filter((__, i) => i < this.nowPlaying)
+      .map(
+        ({ song, trackNumber }) =>
+          `${trackNumber + 1}. ~~${song.title}~~\n${
+            song.artist ? `- ~~${song.artist}~~` : '\u200B'
+          }`
+      );
+
+    const playedPlusCurrent = [
+      ...playedSongs,
+      `**${this.nowPlaying + 1}. ${
+        currentSong.title
+      }**<a:nekodance:938743228251922462>\n${
+        currentSong.artist ? `- ${currentSong.artist}` : '\u200B'
+      }`,
+    ];
+
     return {
       type: 'rich',
       title: `Up Next:`,
-      description: ``,
+      description: includePlayedSongs ? playedPlusCurrent.join('\n') : '',
       color: 0x04a9f5,
       fields: [...futureSongs],
       // thumbnail: currentSong.thumbnail,
