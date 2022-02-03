@@ -16,6 +16,7 @@ export const initializeDebugCommands = () => {
 
   return [
     inspectCommand,
+
     createCommand({
       name: 'toggle-debug-mode',
       description: 'Enable debug mode',

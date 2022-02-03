@@ -4,50 +4,56 @@ import {
   MessagePayload,
 } from 'discord.js';
 import { jsonBlock, times } from '../helpers';
-import { createCommand, OptionType } from '../helpers/_commandState';
+import {
+  CommandOption,
+  createCommand,
+  OptionType,
+} from '../helpers/_commandState';
+
+const options: CommandOption[] = [
+  {
+    type: OptionType.USER,
+    name: 'user',
+    required: false,
+    description: 'Inspect a person',
+  },
+  {
+    type: OptionType.ROLE,
+    name: 'role',
+    required: false,
+    description: 'Inspect a role',
+  },
+  {
+    type: OptionType.MENTIONABLE,
+    name: 'mention',
+    required: false,
+    description: 'Inspect anything mentionable',
+  },
+  {
+    type: OptionType.CHANNEL,
+    name: 'channel',
+    required: false,
+    description: 'Inspect a channel',
+  },
+  {
+    type: OptionType.STRING,
+    name: 'text',
+    required: false,
+    description: 'Inspect a string of text',
+  },
+  {
+    type: OptionType.BOOLEAN,
+    name: 'guild',
+    required: false,
+    description: 'Inspect the server data',
+  },
+];
 
 export const inspectCommand = createCommand({
   name: 'inspect',
   description: 'Debugger: inspect anything',
   debugOnly: true,
-  options: [
-    {
-      type: OptionType.USER,
-      name: 'user',
-      required: false,
-      description: 'Inspect a person',
-    },
-    {
-      type: OptionType.ROLE,
-      name: 'role',
-      required: false,
-      description: 'Inspect a role',
-    },
-    {
-      type: OptionType.MENTIONABLE,
-      name: 'mention',
-      required: false,
-      description: 'Inspect anything mentionable',
-    },
-    {
-      type: OptionType.CHANNEL,
-      name: 'channel',
-      required: false,
-      description: 'Inspect a channel',
-    },
-    {
-      type: OptionType.STRING,
-      name: 'text',
-      required: false,
-      description: 'Inspect a string of text',
-    },
-    {
-      type: OptionType.BOOLEAN,
-      name: 'guild',
-      required: false,
-      description: 'Inspect the server data',
-    },
-  ],
+  options,
   do: async (interaction) => {
     const { options } = interaction;
 
@@ -60,9 +66,6 @@ export const inspectCommand = createCommand({
       options.getBoolean('guild', false) && interaction.guild,
     ]);
 
-    console.log('inspecting');
-
-    // const replyText = jsonBlock(interaction.toJSON());
     const replyText = jsonBlock(opts);
     const replyTextPlain = jsonBlock(opts, true);
 
@@ -81,17 +84,9 @@ export const inspectCommand = createCommand({
       });
 
       await interaction.reply(messages[0]);
-      await interaction.followUp(messages[1]);
-      // // Can't use map or foreach here
-      // for (let i = 1; i > messages.length; i++) {
-      //   await reply(interaction, messages[i], i);
-      // }
-
-      // for (const [i, message] of messages.entries()) {
-      //   console.log(i, message)
-      // }
-
-      // await interaction.reply(`Too many characters: ${replyText.length}`);
+      for (let i = 1; i > messages.length; i++) {
+        await interaction.followUp(messages[i]);
+      }
     } else {
       await interaction.reply(replyText);
     }
@@ -105,15 +100,4 @@ const filterInspectOptions = (
   options = options.filter((val: any) => !!val);
   if (options.length === 1) return options[0];
   return options;
-};
-
-const reply = (
-  interaction: CommandInteraction,
-  message: string | InteractionReplyOptions | MessagePayload,
-  index = 0
-) => {
-  if (index === 0) {
-    return interaction.reply(message);
-  }
-  return interaction.followUp(message);
 };

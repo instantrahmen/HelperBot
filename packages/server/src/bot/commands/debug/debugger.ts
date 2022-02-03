@@ -6,9 +6,6 @@ import {
 import config from '../../config';
 
 export default class Debugger {
-  // static globalDebugMode = false;
-  // static globalDisableCommands = false;
-
   guildId = '';
   debugMode = false;
   disableCommands = false;
