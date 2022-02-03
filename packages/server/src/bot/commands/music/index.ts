@@ -67,7 +67,7 @@ export const initializeMusicCommands = () => {
         mp.nextSong();
         // interaction.reply(`Skipped to track ${mp.nowPlaying}`);
         interaction.reply({
-          content: `Skipped to track ${mp.nowPlaying}`,
+          content: `Skipped to track ${mp.nowPlaying + 1}`,
           embeds: [mp.createCurrentSongEmbed()],
         });
       },
@@ -90,7 +90,7 @@ export const initializeMusicCommands = () => {
         mp.gotoSong(track - 1);
         // interaction.reply(`Skipped to track ${mp.nowPlaying}`);
         interaction.reply({
-          content: `Skipped to track ${mp.nowPlaying}`,
+          content: `Skipped to track ${mp.nowPlaying + 1}`,
           embeds: [mp.createCurrentSongEmbed()],
         });
       },
@@ -118,8 +118,16 @@ export const initializeMusicCommands = () => {
       description: 'Replay this track',
       do: async (interaction: CommandInteraction) => {
         const mp = getMusicPlayer(interaction.guildId!);
-        mp.prevSong();
-        mp.nextSong();
+        // mp.prevSong();
+        // mp.nextSong();
+
+        mp.autoplayDisabled = true;
+
+        mp.stop();
+        setTimeout(() => {
+          mp.play();
+          mp.autoplayDisabled = false;
+        }, 100);
         interaction.reply(`Playing this song again`);
       },
     }),
@@ -128,21 +136,23 @@ export const initializeMusicCommands = () => {
     createCommand({
       name: 'queue',
       description: 'List the items in queue',
+      options: [
+        {
+          type: OptionType.BOOLEAN,
+          name: 'includeplayed',
+          description: 'Include already played songs in the queue list?',
+          required: false,
+        },
+      ],
       do: async (interaction: CommandInteraction) => {
         const mp = getMusicPlayer(interaction.guildId!);
-        const formatted = mp.queue
-          .map((item, index) => {
-            if (index === mp.nowPlaying) {
-              return `**\\> [${index + 1}] - ${item.title}** [now playing]`;
-            }
-            return `[${index + 1}] - ${item.title}`;
-          })
-          .join('\n');
+        const includePlayed =
+          interaction.options.getBoolean('includeplayed', false) || false;
 
         const embed1 = mp.createCurrentSongEmbed();
 
-        const embed2 = mp.createQueueEmbed();
-        // interaction.reply(`**SONG QUEUE**: \n ${formatted} `);
+        const embed2 = mp.createQueueEmbed(includePlayed);
+
         interaction.reply({
           embeds: [embed1, embed2],
         });
