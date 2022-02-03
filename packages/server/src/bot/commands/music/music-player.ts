@@ -31,7 +31,7 @@ export class MusicPlayer {
   repeatMethod: RepeatMethod = RepeatMethod.NONE;
 
   addingSong = false;
-  skipping = false;
+  autoplayDisabled = false;
 
   constructor(guildId: string) {
     this.guildId = guildId;
@@ -65,7 +65,7 @@ export class MusicPlayer {
         newState.status === AudioPlayerStatus.Idle
       ) {
         // Play next song
-        if (!this.skipping) {
+        if (!this.autoplayDisabled) {
           this.nextSong();
         }
       }
@@ -218,7 +218,7 @@ export class MusicPlayer {
   }
 
   async gotoSong(index: number, method: 'wrap' | 'clamp' = 'wrap') {
-    this.skipping = true;
+    this.autoplayDisabled = true;
     const newIndex =
       method === 'wrap'
         ? this.wrapWithinArray(this.queue, index)
@@ -227,7 +227,7 @@ export class MusicPlayer {
     this.stop();
     this.nowPlaying = newIndex;
     await this.play();
-    this.skipping = false;
+    this.autoplayDisabled = false;
   }
 
   clearQueue() {
