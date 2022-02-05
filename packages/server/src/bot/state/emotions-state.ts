@@ -1,4 +1,5 @@
 import { Client, CommandInteraction, Message } from 'discord.js';
+import { timeout } from '../utils';
 
 type MoodType = 'happy' | 'flustered' | 'angry' | 'sad';
 type MoodTypeExtended = MoodType | 'neutral';
@@ -8,7 +9,6 @@ type MoodValues = {
   flustered: number;
   angry: number;
   sad: number;
-  // neutral: never;
 };
 
 // time helpers
@@ -76,7 +76,7 @@ export class GlobalState {
   }
 }
 
-export default class FynbotGlobalController {
+export default class FynniEmotionsController {
   client: Client;
 
   constructor(client: Client) {
@@ -313,12 +313,6 @@ export default class FynbotGlobalController {
   }
 }
 
-const timeout = async (timeInMs: number) => {
-  setTimeout(() => {
-    Promise.resolve();
-  }, timeInMs);
-};
-
 const FynbotMoodImages = {
   happy: [
     'https://media.discordapp.net/attachments/862794834800410657/888466807139217479/Fynbot_Sweet_Smile.png',
@@ -342,6 +336,7 @@ const FynbotMoodImages = {
     'https://media.discordapp.net/attachments/862794834800410657/888466807139217479/Fynbot_Sweet_Smile.png',
   ],
 };
+
 export const getFynbotMoodImage = (
   mood: MoodTypeExtended,
   strength: number = 1
@@ -364,54 +359,3 @@ export const constrain = (val: number, max: number, min = 0): number => {
   if (val < min) return min;
   return val;
 };
-// interaction.reply({
-//   content: intro,
-
-//   files: [
-//     'https://media.discordapp.net/attachments/862794834800410657/888465266302910464/Fynbot_Smug.png',
-//   ],
-// });
-// },
-// }),
-
-// createCommand({
-// name: 'sayhi',
-// description: 'Hi theeere~',
-// do: async (interaction: CommandInteraction) => {
-// interaction.reply({
-//   content: '> Yoooo~',
-
-//   files: [
-//     'https://media.discordapp.net/attachments/862794834800410657/888465761499238470/download20210905174538.png',
-//   ],
-// });
-// },
-// }),
-
-// createCommand({
-// name: 'blush',
-// description: `I- I don't blush, sillyyy`,
-// do: async (interaction: CommandInteraction) => {
-// interaction.reply({
-//   content: '> *Fynbot blushes slightly*',
-
-//   files: [
-//     'https://media.discordapp.net/attachments/862794834800410657/888467277140348958/download20210905175139.png',
-//   ],
-// });
-// },
-// }),
-
-// createCommand({
-// name: 'cuteresponse',
-// description: `C-cute?! Who are you calling cute, dummy?!`,
-// do: async (interaction: CommandInteraction) => {
-// interaction.reply({
-//   content: '> C-cute?! Who are you calling *cute*, dummy?!',
-
-//   files: [
-//     'https://media.discordapp.net/attachments/862794834800410657/888465348473524254/Fynbot_Yell.png',
-//   ],
-// });
-// },
-// }),

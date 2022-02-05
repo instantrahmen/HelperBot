@@ -1,7 +1,7 @@
 import { VoiceChannel } from 'discord.js';
 import { OptionType } from '../../types';
 
-import { createCommand } from '../../state/_commandState';
+import { createCommand } from '../../state/command-state';
 import { getMusicPlayer } from './music-player';
 
 export default () =>

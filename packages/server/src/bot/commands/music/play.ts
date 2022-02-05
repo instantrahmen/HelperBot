@@ -1,5 +1,5 @@
 import { getMusicPlayer, MusicPlayer } from './music-player';
-import { createCommand } from '../../state/_commandState';
+import { createCommand } from '../../state/command-state';
 import { CommandInteraction } from 'discord.js';
 import { OptionType } from '../../types';
 

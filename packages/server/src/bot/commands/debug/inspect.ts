@@ -4,8 +4,8 @@ import {
   MessagePayload,
 } from 'discord.js';
 import { OptionType, CommandOption } from '../../types';
-import { jsonBlock, times } from '../helpers';
-import { createCommand } from '../../state/_commandState';
+import { jsonBlock, times } from '../../utils';
+import { createCommand } from '../../state/command-state';
 
 const options: CommandOption[] = [
   {

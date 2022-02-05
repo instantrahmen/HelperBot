@@ -1,7 +1,7 @@
 import { VoiceConnection } from '@discordjs/voice';
 import { CommandInteraction, Interaction } from 'discord.js';
 import { createAudioResource, createAudioPlayer } from '@discordjs/voice';
-import { createCommand } from '../../state/_commandState';
+import { createCommand } from '../../state/command-state';
 
 import config from '../../config';
 import join from './join';

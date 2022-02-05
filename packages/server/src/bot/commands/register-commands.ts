@@ -1,14 +1,14 @@
-import { registerCommands, getCommands } from '../state/_commandState';
+import { registerCommands, getCommands } from '../state/command-state';
 
 import { initializeMusicCommands } from './music';
 import { initializeDebugCommands } from './debug';
+import { Command } from '../types';
 
-const musicCommands = initializeMusicCommands();
-const debugCommands = initializeDebugCommands();
+export const registerAllCommands = (): Command[] => {
+  const musicCommands = initializeMusicCommands();
+  const debugCommands = initializeDebugCommands();
 
-registerCommands([...musicCommands, ...debugCommands]);
+  registerCommands([...musicCommands, ...debugCommands]);
 
-const commands = getCommands();
-console.log({ commands });
-
-export default commands;
+  return getCommands();
+};

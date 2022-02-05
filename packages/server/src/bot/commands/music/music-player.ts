@@ -10,14 +10,14 @@ import {
   joinVoiceChannel,
   entersState,
 } from '@discordjs/voice';
+
+// ytdl for handling regular youtube links
 import ytdl from 'ytdl-core-discord';
 
 // ytpl for handling playlist links
 import ytpl from 'ytpl';
 
 import config from '../../config';
-import { indexWithinArray } from '../helpers';
-import { url } from 'inspector';
 
 const allPlayers: PlayersByGuild = {};
 

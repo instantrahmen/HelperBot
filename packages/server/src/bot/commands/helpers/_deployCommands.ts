@@ -2,13 +2,11 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import config from '../../config';
+import { getCommands } from '../../state/command-state';
 import { Command } from '../../types';
 import { getDebugger } from '../debug/debugger';
-import commands from '../register-commands';
 
 const { clientID, guilds, botToken } = config;
-
-// console.log('gen commands', { commands });
 
 const commandFilter = (guildId: string) => (command: Command) => {
   const guildDebugger = getDebugger(guildId);
@@ -19,26 +17,29 @@ const commandFilter = (guildId: string) => (command: Command) => {
   return true;
 };
 
-const generatedCommands = (guildId: string) =>
-  commands.filter(commandFilter(guildId)).map((command) => {
-    const commandObject = {
-      ...new SlashCommandBuilder()
-        .setName(command.name)
-        .setDescription(command.description),
-    } as any;
-    if (command.options) {
-      // commandObject.options = { ...commandObject.options, ...command.options };
-      commandObject.options = command.options;
-    }
-    return commandObject;
-  });
+const generateCommandsPostBody = (guildId: string) => {
+  return getCommands()
+    .filter(commandFilter(guildId))
+    .map((command) => {
+      const commandObject = {
+        ...new SlashCommandBuilder()
+          .setName(command.name)
+          .setDescription(command.description),
+      } as any;
+      if (command.options) {
+        // commandObject.options = { ...commandObject.options, ...command.options };
+        commandObject.options = command.options;
+      }
+      return commandObject;
+    });
+};
 
 const rest = new REST({ version: '9' }).setToken(botToken);
 
 export const deployCommands = async (guildID: string) => {
   try {
     await rest.put(Routes.applicationGuildCommands(clientID, guildID), {
-      body: generatedCommands(guildID),
+      body: generateCommandsPostBody(guildID),
     });
     return guildID;
   } catch (error) {
@@ -48,9 +49,15 @@ export const deployCommands = async (guildID: string) => {
 
 export const deployCommandsAllGuilds = async () => {
   config.status = 'deploying commands';
-  guilds.map(async (guildID: string) => await deployCommands(guildID));
+
+  const deploymentPromises = guilds.map((guildID: string) =>
+    deployCommands(guildID)
+  );
+
+  await Promise.all(deploymentPromises).catch((e) => {
+    console.warn(`Couldn't deploy commands`, e);
+  });
 
   config.status = 'running';
-
   return guilds;
 };

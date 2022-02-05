@@ -1,10 +1,14 @@
 import { Client } from 'discord.js';
 
-import './register-commands';
+import { registerAllCommands } from './register-commands';
 
-import { getIndexedCommands } from '../state/_commandState';
+import { getIndexedCommands } from '../state/command-state';
 
 export const generateSlashCommands = (client: Client) => {
+  const commands = registerAllCommands();
+
+  console.log('generateSlashCommands', commands);
+
   client.on('interactionCreate', async (interaction) => {
     // console.log({ interaction });
     if (!interaction.isCommand()) return;

@@ -1,11 +1,5 @@
-import {
-  CommandInteraction,
-  InteractionReplyOptions,
-  MessagePayload,
-} from 'discord.js';
 import config from '../../config';
 
-// globalPersmissions
 export default class Debugger {
   guildId = '';
   debugMode = false;
