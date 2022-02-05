@@ -3,13 +3,15 @@ import {
   InteractionReplyOptions,
   MessagePayload,
 } from 'discord.js';
-import { createCommand, OptionType } from '../helpers/_commandState';
+import { createCommand } from '../../state/_commandState';
 import { jsonBlock, times } from '../helpers';
 
 import config from '../../config';
 import Debugger, { initializeDebuggers, getDebugger } from './debugger';
 import { deployCommands } from '../helpers/_deployCommands';
 import { inspectCommand } from './inspect';
+import { permissionLevels } from '../../permissions';
+import { OptionType } from '../../types';
 
 export const initializeDebugCommands = () => {
   initializeDebuggers();
@@ -21,7 +23,8 @@ export const initializeDebugCommands = () => {
       name: 'toggle-debug-mode',
       description: 'Enable debug mode',
       forceAvailable: true,
-      // debugOnly: process.env.NODE_ENV === 'production',
+      permissions: [permissionLevels.admin],
+
       do: async (interaction) => {
         const guildId = interaction.guild!.id;
         const guildDebugger = getDebugger(guildId);

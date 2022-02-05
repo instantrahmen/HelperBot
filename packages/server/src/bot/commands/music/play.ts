@@ -1,12 +1,10 @@
-import { getVoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
-
 import { getMusicPlayer, MusicPlayer } from './music-player';
-import { createCommand, OptionType } from '../helpers/_commandState';
-import { jsonBlock } from '../helpers';
+import { createCommand } from '../../state/_commandState';
 import { CommandInteraction } from 'discord.js';
+import { OptionType } from '../../types';
 
-export default () =>
-  createCommand({
+export default () => {
+  return createCommand({
     name: 'play',
     description: 'Add a song to the queue',
     options: [
@@ -24,7 +22,7 @@ export default () =>
       const musicPlayer = getMusicPlayer(guildId);
 
       try {
-        if (url.includes('playlist')) {
+        if (url.includes('list')) {
           addPlaylist(url, interaction, musicPlayer);
         } else {
           addSong(url, interaction, musicPlayer);
@@ -34,6 +32,7 @@ export default () =>
       }
     },
   });
+};
 
 const addSong = async (
   url: string,

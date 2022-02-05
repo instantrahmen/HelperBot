@@ -3,12 +3,9 @@ import {
   InteractionReplyOptions,
   MessagePayload,
 } from 'discord.js';
+import { OptionType, CommandOption } from '../../types';
 import { jsonBlock, times } from '../helpers';
-import {
-  CommandOption,
-  createCommand,
-  OptionType,
-} from '../helpers/_commandState';
+import { createCommand } from '../../state/_commandState';
 
 const options: CommandOption[] = [
   {

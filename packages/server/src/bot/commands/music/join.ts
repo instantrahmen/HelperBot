@@ -1,7 +1,7 @@
-import { createCommand, OptionType } from '../helpers/_commandState';
-
 import { VoiceChannel } from 'discord.js';
+import { OptionType } from '../../types';
 
+import { createCommand } from '../../state/_commandState';
 import { getMusicPlayer } from './music-player';
 
 export default () =>
@@ -22,6 +22,7 @@ export default () =>
         'channel',
         true
       ) as VoiceChannel;
+
       const { id: channelId, guild, guildId } = channel;
       const musicPlayer = getMusicPlayer(guildId);
 

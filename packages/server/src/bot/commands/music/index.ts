@@ -1,12 +1,13 @@
 import { VoiceConnection } from '@discordjs/voice';
 import { CommandInteraction, Interaction } from 'discord.js';
 import { createAudioResource, createAudioPlayer } from '@discordjs/voice';
-import { createCommand, OptionType } from '../helpers/_commandState';
+import { createCommand } from '../../state/_commandState';
 
 import config from '../../config';
 import join from './join';
 import play from './play';
 import { getMusicPlayer, initializeMusicPlayers } from './music-player';
+import { OptionType } from '../../types';
 // import { format } from 'path/posix';
 
 // const { guilds } = config;

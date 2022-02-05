@@ -1,8 +1,5 @@
-import { registerCommands, getCommands } from './helpers/_commandState';
-import config from '../config';
-import { jsonBlock } from './helpers';
+import { registerCommands, getCommands } from '../state/_commandState';
 
-import hug from './hug';
 import { initializeMusicCommands } from './music';
 import { initializeDebugCommands } from './debug';
 

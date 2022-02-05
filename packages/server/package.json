@@ -9,7 +9,8 @@
     "prisma": "2.30.2",
     "prisma-schema-to-graphql": "^1.0.0",
     "ts-node": "10.4.0",
-    "typescript": "4.5.5"
+    "typescript": "4.5.5",
+    "rimraf": "^3.0.2"
   },
   "scripts": {
     "dev": "nodemon src/index.ts",
@@ -24,16 +25,13 @@
     "@prisma/client": "2.30.2",
     "@types/dotenv": "^8.2.0",
     "apollo-server": "^3.3.0",
-    "discord-api-types": "^0.26.1",
+    "discord-api-types": "0.27.0-next.87b9b08.1644022571",
     "discord.js": "^13.1.0",
     "dotenv": "^16.0.0",
     "fastify": "^3.27.1",
     "graphql": "^16.3.0",
     "libsodium-wrappers": "^0.7.9",
     "play-dl": "^1.8.2",
-    "rimraf": "^3.0.2",
-    "streamlink": "^1.0.4",
-    "youtube-dl-exec": "^2.0.2",
     "ytdl-core": "^4.10.0",
     "ytdl-core-discord": "^1.3.1",
     "ytpl": "^2.2.3"

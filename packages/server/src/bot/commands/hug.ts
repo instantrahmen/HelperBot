@@ -1,4 +1,4 @@
-import { createCommand, OptionType } from './helpers/_commandState';
+import { createCommand, OptionType } from '../state/_commandState';
 
 export default createCommand({
   name: 'hug',

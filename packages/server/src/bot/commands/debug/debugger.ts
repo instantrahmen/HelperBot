@@ -5,6 +5,7 @@ import {
 } from 'discord.js';
 import config from '../../config';
 
+// globalPersmissions
 export default class Debugger {
   guildId = '';
   debugMode = false;

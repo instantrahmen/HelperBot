@@ -1,8 +1,8 @@
 import { Client } from 'discord.js';
 
-import './_commands';
+import './register-commands';
 
-import { getIndexedCommands } from './helpers/_commandState';
+import { getIndexedCommands } from '../state/_commandState';
 
 export const generateSlashCommands = (client: Client) => {
   client.on('interactionCreate', async (interaction) => {

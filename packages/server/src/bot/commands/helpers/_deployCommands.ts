@@ -2,9 +2,9 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import config from '../../config';
+import { Command } from '../../types';
 import { getDebugger } from '../debug/debugger';
-import commands from '../_commands';
-import { Command } from './_commandState';
+import commands from '../register-commands';
 
 const { clientID, guilds, botToken } = config;
 
