@@ -1,17 +1,9 @@
-import {
-  CommandInteraction,
-  InteractionReplyOptions,
-  MessagePayload,
-} from 'discord.js';
 import { createCommand } from '../../state/command-state';
 
-import config from '../../config';
-import Debugger, { initializeDebuggers, getDebugger } from './debugger';
-import { deployCommands } from '../helpers/_deployCommands';
+import { initializeDebuggers, getDebugger } from './debugger';
+import { deployCommands } from '../helpers/deploy-commands';
 import { inspectCommand } from './inspect';
 import { permissionLevels } from '../../permissions';
-import { OptionType } from '../../types';
-import { times, jsonBlock } from '../../utils';
 
 export const initializeDebugCommands = () => {
   initializeDebuggers();

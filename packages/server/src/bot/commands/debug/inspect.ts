@@ -1,8 +1,4 @@
-import {
-  CommandInteraction,
-  InteractionReplyOptions,
-  MessagePayload,
-} from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { OptionType, CommandOption } from '../../types';
 import { jsonBlock, times } from '../../utils';
 import { createCommand } from '../../state/command-state';

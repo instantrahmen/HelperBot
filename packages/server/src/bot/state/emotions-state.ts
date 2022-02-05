@@ -1,4 +1,4 @@
-import { Client, CommandInteraction, Message } from 'discord.js';
+import { Client, Message } from 'discord.js';
 import { timeout } from '../utils';
 
 type MoodType = 'happy' | 'flustered' | 'angry' | 'sad';

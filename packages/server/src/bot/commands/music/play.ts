@@ -1,7 +1,7 @@
-import { getMusicPlayer, MusicPlayer } from './music-player';
 import { createCommand } from '../../state/command-state';
 import { CommandInteraction } from 'discord.js';
 import { OptionType } from '../../types';
+import { MusicPlayer, mpState } from '../../components/MusicPLayer';
 
 export default () => {
   return createCommand({
@@ -19,13 +19,13 @@ export default () => {
       const url = interaction.options.getString('url', true);
       const guildId = interaction.guildId!;
 
-      const musicPlayer = getMusicPlayer(guildId);
+      const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
 
       try {
         if (url.includes('list')) {
-          addPlaylist(url, interaction, musicPlayer);
+          addPlaylist(url, interaction, mp);
         } else {
-          addSong(url, interaction, musicPlayer);
+          addSong(url, interaction, mp);
         }
       } catch (e: any) {
         interaction.editReply(`Failed to add song. \n \`${e.message}\``);

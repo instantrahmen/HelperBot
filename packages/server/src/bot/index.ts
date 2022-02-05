@@ -1,7 +1,7 @@
 import { Client } from 'discord.js';
 import config from './config';
 import { generateSlashCommands } from './commands';
-import { deployCommandsAllGuilds } from './commands/helpers/_deployCommands';
+import { deployCommandsAllGuilds } from './commands/helpers/deploy-commands';
 
 import FynniEmotionsController from './state/emotions-state';
 

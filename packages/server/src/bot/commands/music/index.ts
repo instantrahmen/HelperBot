@@ -1,19 +1,20 @@
 import { VoiceConnection } from '@discordjs/voice';
-import { CommandInteraction, Interaction } from 'discord.js';
-import { createAudioResource, createAudioPlayer } from '@discordjs/voice';
-import { createCommand } from '../../state/command-state';
+import { CommandInteraction } from 'discord.js';
+import { createAudioPlayer } from '@discordjs/voice';
 
-import config from '../../config';
 import join from './join';
 import play from './play';
-import { getMusicPlayer, initializeMusicPlayers } from './music-player';
-import { OptionType } from '../../types';
-// import { format } from 'path/posix';
+import { createCommand } from '../../state/command-state';
+// import { getMusicPlayer, initializeMusicPlayers } from './music-player';
 
-// const { guilds } = config;
+import { MusicPlayer, initializeMP } from '../../components/MusicPLayer';
+
+import { OptionType } from '../../types';
 
 export const initializeMusicCommands = () => {
-  initializeMusicPlayers();
+  // initializeMusicPlayers();
+  // MusicPlayer.createComponentsForAllGuilds();
+  const mpState = initializeMP();
 
   return [
     join(),
@@ -23,7 +24,9 @@ export const initializeMusicCommands = () => {
       name: 'pause',
       description: 'Pause music',
       do: async (interaction: CommandInteraction) => {
-        const mp = getMusicPlayer(interaction.guildId!);
+        // const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
         mp.pause();
 
         interaction.reply(
@@ -37,7 +40,8 @@ export const initializeMusicCommands = () => {
       name: 'unpause',
       description: 'Unpause music',
       do: async (interaction: CommandInteraction) => {
-        const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
         mp.unpause();
 
         interaction.reply(`You ready again? Let's gooooo~`);
@@ -49,7 +53,8 @@ export const initializeMusicCommands = () => {
       name: 'playerstatus',
       description: 'Get music player status',
       do: async (interaction: CommandInteraction) => {
-        const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
         // interaction.reply(`\`\`\`json ${mp.toString()}\`\`\``);
         interaction.reply(
           `Current status: ${mp.getPlayerStatus()} \n Song: ${
@@ -64,7 +69,8 @@ export const initializeMusicCommands = () => {
       name: 'skip',
       description: 'Skip to next track',
       do: async (interaction: CommandInteraction) => {
-        const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
         mp.nextSong();
         // interaction.reply(`Skipped to track ${mp.nowPlaying}`);
         interaction.reply({
@@ -87,7 +93,8 @@ export const initializeMusicCommands = () => {
       ],
       do: async (interaction: CommandInteraction) => {
         const track = interaction.options.getInteger('track', true);
-        const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
         mp.gotoSong(track - 1);
         // interaction.reply(`Skipped to track ${mp.nowPlaying}`);
         interaction.reply({
@@ -102,7 +109,8 @@ export const initializeMusicCommands = () => {
       name: 'prev',
       description: 'Go back to previous track',
       do: async (interaction: CommandInteraction) => {
-        const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
         mp.prevSong();
 
         // interaction.reply(`Playing previous song (track ${mp.nowPlaying})`);
@@ -118,7 +126,8 @@ export const initializeMusicCommands = () => {
       name: 'replay',
       description: 'Replay this track',
       do: async (interaction: CommandInteraction) => {
-        const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
         // mp.prevSong();
         // mp.nextSong();
 
@@ -146,7 +155,8 @@ export const initializeMusicCommands = () => {
         },
       ],
       do: async (interaction: CommandInteraction) => {
-        const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
         const includePlayed =
           interaction.options.getBoolean('includeplayed', false) || false;
 
@@ -165,7 +175,7 @@ export const initializeMusicCommands = () => {
       name: 'clearqueue',
       description: 'List the items in queue',
       do: async (interaction: CommandInteraction) => {
-        const mp = getMusicPlayer(interaction.guildId!);
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
 
         mp.clearQueue();
 
