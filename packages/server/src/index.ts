@@ -14,16 +14,16 @@ app.get('/', async (req, res) => {
   return { running: 'true' };
 });
 
-app.get('/authenticate', async (req, res) => {
+app.get('/authenticate', async (req: any) => {
   app.log.info({ query: req.query });
   return { ...(req.query as any) };
 });
 
-app.get('/bot/info', async (req, res) => {
+app.get('/bot/info', async () => {
   return stringify(botState, null, 2);
 });
 
-app.get('/bot/debug', async (req, res) => {
+app.get('/bot/debug', async () => {
   return stringify(Debugger.inMemoryDebugLog, null, 2);
 });
 

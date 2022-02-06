@@ -4,11 +4,11 @@
     "outDir": "dist",
     "strict": true,
     "lib": ["esnext", "dom"],
-    "target": "es2015",
+    "target": "es5",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "downlevelIteration": true
-
+    "downlevelIteration": true,
+    "moduleResolution": "node"
   }
 }
