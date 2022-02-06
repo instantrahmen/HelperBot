@@ -1,7 +1,9 @@
 import { CommandInteraction } from 'discord.js';
+import { commandState } from '../../components/Commands';
 import { OptionType, CommandOption } from '../../types';
 import { jsonBlock, times } from '../../utils';
-import { createCommand } from '../../state/command-state';
+
+const { createCommand } = commandState;
 
 const options: CommandOption[] = [
   {

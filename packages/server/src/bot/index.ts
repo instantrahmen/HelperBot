@@ -1,9 +1,9 @@
 import { Client } from 'discord.js';
-import config from './config';
-import { generateSlashCommands } from './commands';
-import { deployCommandsAllGuilds } from './commands/helpers/deploy-commands';
 
+import { generateSlashCommands } from './commands';
+import config from './config';
 import FynniEmotionsController from './state/emotions-state';
+import commandState from './components/Commands';
 
 process.on('uncaughtException', function (err) {
   console.log(err);
@@ -20,7 +20,7 @@ export const initializeBot = () => {
   client.once('ready', async () => {
     // Deploy commands every time server starts up
     console.log('Deploying commands...');
-    await deployCommandsAllGuilds();
+    await commandState.deployAll();
     console.log('deployed commands');
 
     console.log('Ready.');

@@ -4,16 +4,15 @@ import { createAudioPlayer } from '@discordjs/voice';
 
 import join from './join';
 import play from './play';
-import { createCommand } from '../../state/command-state';
 
 import { MusicPlayer, initializeMP } from '../../components/MusicPLayer';
 
 import { OptionType } from '../../types';
 import { jsonBlock } from '../../utils';
+import commandState from '../../components/Commands';
 
 export const initializeMusicCommands = () => {
-  // initializeMusicPlayers();
-  // MusicPlayer.createComponentsForAllGuilds();
+  const { createCommand } = commandState;
   const mpState = initializeMP();
 
   return [

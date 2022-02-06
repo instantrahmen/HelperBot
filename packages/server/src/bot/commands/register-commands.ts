@@ -1,14 +1,10 @@
-import { registerCommands, getCommands } from '../state/command-state';
-
 import { initializeMusicCommands } from './music';
 import { initializeDebugCommands } from './debug';
-import { Command } from '../types';
+import commandState from '../components/Commands';
 
-export const registerAllCommands = (): Command[] => {
+export const registerAllCommands = (): void => {
   const musicCommands = initializeMusicCommands();
   const debugCommands = initializeDebugCommands();
 
-  registerCommands([...musicCommands, ...debugCommands]);
-
-  return getCommands();
+  commandState.registerCommands([...musicCommands, ...debugCommands]);
 };

@@ -1,12 +1,12 @@
-import { createCommand } from '../../state/command-state';
-
-import { deployCommands } from '../helpers/deploy-commands';
 import { inspectCommand } from './inspect';
 import { permissionLevels } from '../../permissions';
 import { initializeDebuggers, getDebugger } from '../../components/Debugger';
+import commandState from '../../components/Commands';
 
 export const initializeDebugCommands = () => {
   initializeDebuggers();
+
+  const { createCommand } = commandState;
 
   return [
     inspectCommand,
@@ -25,7 +25,7 @@ export const initializeDebugCommands = () => {
         await interaction.reply(`Setting debug mode to \`${newValue}\``);
 
         guildDebugger.debugMode = newValue;
-        await deployCommands(guildId);
+        await commandState.deployForGuild(guildId);
 
         await interaction.editReply(
           `Debug mode set to \`${guildDebugger.debugMode}\``
@@ -46,7 +46,7 @@ export const initializeDebugCommands = () => {
         await interaction.reply(`Setting commands hidden to \`${newValue}\``);
 
         guildDebugger.disableCommands = !guildDebugger.disableCommands;
-        await deployCommands(guildId);
+        await commandState.deployForGuild(guildId);
 
         await interaction.editReply(
           `Done. Commands hidden: \`${guildDebugger.disableCommands}\``

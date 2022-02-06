@@ -15,8 +15,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "rimraf ./dist && tsc",
-    "bot-only": "nodemon src/bot/index.ts",
-    "deploy-commands": "ts-node src/actions/action-deploy-commands.ts"
+    "bot-only": "nodemon src/bot/index.ts"
   },
   "dependencies": {
     "@discordjs/builders": "^0.12.0",

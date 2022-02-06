@@ -1,21 +1,16 @@
 import { Client } from 'discord.js';
 
+import commandState from '../components/Commands';
 import { registerAllCommands } from './register-commands';
 
-import { getIndexedCommands } from '../state/command-state';
-
 export const generateSlashCommands = (client: Client) => {
-  const commands = registerAllCommands();
+  registerAllCommands();
 
   client.on('interactionCreate', async (interaction) => {
     // console.log({ interaction });
     if (!interaction.isCommand()) return;
 
     const { commandName } = interaction;
-
-    getIndexedCommands()[commandName] &&
-      getIndexedCommands()[commandName].do(interaction);
+    commandState.getCommand(commandName).run(interaction);
   });
-
-  return commands;
 };

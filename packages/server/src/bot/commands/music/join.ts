@@ -1,11 +1,13 @@
 import { VoiceChannel } from 'discord.js';
 import { OptionType } from '../../types';
 
-import { createCommand } from '../../state/command-state';
 import { mpState, MusicPlayer } from '../../components/MusicPLayer';
+import commandState from '../../components/Commands';
 
-export default () =>
-  createCommand({
+export default () => {
+  const { createCommand } = commandState;
+
+  return createCommand({
     name: 'join',
     description: 'Join a channel',
     options: [
@@ -69,3 +71,4 @@ export default () =>
       }
     },
   });
+};

@@ -1,9 +1,11 @@
-import { createCommand } from '../../state/command-state';
 import { CommandInteraction } from 'discord.js';
 import { OptionType } from '../../types';
 import { MusicPlayer, mpState } from '../../components/MusicPLayer';
+import commandState from '../../components/Commands';
 
 export default () => {
+  const { createCommand } = commandState;
+
   return createCommand({
     name: 'play',
     description: 'Add a song to the queue',

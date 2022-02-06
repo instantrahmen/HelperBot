@@ -35,7 +35,7 @@ const config = {
         ]
       : ['862794834800410654'],
   clientID: process.env['DISCORD_CLIENT_ID'] as string,
-  guildID: process.env['DISCORD_GUILD_ID'] as string,
+  guildId: process.env['DISCORD_GUILD_ID'] as string,
   botToken: process.env['DISCORD_BOT_TOKEN'] as string,
   clientSecret: process.env['DISCORD_CLIENT_SECRET'] as string,
 

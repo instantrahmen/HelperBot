@@ -1,5 +1,5 @@
 export default class Moderator {
-  guildID = '';
+  guildId = '';
 
   constructor() {}
 }
