@@ -1,15 +1,16 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 // import server from "./graphql/server";
 import { initialize } from './bot';
+import stringify from 'safe-json-stringify';
+
 const botState = initialize();
 
 import fastify from 'fastify';
 
 const app = fastify({ logger: true });
 
-// Declare a route
 app.get('/', async (req, res) => {
-  return { hello: 'world' };
+  return { running: 'true' };
 });
 
 app.get('/authenticate', async (req, res) => {
@@ -18,7 +19,7 @@ app.get('/authenticate', async (req, res) => {
 });
 
 app.get('/bot-info', async (req, res) => {
-  return { botState };
+  return stringify(botState, null, 2);
 });
 
 // Run the server!
