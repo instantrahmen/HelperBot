@@ -6,4 +6,4 @@ Dev: https://discord.com/api/oauth2/authorize?client_id=938274206574075994&permi
 Prod: [Coming Soon]
 
 ### Known Issues:
- - None currently, will update as I find some
+ - Music player commands still work if Fynni isn't connected to a VC

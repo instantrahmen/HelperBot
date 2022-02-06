@@ -1,11 +1,13 @@
-import { createCommand, OptionType } from '../helpers/_commandState';
-
 import { VoiceChannel } from 'discord.js';
+import { OptionType } from '../../types';
 
-import { getMusicPlayer } from './music-player';
+import { mpState, MusicPlayer } from '../../components/MusicPLayer';
+import commandState from '../../components/Commands';
 
-export default () =>
-  createCommand({
+export default () => {
+  const { createCommand } = commandState;
+
+  return createCommand({
     name: 'join',
     description: 'Join a channel',
     options: [
@@ -22,8 +24,9 @@ export default () =>
         'channel',
         true
       ) as VoiceChannel;
+
       const { id: channelId, guild, guildId } = channel;
-      const musicPlayer = getMusicPlayer(guildId);
+      const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
 
       console.log('Fynni joining channel', {
         // channel,
@@ -40,7 +43,7 @@ export default () =>
       });
 
       try {
-        await musicPlayer.connectToChannel(channel);
+        await mp.connectToChannel(channel);
 
         interaction.editReply(
           `DJ Fynni in the house~ (joined ${channel.toString()})~`
@@ -68,3 +71,4 @@ export default () =>
       }
     },
   });
+};
