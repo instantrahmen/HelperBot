@@ -1,4 +1,6 @@
-// import transform from 'ts-transform-const-enum';
+import safeStringify from 'safe-json-stringify';
+
+export const stringify = safeStringify;
 
 type Filter = (value: any[]) => boolean;
 
@@ -63,4 +65,8 @@ export const wrapWithinArray = (arr: Array<any>, value: number) => {
 
 export const clampWithinArray = (arr: Array<any>, value: number) => {
   return clamp(arr.length - 1, value);
+};
+
+export const removeElementFromArray = (items: Array<any>, index: number) => {
+  return [...items.slice(0, index), ...items.slice(index + 1)];
 };

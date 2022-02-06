@@ -1,6 +1,8 @@
 import { botState } from './components/Bot';
 import { generateSlashCommands } from './commands';
 import FynniEmotionsController from './state/emotions-state';
+import { state as debuggerState } from './components/Debugger';
+import { mpState } from './components/MusicPLayer';
 
 process.on('uncaughtException', (err) => {
   console.log(err);
@@ -11,7 +13,7 @@ export const initialize = () => {
 
   generateSlashCommands(botState.client);
 
-  new FynniEmotionsController();
+  const fynniController = new FynniEmotionsController();
 
-  return botState;
+  return { botState, fynniController, debuggerState, mpState };
 };

@@ -3,6 +3,7 @@ import { OptionType } from '../../types';
 
 import { mpState, MusicPlayer } from '../../components/MusicPLayer';
 import commandState from '../../components/Commands';
+import { ChannelTypes } from 'discord.js/typings/enums';
 
 export default () => {
   const { createCommand } = commandState;
@@ -16,6 +17,7 @@ export default () => {
         name: 'channel',
         description: 'Which channel should I join?',
         required: true,
+        channel_types: [ChannelTypes.GUILD_VOICE],
       },
     ],
     do: async (interaction) => {
@@ -45,19 +47,14 @@ export default () => {
       try {
         await mp.connectToChannel(channel);
 
-        interaction.editReply(
-          `DJ Fynni in the house~ (joined ${channel.toString()})~`
-        );
-
         const gif = 'https://c.tenor.com/bOR-CXcBQ8QAAAAC/djaymano-dj.gif';
 
         await interaction.editReply({
-          // content: `${interaction.user.toString()} gives <@${target}> a hug!`,
-          content: `DJ Fynni in the house~ (joined ${channel.toString()})~`,
+          content: `DJ Fynni in the house~ \n\n(joined ${channel.toString()})`,
           files: [gif],
         });
       } catch (e: any) {
-        const replyText = `Failed to join channel ${channel.toString()}! \n ${
+        const replyText = `Darn coudn't join ${channel.toString()}! \n ${
           e.message
         }`;
 
