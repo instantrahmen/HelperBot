@@ -24,6 +24,7 @@
     "@discordjs/voice": "^0.8.0",
     "@prisma/client": "2.30.2",
     "@types/dotenv": "^8.2.0",
+    "@types/lodash": "^4.14.178",
     "apollo-server": "^3.3.0",
     "discord-api-types": "0.27.0-next.87b9b08.1644022571",
     "discord.js": "^13.1.0",
@@ -33,6 +34,7 @@
     "ffmpeg-static": "^4.4.1",
     "graphql": "^16.3.0",
     "libsodium-wrappers": "^0.7.9",
+    "lodash": "^4.17.21",
     "play-dl": "^1.8.6",
     "safe-json-stringify": "^1.2.0",
     "ytpl": "^2.2.3"

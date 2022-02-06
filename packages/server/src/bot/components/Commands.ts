@@ -1,15 +1,13 @@
 import { REST } from '@discordjs/rest';
 import { CommandInteraction } from 'discord.js';
+import { snakeCase } from 'lodash';
+
 import config from '../config';
-import {
-  Command,
-  CommandBase,
-  CommandsArray,
-  IndexedCommands,
-  KVPairs,
-} from '../types';
-import { getDebugger } from './Debugger';
+import { Command, CommandsArray, APIAppCommand } from '../types';
+import { Debugger, getDebugger } from './Debugger';
 import { Routes } from 'discord-api-types/v9';
+import { botState } from './Bot';
+import { getPermissionsArray, permissionLevels } from '../permissions';
 
 const { clientID, guilds, botToken } = config;
 
@@ -72,12 +70,11 @@ export const commandState = {
     const postBody = this.commandsArray()
       .filter(this.createFilter(guildId))
       .map((command) => command.toJSON());
-    // console.log({ postBody });
 
     return postBody;
   },
 
-  async deployForGuild(guildId: string) {
+  async deployForGuild(guildId: string): Promise<APIAppCommand[]> {
     try {
       const res = await rest.put(
         Routes.applicationGuildCommands(clientID, guildId),
@@ -85,8 +82,8 @@ export const commandState = {
           body: commandState.toJSON(guildId),
         }
       );
-      // console.log({ [guildId]: res });
-      return guildId;
+
+      return res as APIAppCommand[];
     } catch (error: any) {
       throw new Error(error);
     }
@@ -97,11 +94,58 @@ export const commandState = {
       this.deployForGuild(guildId)
     );
 
-    await Promise.all(deploymentPromises).catch((e) => {
+    // data[0]
+
+    const data = await Promise.all(deploymentPromises).catch((e) => {
       console.warn(`Couldn't deploy commands`, e);
     });
 
-    return guilds;
+    if (!data) {
+      throw new Error('No data returned from command deploy');
+    }
+
+    Debugger.log({ data });
+
+    await this.setPermissions(data);
+
+    return data;
+  },
+
+  async setPermissions(apiCommands: APIAppCommand[][]) {
+    const response = await Promise.all(
+      apiCommands.map((commands) => {
+        return Promise.all(
+          commands.map(async (command) => {
+            const { guild_id: guildId, id: commandId, name } = command;
+            const appCommandOptions = this.commands[name].commandOptions;
+            if (!appCommandOptions.permissions) return;
+
+            const fetchedCommand = await this.fetchCommandFromAPI(
+              guildId!,
+              commandId
+            );
+
+            const permissions = getPermissionsArray(
+              appCommandOptions.permissions,
+              guildId!
+            );
+
+            await fetchedCommand?.permissions.add({ permissions });
+            return fetchedCommand?.setDefaultPermission(
+              appCommandOptions.defaultPermission
+            );
+          })
+        );
+      })
+    );
+
+    Debugger.log(response);
+    return response;
+  },
+
+  async fetchCommandFromAPI(guildId: string, commandId: string) {
+    const { client } = botState;
+    return client.guilds.cache.get(guildId)?.commands.fetch(commandId);
   },
 };
 
@@ -114,12 +158,16 @@ class _AppCommand {
     this.commandOptions = commandOptions;
   }
 
-  toCommandBase() {
-    return this.commandOptions as CommandBase;
-  }
+  // toCommandBase() {
+  //   return this.commandOptions as CommandBase;
+  // }
 
   toJSON() {
-    return this.toCommandBase();
+    // let newObject as API;
+    return Object.keys(this.commandOptions).reduce((newObj: any, oldKey) => {
+      const newKey = snakeCase(oldKey);
+      return { ...newObj, [newKey]: (this.commandOptions as any)[oldKey] };
+    }, {});
   }
 
   run(interaction: CommandInteraction) {

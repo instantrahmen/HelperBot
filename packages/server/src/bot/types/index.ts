@@ -1,5 +1,8 @@
 import { ApplicationCommand, CommandInteraction } from 'discord.js';
-import { APIApplicationCommandOption } from 'discord-api-types';
+import {
+  APIApplicationCommandOption,
+  APIApplicationCommand,
+} from 'discord-api-types';
 import { PermissionLevel } from './permission-types';
 import { ChannelTypes } from 'discord.js/typings/enums';
 
@@ -28,6 +31,12 @@ export type CommandOption = Merge<
     channel_types?: ChannelTypes[];
   }
 >;
+
+export type APIAppCommand = APIApplicationCommand;
+export type APIAppCommandsForGuild = {
+  guildId: string;
+  commands: APIAppCommand[];
+};
 
 export type CommandBase = {
   name: string;
