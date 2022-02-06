@@ -17,9 +17,9 @@ export default () => {
     ],
     do: async (interaction) => {
       const url = interaction.options.getString('url', true);
-      const guildId = interaction.guildId!;
 
       const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+      await mp.validateConnection(interaction);
 
       try {
         if (url.includes('list')) {

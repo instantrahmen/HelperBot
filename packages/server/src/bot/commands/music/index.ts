@@ -5,11 +5,11 @@ import { createAudioPlayer } from '@discordjs/voice';
 import join from './join';
 import play from './play';
 import { createCommand } from '../../state/command-state';
-// import { getMusicPlayer, initializeMusicPlayers } from './music-player';
 
 import { MusicPlayer, initializeMP } from '../../components/MusicPLayer';
 
 import { OptionType } from '../../types';
+import { jsonBlock } from '../../utils';
 
 export const initializeMusicCommands = () => {
   // initializeMusicPlayers();
@@ -26,6 +26,7 @@ export const initializeMusicCommands = () => {
       do: async (interaction: CommandInteraction) => {
         // const mp = getMusicPlayer(interaction.guildId!);
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         mp.pause();
 
@@ -41,6 +42,7 @@ export const initializeMusicCommands = () => {
       description: 'Unpause music',
       do: async (interaction: CommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         mp.unpause();
 
@@ -54,6 +56,7 @@ export const initializeMusicCommands = () => {
       description: 'Get music player status',
       do: async (interaction: CommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         // interaction.reply(`\`\`\`json ${mp.toString()}\`\`\``);
         interaction.reply(
@@ -70,6 +73,7 @@ export const initializeMusicCommands = () => {
       description: 'Skip to next track',
       do: async (interaction: CommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         mp.nextSong();
         // interaction.reply(`Skipped to track ${mp.nowPlaying}`);
@@ -94,6 +98,7 @@ export const initializeMusicCommands = () => {
       do: async (interaction: CommandInteraction) => {
         const track = interaction.options.getInteger('track', true);
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         mp.gotoSong(track - 1);
         // interaction.reply(`Skipped to track ${mp.nowPlaying}`);
@@ -110,6 +115,7 @@ export const initializeMusicCommands = () => {
       description: 'Go back to previous track',
       do: async (interaction: CommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         mp.prevSong();
 
@@ -127,6 +133,7 @@ export const initializeMusicCommands = () => {
       description: 'Replay this track',
       do: async (interaction: CommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         // mp.prevSong();
         // mp.nextSong();
@@ -156,6 +163,7 @@ export const initializeMusicCommands = () => {
       ],
       do: async (interaction: CommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         const includePlayed =
           interaction.options.getBoolean('includeplayed', false) || false;
@@ -172,34 +180,32 @@ export const initializeMusicCommands = () => {
 
     // clearqueue
     createCommand({
-      name: 'clearqueue',
+      name: 'clear-queue',
       description: 'List the items in queue',
       do: async (interaction: CommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+        await mp.validateConnection(interaction);
 
         mp.clearQueue();
 
         interaction.reply('Queue Cleared');
       },
     }),
+
+    // connection status
+    createCommand({
+      name: 'connection-status',
+      description: 'List the items in queue',
+      debugOnly: true,
+      do: async (interaction: CommandInteraction) => {
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
+        const connectionState = mp.getConnectionState();
+
+        // mp.clearQueue();
+
+        interaction.reply(jsonBlock(connectionState));
+      },
+    }),
   ];
-};
-
-export const player = createAudioPlayer();
-
-// Runs whenever Fynni connects to a VC
-export const onConnect = (
-  interaction: CommandInteraction,
-  connection: VoiceConnection
-) => {
-  console.log('onConnect', { interaction, connection });
-  connection.subscribe(player);
-  interaction.editReply(`subscribed to player`);
-};
-
-export const onDisconnect = (
-  interaction: CommandInteraction,
-  connection: VoiceConnection
-) => {
-  console.log('onDisconnect', { interaction, connection });
 };

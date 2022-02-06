@@ -1,6 +1,6 @@
 import ytpl from 'ytpl';
 import ytdl from 'ytdl-core-discord';
-import { User, VoiceChannel } from 'discord.js';
+import { CommandInteraction, User, VoiceChannel } from 'discord.js';
 import {
   AudioPlayer,
   AudioPlayerStatus,
@@ -13,7 +13,6 @@ import {
   VoiceConnectionStatus,
 } from '@discordjs/voice';
 
-// import BaseComponent, { ComponentState } from './BaseComponent';
 import {
   GuildQueue,
   QueueItem,
@@ -21,6 +20,7 @@ import {
   url,
 } from '../types/music-player-types';
 import BaseComponent, { ComponentState } from './BaseComponent';
+import { clampWithinArray, wrapWithinArray } from '../utils';
 
 export class MusicPlayer extends BaseComponent {
   queue: GuildQueue = [];
@@ -30,6 +30,8 @@ export class MusicPlayer extends BaseComponent {
 
   addingSong = false;
   autoplayDisabled = false;
+
+  // connected = false;
 
   constructor(guildId: string, state: ComponentState) {
     super(guildId, state);
@@ -42,7 +44,7 @@ export class MusicPlayer extends BaseComponent {
     });
 
     this.player.on(AudioPlayerStatus.Idle, () => {
-      console.log('The audio player has started playing!');
+      console.log('The audio player is idle!');
     });
 
     // Whenever song changes, play next song
@@ -94,76 +96,6 @@ export class MusicPlayer extends BaseComponent {
     });
   }
 
-  toString() {
-    const { guildId, nowPlaying, repeatMethod, queue } = this;
-    return JSON.stringify(
-      {
-        guildId,
-        nowPlaying,
-        queue,
-        repeatMethod,
-        playerStatus: this.getPlayerStatus(),
-      },
-      null,
-      2
-    );
-  }
-
-  createCurrentSongEmbed() {
-    const currentSong = this.queue[this.nowPlaying];
-    return {
-      type: 'rich',
-      title: `${currentSong.title}`,
-      description: `- ${currentSong.artist}`,
-      color: 0x04a9f5,
-      image: currentSong.thumbnail,
-      author: {
-        name: `Now Playing:`,
-      },
-      url: currentSong.url,
-    };
-  }
-
-  createQueueEmbed(includePlayedSongs = false) {
-    // const upNext = this.this.queue[this.nowPlaying];
-    const futureSongs = this.queue
-      .map((song, trackNumber) => ({ song, trackNumber }))
-      .filter((__, i) => i > this.nowPlaying)
-      .map(({ song, trackNumber }) => ({
-        name: `${trackNumber + 1}. **${song.title}**`,
-        value: song.artist ? `- ${song.artist}` : '\u200B',
-      }));
-
-    const currentSong = this.queue[this.nowPlaying];
-
-    const playedSongs = this.queue
-      .map((song, trackNumber) => ({ song, trackNumber }))
-      .filter((__, i) => i < this.nowPlaying)
-      .map(
-        ({ song, trackNumber }) =>
-          `${trackNumber + 1}. ~~${song.title}~~\n${
-            song.artist ? `- ~~${song.artist}~~` : '\u200B'
-          }`
-      );
-
-    const playedPlusCurrent = [
-      ...playedSongs,
-      `**${this.nowPlaying + 1}. ${
-        currentSong.title
-      }**<a:nekodance:938743228251922462>\n${
-        currentSong.artist ? `- ${currentSong.artist}` : '\u200B'
-      }`,
-    ];
-
-    return {
-      type: 'rich',
-      title: `Up Next:`,
-      description: includePlayedSongs ? playedPlusCurrent.join('\n') : '',
-      color: 0x04a9f5,
-      fields: [...futureSongs],
-      // thumbnail: currentSong.thumbnail,
-    };
-  }
   // #region Control Methods
 
   // Play current song
@@ -211,29 +143,12 @@ export class MusicPlayer extends BaseComponent {
     this.gotoSong(this.nowPlaying + 1);
   }
 
-  clamp(max: number, num: number) {
-    if (num < 0) return 0;
-    if (num > max) return max;
-    return num;
-  }
-
-  wrap(max: number, num: number) {
-    return num >= 0 ? num % max : ((num % max) + max) % max;
-  }
-
-  wrapWithinArray(arr: Array<any>, value: number) {
-    return this.wrap(arr.length, value);
-  }
-  clampWithinArray(arr: Array<any>, value: number) {
-    return this.clamp(arr.length - 1, value);
-  }
-
   async gotoSong(index: number, method: 'wrap' | 'clamp' = 'wrap') {
     this.autoplayDisabled = true;
     const newIndex =
       method === 'wrap'
-        ? this.wrapWithinArray(this.queue, index)
-        : this.clampWithinArray(this.queue, index);
+        ? wrapWithinArray(this.queue, index)
+        : clampWithinArray(this.queue, index);
 
     this.stop();
     this.nowPlaying = newIndex;
@@ -392,15 +307,122 @@ export class MusicPlayer extends BaseComponent {
   // AutoPaused - the state a voice connection will enter when the player has paused itself because there are no active voice connections to play to. This is only possible with the noSubscriber behavior set to Pause. It will automatically transition back to Playing once at least one connection becomes available again.
   // Paused - the state a voice connection enters when it is paused by the user.
   getPlayerStatus = () => this.player.state.status;
+  getConnectionState = () => this.getConnection()?.state;
 
-  canPlay = () => {
+  canPlay = (): boolean => {
     const connection = this.getConnection();
 
     return (
-      connection && connection.state.status === VoiceConnectionStatus.Ready
+      !!connection &&
+      !!connection.state &&
+      connection.state.status === VoiceConnectionStatus.Ready
     );
   };
 
+  toString() {
+    const { guildId, nowPlaying, repeatMethod, queue } = this;
+    return JSON.stringify(
+      {
+        guildId,
+        nowPlaying,
+        queue,
+        repeatMethod,
+        playerStatus: this.getPlayerStatus(),
+      },
+      null,
+      2
+    );
+  }
+
+  createCurrentSongEmbed() {
+    if (this.queue.length === 0) {
+      return {
+        type: 'rich',
+        title: `No song playing`,
+        description: ``,
+        color: 0x04a9f5,
+        // image: currentSong.thumbnail,
+        author: {
+          name: `Now Playing:`,
+        },
+        // url: currentSong.url,
+      };
+    }
+    const currentSong = this.queue[this.nowPlaying];
+    return {
+      type: 'rich',
+      title: `${currentSong.title}`,
+      description: `- ${currentSong.artist}`,
+      color: 0x04a9f5,
+      image: currentSong.thumbnail,
+      author: {
+        name: `Now Playing:`,
+      },
+      url: currentSong.url,
+    };
+  }
+
+  createEmptyQueueEmbed() {
+    return {
+      type: 'rich',
+      title: `Up Next:`,
+      description: 'Queue empty, add songs with `/play`',
+      color: 0x04a9f5,
+    };
+  }
+
+  createQueueEmbed(includePlayedSongs = false) {
+    // const upNext = this.this.queue[this.nowPlaying];
+    if (this.queue.length === 0) {
+      return this.createEmptyQueueEmbed();
+    }
+
+    const futureSongs = this.queue
+      .map((song, trackNumber) => ({ song, trackNumber }))
+      .filter((__, i) => i > this.nowPlaying)
+      .map(({ song, trackNumber }) => ({
+        name: `${trackNumber + 1}. **${song.title}**`,
+        value: song.artist ? `- ${song.artist}` : '\u200B',
+      }));
+
+    const currentSong = this.queue[this.nowPlaying];
+
+    const playedSongs = this.queue
+      .map((song, trackNumber) => ({ song, trackNumber }))
+      .filter((__, i) => i < this.nowPlaying)
+      .map(
+        ({ song, trackNumber }) =>
+          `${trackNumber + 1}. ~~${song.title}~~\n${
+            song.artist ? `- ~~${song.artist}~~` : '\u200B'
+          }`
+      );
+
+    const playedPlusCurrent = [
+      ...playedSongs,
+      `**${this.nowPlaying + 1}. ${
+        currentSong.title
+      }**<a:nekodance:938743228251922462>\n${
+        currentSong.artist ? `- ${currentSong.artist}` : '\u200B'
+      }`,
+    ];
+
+    return {
+      type: 'rich',
+      title: `Up Next:`,
+      description: includePlayedSongs ? playedPlusCurrent.join('\n') : '',
+      color: 0x04a9f5,
+      fields: [...futureSongs],
+      // thumbnail: currentSong.thumbnail,
+    };
+  }
+
+  validateConnection = async (interaction: CommandInteraction) => {
+    if (this.canPlay()) return true;
+
+    await interaction.reply('Please use `/join` to connect me to a VC first');
+
+    throw new Error('Not in VC');
+  };
   //#endregion
 }
 
