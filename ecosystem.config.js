@@ -4,7 +4,7 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
    */
   apps: [
-    // Fynbot Server
+    // Fynni Server
     {
       name: 'Fynni',
       // script: './packages/dist/index.js',

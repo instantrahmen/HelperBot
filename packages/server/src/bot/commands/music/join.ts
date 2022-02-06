@@ -50,7 +50,6 @@ export default () => {
         const gif = 'https://c.tenor.com/bOR-CXcBQ8QAAAAC/djaymano-dj.gif';
 
         await interaction.editReply({
-          // content: `${interaction.user.toString()} gives <@${target}> a hug!`,
           content: `DJ Fynni in the house~ \n\n(joined ${channel.toString()})`,
           files: [gif],
         });
