@@ -1,7 +1,7 @@
 import { VoiceChannel } from 'discord.js';
 import { OptionType } from '../../types';
 
-import { mpState, MusicPlayer } from '../../components/MusicPLayer';
+import { mpState, MusicPlayer } from '../../components/MusicPlayer';
 import commandState from '../../components/Commands';
 import { ChannelTypes } from 'discord.js/typings/enums';
 
