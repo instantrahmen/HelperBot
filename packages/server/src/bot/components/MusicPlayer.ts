@@ -1,31 +1,29 @@
-import { User, VoiceChannel } from 'discord.js';
+import ytpl from 'ytpl';
+import ytdl from 'ytdl-core-discord';
+import { CommandInteraction, User, VoiceChannel } from 'discord.js';
 import {
   AudioPlayer,
-  createAudioPlayer,
   AudioPlayerStatus,
+  createAudioPlayer,
   createAudioResource,
+  entersState,
   getVoiceConnection,
+  joinVoiceChannel,
   VoiceConnection,
   VoiceConnectionStatus,
-  joinVoiceChannel,
-  entersState,
 } from '@discordjs/voice';
-import ytdl from 'ytdl-core-discord';
 
-// ytpl for handling playlist links
-import ytpl from 'ytpl';
+import {
+  GuildQueue,
+  QueueItem,
+  RepeatMethod,
+  url,
+} from '../types/music-player-types';
+import BaseComponent, { ComponentState } from './BaseComponent';
+import { clampWithinArray, wrapWithinArray } from '../utils';
 
-import config from '../../config';
-import { indexWithinArray } from '../helpers';
-import { url } from 'inspector';
-
-const allPlayers: PlayersByGuild = {};
-
-// MusicPlayer class to handle music playback
-export class MusicPlayer {
+export class MusicPlayer extends BaseComponent {
   queue: GuildQueue = [];
-
-  guildId: string;
   nowPlaying: number = 0;
   private player: AudioPlayer = createAudioPlayer();
   repeatMethod: RepeatMethod = RepeatMethod.NONE;
@@ -33,16 +31,10 @@ export class MusicPlayer {
   addingSong = false;
   autoplayDisabled = false;
 
-  constructor(guildId: string) {
-    this.guildId = guildId;
+  // connected = false;
 
-    if (!allPlayers[guildId])
-      console.warn(
-        'Two music players created for the same guild. This is likely in error. Replacing old one with new one'
-      );
-
-    allPlayers[guildId] = this;
-
+  constructor(guildId: string, state: ComponentState) {
+    super(guildId, state);
     this.registerPlayerEventHandlers();
   }
 
@@ -52,7 +44,7 @@ export class MusicPlayer {
     });
 
     this.player.on(AudioPlayerStatus.Idle, () => {
-      console.log('The audio player has started playing!');
+      console.log('The audio player is idle!');
     });
 
     // Whenever song changes, play next song
@@ -97,83 +89,13 @@ export class MusicPlayer {
     });
 
     // Handle any state change
-    connection.on('stateChange', (oldState, newState) => {
+    connection.on('stateChange', (oldState: any, newState: any) => {
       console.log(
         `Connection transitioned from ${oldState.status} to ${newState.status}`
       );
     });
   }
 
-  toString() {
-    const { guildId, nowPlaying, repeatMethod, queue } = this;
-    return JSON.stringify(
-      {
-        guildId,
-        nowPlaying,
-        queue,
-        repeatMethod,
-        playerStatus: this.getPlayerStatus(),
-      },
-      null,
-      2
-    );
-  }
-
-  createCurrentSongEmbed() {
-    const currentSong = this.queue[this.nowPlaying];
-    return {
-      type: 'rich',
-      title: `${currentSong.title}`,
-      description: `- ${currentSong.artist}`,
-      color: 0x04a9f5,
-      image: currentSong.thumbnail,
-      author: {
-        name: `Now Playing:`,
-      },
-      url: currentSong.url,
-    };
-  }
-
-  createQueueEmbed(includePlayedSongs = false) {
-    // const upNext = this.this.queue[this.nowPlaying];
-    const futureSongs = this.queue
-      .map((song, trackNumber) => ({ song, trackNumber }))
-      .filter((__, i) => i > this.nowPlaying)
-      .map(({ song, trackNumber }) => ({
-        name: `${trackNumber + 1}. **${song.title}**`,
-        value: song.artist ? `- ${song.artist}` : '\u200B',
-      }));
-
-    const currentSong = this.queue[this.nowPlaying];
-
-    const playedSongs = this.queue
-      .map((song, trackNumber) => ({ song, trackNumber }))
-      .filter((__, i) => i < this.nowPlaying)
-      .map(
-        ({ song, trackNumber }) =>
-          `${trackNumber + 1}. ~~${song.title}~~\n${
-            song.artist ? `- ~~${song.artist}~~` : '\u200B'
-          }`
-      );
-
-    const playedPlusCurrent = [
-      ...playedSongs,
-      `**${this.nowPlaying + 1}. ${
-        currentSong.title
-      }**<a:nekodance:938743228251922462>\n${
-        currentSong.artist ? `- ${currentSong.artist}` : '\u200B'
-      }`,
-    ];
-
-    return {
-      type: 'rich',
-      title: `Up Next:`,
-      description: includePlayedSongs ? playedPlusCurrent.join('\n') : '',
-      color: 0x04a9f5,
-      fields: [...futureSongs],
-      // thumbnail: currentSong.thumbnail,
-    };
-  }
   // #region Control Methods
 
   // Play current song
@@ -221,29 +143,12 @@ export class MusicPlayer {
     this.gotoSong(this.nowPlaying + 1);
   }
 
-  clamp(max: number, num: number) {
-    if (num < 0) return 0;
-    if (num > max) return max;
-    return num;
-  }
-
-  wrap(max: number, num: number) {
-    return num >= 0 ? num % max : ((num % max) + max) % max;
-  }
-
-  wrapWithinArray(arr: Array<any>, value: number) {
-    return this.wrap(arr.length, value);
-  }
-  clampWithinArray(arr: Array<any>, value: number) {
-    return this.clamp(arr.length - 1, value);
-  }
-
   async gotoSong(index: number, method: 'wrap' | 'clamp' = 'wrap') {
     this.autoplayDisabled = true;
     const newIndex =
       method === 'wrap'
-        ? this.wrapWithinArray(this.queue, index)
-        : this.clampWithinArray(this.queue, index);
+        ? wrapWithinArray(this.queue, index)
+        : clampWithinArray(this.queue, index);
 
     this.stop();
     this.nowPlaying = newIndex;
@@ -386,8 +291,6 @@ export class MusicPlayer {
     }
   }
 
-  // public on = this.player && this.player.on;
-
   removeElementFromArray(items: Array<any>, index: number) {
     return [...items.slice(0, index), ...items.slice(index + 1)];
   }
@@ -404,60 +307,129 @@ export class MusicPlayer {
   // AutoPaused - the state a voice connection will enter when the player has paused itself because there are no active voice connections to play to. This is only possible with the noSubscriber behavior set to Pause. It will automatically transition back to Playing once at least one connection becomes available again.
   // Paused - the state a voice connection enters when it is paused by the user.
   getPlayerStatus = () => this.player.state.status;
+  getConnectionState = () => this.getConnection()?.state;
 
-  canPlay = () => {
+  canPlay = (): boolean => {
     const connection = this.getConnection();
 
     return (
-      connection && connection.state.status === VoiceConnectionStatus.Ready
+      !!connection &&
+      !!connection.state &&
+      connection.state.status === VoiceConnectionStatus.Ready
     );
   };
 
+  toString() {
+    const { guildId, nowPlaying, repeatMethod, queue } = this;
+    return JSON.stringify(
+      {
+        guildId,
+        nowPlaying,
+        queue,
+        repeatMethod,
+        playerStatus: this.getPlayerStatus(),
+      },
+      null,
+      2
+    );
+  }
+
+  createCurrentSongEmbed() {
+    if (this.queue.length === 0) {
+      return {
+        type: 'rich',
+        title: `No song playing`,
+        description: ``,
+        color: 0x04a9f5,
+        // image: currentSong.thumbnail,
+        author: {
+          name: `Now Playing:`,
+        },
+        // url: currentSong.url,
+      };
+    }
+    const currentSong = this.queue[this.nowPlaying];
+    return {
+      type: 'rich',
+      title: `${currentSong.title}`,
+      description: `- ${currentSong.artist}`,
+      color: 0x04a9f5,
+      image: currentSong.thumbnail,
+      author: {
+        name: `Now Playing:`,
+      },
+      url: currentSong.url,
+    };
+  }
+
+  createEmptyQueueEmbed() {
+    return {
+      type: 'rich',
+      title: `Up Next:`,
+      description: 'Queue empty, add songs with `/play`',
+      color: 0x04a9f5,
+    };
+  }
+
+  createQueueEmbed(includePlayedSongs = false) {
+    // const upNext = this.this.queue[this.nowPlaying];
+    if (this.queue.length === 0) {
+      return this.createEmptyQueueEmbed();
+    }
+
+    const futureSongs = this.queue
+      .map((song, trackNumber) => ({ song, trackNumber }))
+      .filter((__, i) => i > this.nowPlaying)
+      .map(({ song, trackNumber }) => ({
+        name: `${trackNumber + 1}. **${song.title}**`,
+        value: song.artist ? `- ${song.artist}` : '\u200B',
+      }));
+
+    const currentSong = this.queue[this.nowPlaying];
+
+    const playedSongs = this.queue
+      .map((song, trackNumber) => ({ song, trackNumber }))
+      .filter((__, i) => i < this.nowPlaying)
+      .map(
+        ({ song, trackNumber }) =>
+          `${trackNumber + 1}. ~~${song.title}~~\n${
+            song.artist ? `- ~~${song.artist}~~` : '\u200B'
+          }`
+      );
+
+    const playedPlusCurrent = [
+      ...playedSongs,
+      `**${this.nowPlaying + 1}. ${
+        currentSong.title
+      }**<a:nekodance:938743228251922462>\n${
+        currentSong.artist ? `- ${currentSong.artist}` : '\u200B'
+      }`,
+    ];
+
+    return {
+      type: 'rich',
+      title: `Up Next:`,
+      description: includePlayedSongs ? playedPlusCurrent.join('\n') : '',
+      color: 0x04a9f5,
+      fields: [...futureSongs],
+      // thumbnail: currentSong.thumbnail,
+    };
+  }
+
+  validateConnection = async (interaction: CommandInteraction) => {
+    if (this.canPlay()) return true;
+
+    await interaction.reply('Please use `/join` to connect me to a VC first');
+
+    throw new Error('Not in VC');
+  };
   //#endregion
 }
 
-const createMusicPlayersForAllGuilds = () => {
-  config.guilds.forEach((guildId) => {
-    if (!allPlayers[guildId]) {
-      new MusicPlayer(guildId);
-    } else {
-      console.log('guild already has music player');
-    }
-  });
+export const mpState = new ComponentState(MusicPlayer);
 
-  console.log({ allPlayers });
+export const initializeMP = () => {
+  mpState.createComponentsForEachGuild();
+
+  return mpState;
 };
-
-export const initializeMusicPlayers = () => {
-  createMusicPlayersForAllGuilds();
-};
-
-export const getMusicPlayer = (guildId: string) => allPlayers[guildId];
-
-// Types and Enums
-type QueueItem = {
-  title: string;
-  resource?: any; // Optional for, we'll probably end up grabbing the resource at the last minute when played
-  user: User;
-  url: string;
-  thumbnail?: Thumbnail;
-  artist?: string;
-};
-
-type Thumbnail = {
-  url: string;
-  width: number;
-  height: number;
-};
-
-type url = string;
-
-type GuildQueue = QueueItem[];
-
-type PlayersByGuild = { [guildId: string]: MusicPlayer };
-
-enum RepeatMethod {
-  NONE,
-  REPEAT_ONE,
-  REPEAT_ALL,
-}
