@@ -1,4 +1,6 @@
 import { Client, Message } from 'discord.js';
+import { botState } from '../components/Bot';
+
 import { timeout } from '../utils';
 
 type MoodType = 'happy' | 'flustered' | 'angry' | 'sad';
@@ -79,13 +81,24 @@ export class GlobalState {
 export default class FynniEmotionsController {
   client: Client;
 
-  constructor(client: Client) {
-    this.client = client;
+  private updateTimer: NodeJS.Timer;
 
-    const _updateTimer = setInterval(async () => {
+  constructor() {
+    this.client = botState.client;
+    console.log('new FynniController()');
+
+    this.updateTimer = setInterval(async () => {
       // console.log('updating status...');
       this.updateStatus();
     }, seconds(15));
+
+    this.client.on('messageCreate', (message) => {
+      this.handleMentions(message);
+    });
+  }
+
+  cleanup() {
+    clearInterval(this.updateTimer);
   }
 
   updateStatus() {

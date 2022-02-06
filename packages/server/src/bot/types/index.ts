@@ -19,7 +19,6 @@ export enum OptionType {
   MENTIONABLE = 9, // MENTIONABLE sets the option to require a user, role or snowflake as value
 }
 
-//
 export type CommandOption = Merge<
   APIApplicationCommandOption,
   {
@@ -47,3 +46,5 @@ export type CommandsArray = Command[];
 export type IndexedCommands = {
   [key: string]: Command;
 };
+
+export type KVPairs = { [key: string]: any };

@@ -9,10 +9,10 @@ export class Debugger extends BaseComponent {
   }
 }
 
+console.log('new debugger state');
 export const state = new ComponentState(Debugger);
 
 export const initializeDebuggers = () => {
-  console.log('initializing debuggers');
   state.createComponentsForEachGuild();
 
   console.log({ debuggerState: state });

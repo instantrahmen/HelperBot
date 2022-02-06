@@ -1519,14 +1519,6 @@ m3u8stream@^0.8.3:
     miniget "^4.0.0"
     sax "^1.2.4"
 
-m3u8stream@^0.8.6:
-  version "0.8.6"
-  resolved "https://registry.yarnpkg.com/m3u8stream/-/m3u8stream-0.8.6.tgz#0d6de4ce8ee69731734e6b616e7b05dd9d9a55b1"
-  integrity sha512-LZj8kIVf9KCphiHmH7sbFQTVe4tOemb202fWwvJwR9W5ENW/1hxJN6ksAWGhQgSBSa3jyWhnjKU1Fw1GaOdbyA==
-  dependencies:
-    miniget "^4.2.2"
-    sax "^1.2.4"
-
 make-dir@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-3.1.0.tgz#415e967046b3a7f1d185277d84aa58203726a13f"
@@ -1576,7 +1568,7 @@ mimic-response@^1.0.0, mimic-response@^1.0.1:
   resolved "https://registry.yarnpkg.com/mimic-response/-/mimic-response-1.0.1.tgz#4923538878eef42063cb8a3e3b0798781487ab1b"
   integrity sha512-j5EctnkH7amfV/q5Hgmoal1g2QHFJRraOtmx0JpIqkxhBhI/lJSl1nMpQ45hVarwNETOoWEimndZ4QK0RHxuxQ==
 
-miniget@^4.0.0, miniget@^4.2.2:
+miniget@^4.0.0:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/miniget/-/miniget-4.2.2.tgz#db20320f265efdc4c1826a0be431d56753074475"
   integrity sha512-a7voNL1N5lDMxvTMExOkg+Fq89jM2vY8pAi9ZEWzZtfNmdfP6RXkvUtFnCAXoCv2T9k1v/fUJVaAEuepGcvLYA==
@@ -1761,17 +1753,17 @@ pino@^6.13.0:
     quick-format-unescaped "^4.0.3"
     sonic-boom "^1.0.2"
 
-play-audio@^0.4.3:
-  version "0.4.9"
-  resolved "https://registry.yarnpkg.com/play-audio/-/play-audio-0.4.9.tgz#74f3ad053d02e0464fce1a28887b2b99da75a76b"
-  integrity sha512-An88OAvbCcFZH00n9eq6+t2LmJUPJgBCz8ycKXdvUWQz3GcZ3U4o1ZsSHfVFIuoiKuovX+ue5gKNcfSs4ophew==
+play-audio@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/play-audio/-/play-audio-0.5.2.tgz#191dd45b95ff64ae20bbd718671da4e987d4edd1"
+  integrity sha512-ZAqHUKkQLix2Iga7pPbsf1LpUoBjcpwU93F1l3qBIfxYddQLhxS6GKmS0d3jV8kSVaUbr6NnOEcEMFvuX93SWQ==
 
-play-dl@^1.8.2:
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/play-dl/-/play-dl-1.8.4.tgz#5a5c77121daa4f1f4cb20396e7268d141ec5b7dd"
-  integrity sha512-U/OHjqQvmzNOi1mWghWChd64bxbOu4YAAq3XafLva83QO+JfiWEFdcMn9qBpwH8utq6wvhsLJLIeqj62GZ16kA==
+play-dl@^1.8.6:
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/play-dl/-/play-dl-1.8.6.tgz#483420c0273ad38f0a07346dcd78fb76ce31c2c9"
+  integrity sha512-NOnSmg6ikdrf6x6R4ML5QY6AJS4h4KkIIynlKuDx7RVDPE7C2kowgtS+e6RRMuuAXXXESkmlWrpUb+bnZFWy1w==
   dependencies:
-    play-audio "^0.4.3"
+    play-audio "^0.5.2"
 
 pluralize@^8.0.0:
   version "8.0.0"
@@ -2364,15 +2356,6 @@ ytdl-core-discord@^1.3.1:
     "@types/node" "^15.12.2"
     prism-media "^1.3.1"
     ytdl-core "^4.8.2"
-
-ytdl-core@^4.10.0:
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/ytdl-core/-/ytdl-core-4.10.1.tgz#6648d65faca787919181b2cee1be470b2ef9fdcb"
-  integrity sha512-idBhW+e7HCzs5fR5cqp7Ci+mJhEch41YAaWabYlneQFCL6IGf6Hycv99yVx01Zl1Ci0t/70faOelMSrXaQTE/A==
-  dependencies:
-    m3u8stream "^0.8.6"
-    miniget "^4.0.0"
-    sax "^1.1.3"
 
 ytdl-core@^4.8.2:
   version "4.9.1"

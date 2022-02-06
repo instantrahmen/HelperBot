@@ -64,8 +64,12 @@ export class ComponentState {
       return newComponent;
     } else {
       console.log(
-        `Guild already has a component of type ${this.componentClass.constructor.name}. Did not create one.`
+        `Guild already has a component of type ${this.componentClass.name}. Did not create one.`
       );
+      // console.log({
+      //   components: this.componentsByGuild,
+      //   class: this.componentClass,
+      // });
     }
   }
 

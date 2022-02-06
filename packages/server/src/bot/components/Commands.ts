@@ -1,7 +1,13 @@
 import { REST } from '@discordjs/rest';
 import { CommandInteraction } from 'discord.js';
 import config from '../config';
-import { Command, CommandBase, CommandsArray, IndexedCommands } from '../types';
+import {
+  Command,
+  CommandBase,
+  CommandsArray,
+  IndexedCommands,
+  KVPairs,
+} from '../types';
 import { getDebugger } from './Debugger';
 import { Routes } from 'discord-api-types/v9';
 
@@ -66,17 +72,20 @@ export const commandState = {
     const postBody = this.commandsArray()
       .filter(this.createFilter(guildId))
       .map((command) => command.toJSON());
-    console.log({ postBody });
+    // console.log({ postBody });
 
     return postBody;
   },
 
   async deployForGuild(guildId: string) {
     try {
-      await rest.put(Routes.applicationGuildCommands(clientID, guildId), {
-        body: commandState.toJSON(guildId),
-      });
-
+      const res = await rest.put(
+        Routes.applicationGuildCommands(clientID, guildId),
+        {
+          body: commandState.toJSON(guildId),
+        }
+      );
+      // console.log({ [guildId]: res });
       return guildId;
     } catch (error: any) {
       throw new Error(error);
