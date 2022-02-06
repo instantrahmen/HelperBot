@@ -5,7 +5,7 @@ import { createAudioPlayer } from '@discordjs/voice';
 import join from './join';
 import play from './play';
 
-import { MusicPlayer, initializeMP } from '../../components/MusicPLayer';
+import { MusicPlayer, initializeMP } from '../../components/MusicPlayer';
 
 import { OptionType } from '../../types';
 import { jsonBlock } from '../../utils';

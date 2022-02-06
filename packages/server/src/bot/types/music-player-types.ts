@@ -1,5 +1,5 @@
 import { User } from 'discord.js';
-import { MusicPlayer } from '../components/MusicPLayer';
+import { MusicPlayer } from '../components/MusicPlayer';
 
 // Types and Enums
 export type QueueItem = {
