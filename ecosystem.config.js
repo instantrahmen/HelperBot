@@ -20,6 +20,17 @@ module.exports = {
           'ODc0OTIyMzg3ODQ4Njk5OTI0.YROA-A.I8Du9nZqzOnu5V4WQ0ShG__Cw0Y',
         DISCORD_GUILD_ID: '872562843688517693',
       },
+      env_development: {
+        NODE_ENV: 'development',
+        DATABASE_URL: 'file:./dev.db',
+
+        // Very sensitive data, only commit if on private repo
+        DISCORD_CLIENT_ID: '938274206574075994',
+        DISCORD_CLIENT_SECRET: 'YquYfkhIOjeXyHkPQIC25Py0MQCDQ0Z3',
+        DISCORD_BOT_TOKEN:
+          'OTM4Mjc0MjA2NTc0MDc1OTk0.Yfn58w.aY005A70ct-UxwoGm7UVGKNxHQw',
+        DISCORD_GUILD_ID: '872562843688517693',
+      },
     },
   ],
 
