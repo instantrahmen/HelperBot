@@ -1,15 +1,21 @@
+import { stringify } from '../utils';
 import BaseComponent, { ComponentState } from './BaseComponent';
 
 export class Debugger extends BaseComponent {
   debugMode = false;
   disableCommands = false;
+  static inMemoryDebugLog: any[] = [];
 
   constructor(guildId: string, state: ComponentState) {
     super(guildId, state);
   }
+
+  static log(data: any) {
+    console.log(data);
+    Debugger.inMemoryDebugLog.push(data);
+  }
 }
 
-console.log('new debugger state');
 export const state = new ComponentState(Debugger);
 
 export const initializeDebuggers = () => {

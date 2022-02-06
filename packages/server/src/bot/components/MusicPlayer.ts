@@ -1,5 +1,6 @@
 import ytpl from 'ytpl';
-import ytdl from 'ytdl-core-discord';
+
+import playdl, { video_basic_info, stream, validate } from 'play-dl';
 import { CommandInteraction, User, VoiceChannel } from 'discord.js';
 import {
   AudioPlayer,
@@ -17,10 +18,20 @@ import {
   GuildQueue,
   QueueItem,
   RepeatMethod,
+  Thumbnail,
   url,
 } from '../types/music-player-types';
+
+// playdl.refreshToken
 import BaseComponent, { ComponentState } from './BaseComponent';
-import { clampWithinArray, wrapWithinArray } from '../utils';
+
+import {
+  clampWithinArray,
+  removeElementFromArray,
+  wrapWithinArray,
+} from '../utils';
+
+import { Debugger } from './Debugger';
 
 export class MusicPlayer extends BaseComponent {
   queue: GuildQueue = [];
@@ -100,25 +111,17 @@ export class MusicPlayer extends BaseComponent {
 
   // Play current song
   async play() {
-    console.log('play()');
-    if (!this.canPlay())
-      return new Error(
-        'I must be in a voice channel in order to play music, sorry! \n Please use the `/join` command to send me to a channel.'
-      );
-
-    if (this.getPlayerStatus() === AudioPlayerStatus.Paused) {
-      return this.unpause();
-    }
-
     const song = this.getCurrentSong();
 
     try {
+      const musicStream = await stream(song.url);
       // Get player resource and play it
-      const resource = createAudioResource(
-        await ytdl(song.url, { highWaterMark: 1 << 25 })
-      );
+      const resource = createAudioResource(musicStream.stream, {
+        inputType: musicStream.type,
+      });
       this.player.play(resource);
     } catch (e: any) {
+      Debugger.log({ error: e });
       throw new Error(`Unable to play song: ${e.message}`);
     }
   }
@@ -187,7 +190,7 @@ export class MusicPlayer extends BaseComponent {
     }
 
     // validate youtube link
-    const validYTUrl = ytdl.validateURL(song);
+    const validYTUrl = validate(song);
     if (!validYTUrl) {
       throw new Error(`Not a youtube domain: ${song}`);
     }
@@ -268,7 +271,7 @@ export class MusicPlayer extends BaseComponent {
   }
   // Remove a song from queue
   remove(index: number) {
-    this.queue = this.removeElementFromArray(this.queue, index);
+    this.queue = removeElementFromArray(this.queue, index);
   }
 
   // #endregion
@@ -277,22 +280,22 @@ export class MusicPlayer extends BaseComponent {
 
   async getVideoInfoAsQueueItem(url: url, user: User): Promise<QueueItem> {
     try {
-      const { videoDetails } = await ytdl.getInfo(url);
+      const { video_details: videoDetails } = await video_basic_info(url);
+
+      Debugger.log({ videoDetails });
 
       return {
-        title: videoDetails.title,
+        title: videoDetails.title!,
         user,
         url,
-        artist: videoDetails.author.name,
-        thumbnail: videoDetails.thumbnails[videoDetails.thumbnails.length - 1],
+        artist: videoDetails.channel?.name,
+        thumbnail:
+          (videoDetails.toJSON().thumbnail as Thumbnail) ||
+          videoDetails.thumbnails[videoDetails.thumbnails.length - 1],
       };
     } catch (e: any) {
       throw new Error(`Unable to get video details for ${url}`);
     }
-  }
-
-  removeElementFromArray(items: Array<any>, index: number) {
-    return [...items.slice(0, index), ...items.slice(index + 1)];
   }
 
   getCurrentSong = () => this.queue[this.nowPlaying];
@@ -334,18 +337,21 @@ export class MusicPlayer extends BaseComponent {
     );
   }
 
+  colors = {
+    pink: 0xffb8d9,
+    blue: 0x00f0ff,
+  };
+
   createCurrentSongEmbed() {
     if (this.queue.length === 0) {
       return {
         type: 'rich',
         title: `No song playing`,
         description: ``,
-        color: 0x04a9f5,
-        // image: currentSong.thumbnail,
+        color: this.colors.blue,
         author: {
           name: `Now Playing:`,
         },
-        // url: currentSong.url,
       };
     }
     const currentSong = this.queue[this.nowPlaying];
@@ -353,7 +359,7 @@ export class MusicPlayer extends BaseComponent {
       type: 'rich',
       title: `${currentSong.title}`,
       description: `- ${currentSong.artist}`,
-      color: 0x04a9f5,
+      color: this.colors.blue,
       image: currentSong.thumbnail,
       author: {
         name: `Now Playing:`,
@@ -363,17 +369,26 @@ export class MusicPlayer extends BaseComponent {
   }
 
   createEmptyQueueEmbed() {
+    const noSongs = this.queue.length === 0;
+    const message = noSongs
+      ? 'None, add more songs with `/play`'
+      : 'None, replaying the playlist after this song';
+
     return {
       type: 'rich',
       title: `Up Next:`,
-      description: 'Queue empty, add songs with `/play`',
-      color: 0x04a9f5,
+      description: message,
+      color: this.colors.blue,
     };
   }
 
   createQueueEmbed(includePlayedSongs = false) {
     // const upNext = this.this.queue[this.nowPlaying];
-    if (this.queue.length === 0) {
+    const lastSong = this.nowPlaying === this.queue.length - 1;
+    const noSongs = this.queue.length === 0;
+    const showEmpty = noSongs || (lastSong && !includePlayedSongs);
+
+    if (showEmpty) {
       return this.createEmptyQueueEmbed();
     }
 
@@ -410,7 +425,7 @@ export class MusicPlayer extends BaseComponent {
       type: 'rich',
       title: `Up Next:`,
       description: includePlayedSongs ? playedPlusCurrent.join('\n') : '',
-      color: 0x04a9f5,
+      color: this.colors.pink,
       fields: [...futureSongs],
       // thumbnail: currentSong.thumbnail,
     };

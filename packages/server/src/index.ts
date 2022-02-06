@@ -6,6 +6,7 @@ import stringify from 'safe-json-stringify';
 const botState = initialize();
 
 import fastify from 'fastify';
+import { Debugger } from './bot/components/Debugger';
 
 const app = fastify({ logger: true });
 
@@ -18,8 +19,12 @@ app.get('/authenticate', async (req, res) => {
   return { ...(req.query as any) };
 });
 
-app.get('/bot-info', async (req, res) => {
+app.get('/bot/info', async (req, res) => {
   return stringify(botState, null, 2);
+});
+
+app.get('/bot/debug', async (req, res) => {
+  return stringify(Debugger.inMemoryDebugLog, null, 2);
 });
 
 // Run the server!
