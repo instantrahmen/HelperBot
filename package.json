@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "yarn workspace @fynni/server dev",
     "install": "yarn workspace @fynni/server install && echo Finished installing",
-    "build": "yarn workspace @fynni/server build"
+    "build": "yarn workspace @fynni/server build",
+    "pm2-dev": "pm2 start --env development"
   },
   "devDependencies": {
     "pm2": "^5.1.2"
