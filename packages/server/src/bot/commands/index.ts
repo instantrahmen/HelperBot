@@ -7,8 +7,6 @@ import { getIndexedCommands } from '../state/command-state';
 export const generateSlashCommands = (client: Client) => {
   const commands = registerAllCommands();
 
-  console.log('generateSlashCommands', commands);
-
   client.on('interactionCreate', async (interaction) => {
     // console.log({ interaction });
     if (!interaction.isCommand()) return;
@@ -18,4 +16,6 @@ export const generateSlashCommands = (client: Client) => {
     getIndexedCommands()[commandName] &&
       getIndexedCommands()[commandName].do(interaction);
   });
+
+  return commands;
 };

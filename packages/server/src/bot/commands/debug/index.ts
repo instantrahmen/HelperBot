@@ -1,9 +1,9 @@
 import { createCommand } from '../../state/command-state';
 
-import { initializeDebuggers, getDebugger } from './debugger';
 import { deployCommands } from '../helpers/deploy-commands';
 import { inspectCommand } from './inspect';
 import { permissionLevels } from '../../permissions';
+import { initializeDebuggers, getDebugger } from '../../components/Debugger';
 
 export const initializeDebugCommands = () => {
   initializeDebuggers();
@@ -20,11 +20,11 @@ export const initializeDebugCommands = () => {
       do: async (interaction) => {
         const guildId = interaction.guild!.id;
         const guildDebugger = getDebugger(guildId);
-        guildDebugger.debugMode = !guildDebugger.debugMode;
+        const newValue = !guildDebugger.debugMode;
 
-        await interaction.reply(
-          `Setting debug mode to \`${!guildDebugger.debugMode}\``
-        );
+        await interaction.reply(`Setting debug mode to \`${newValue}\``);
+
+        guildDebugger.debugMode = newValue;
         await deployCommands(guildId);
 
         await interaction.editReply(
@@ -37,20 +37,19 @@ export const initializeDebugCommands = () => {
       name: 'toggle-all-commands',
       description: 'Hide/show all commands',
       forceAvailable: true,
-      // debugOnly: process.env.NODE_ENV === 'production',
+
       do: async (interaction) => {
         const guildId = interaction.guild!.id;
         const guildDebugger = getDebugger(guildId);
+        const newValue = !guildDebugger.disableCommands;
+
+        await interaction.reply(`Setting commands hidden to \`${newValue}\``);
+
         guildDebugger.disableCommands = !guildDebugger.disableCommands;
-
-        await interaction.reply(
-          `Setting commands hidden: \`${!guildDebugger.debugMode}\``
-        );
-
         await deployCommands(guildId);
 
         await interaction.editReply(
-          `Commands hidden: \`${guildDebugger.debugMode}\``
+          `Done. Commands hidden: \`${guildDebugger.disableCommands}\``
         );
       },
     }),

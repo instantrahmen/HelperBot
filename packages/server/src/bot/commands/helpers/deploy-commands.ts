@@ -1,15 +1,17 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import { getDebugger, state as debuggerState } from '../../components/Debugger';
 import config from '../../config';
 import { getCommands } from '../../state/command-state';
 import { Command } from '../../types';
-import { getDebugger } from '../debug/debugger';
 
 const { clientID, guilds, botToken } = config;
 
 const commandFilter = (guildId: string) => (command: Command) => {
+  // console.log(`getting debugger for ${guildId}`, debuggerState, getDebugger);
   const guildDebugger = getDebugger(guildId);
+  console.log({ guildDebugger });
 
   if (guildDebugger.disableCommands) return command.forceAvailable || false;
   if (command.debugOnly) return guildDebugger.debugMode || false;
@@ -27,7 +29,6 @@ const generateCommandsPostBody = (guildId: string) => {
           .setDescription(command.description),
       } as any;
       if (command.options) {
-        // commandObject.options = { ...commandObject.options, ...command.options };
         commandObject.options = command.options;
       }
       return commandObject;

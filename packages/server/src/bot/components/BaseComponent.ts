@@ -51,24 +51,3 @@ export default abstract class BaseComponent {
     this.state = state;
   }
 }
-
-class VideoPlayer extends BaseComponent {
-  guildId = 'jfksdl';
-
-  constructor(guildId: string, state: ComponentState) {
-    super(guildId, state);
-  }
-}
-
-const vpState = new ComponentState(VideoPlayer);
-
-const testShit = () => {
-  console.log('testing...');
-
-  // const vp = new VideoPlayer('aaaaaa');
-  vpState.createComponentsForEachGuild();
-
-  console.log({ vpState });
-};
-
-testShit();
