@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { OptionType } from '../../types';
-import { MusicPlayer, mpState } from '../../components/MusicPLayer';
+import { MusicPlayer, mpState } from '../../components/MusicPlayer';
 import commandState from '../../components/Commands';
 
 export default () => {
