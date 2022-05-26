@@ -5,11 +5,11 @@
   "author": "Erika Cudd",
   "private": true,
   "workspaces": [
-    "./packages/server"
+    "packages/server"
   ],
   "scripts": {
-    "dev": "yarn workspace @helper/server dev",
-    "build": "yarn workspace @helper/server build",
+    "dev": "npm run dev -w @helper/server",
+    "build": "npm run build -w @helper/server",
     "pm2-dev": "pm2 start --env development"
   },
   "devDependencies": {

@@ -46,7 +46,7 @@ module.exports = {
       repo: 'git@github.com:instantrahmen/fynni-bot.git',
       path: '/var/www/rahmen/fynni-bot',
       'post-deploy':
-        'yarn install && yarn run build && /home/erika/.npm-packages/bin/pm2 reload ecosystem.config.js --env production',
+        'pnpm install && pnpm run build && /home/erika/.npm-packages/bin/pm2 reload ecosystem.config.js --env production',
     },
   },
 };
