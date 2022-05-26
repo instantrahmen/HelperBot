@@ -27,13 +27,13 @@ const config = {
   guilds:
     process.env.NODE_ENV === 'production'
       ? [
-          // Fyn's PP
+          // Midnight Oasis Server
           '872562843688517693',
 
-          // Bestie Server
+          // Old test server
           '862794834800410654',
         ]
-      : ['862794834800410654'],
+      : ['862794834800410654', '872562843688517693'],
   clientID: process.env['DISCORD_CLIENT_ID'] as string,
   guildId: process.env['DISCORD_GUILD_ID'] as string,
   botToken: process.env['DISCORD_BOT_TOKEN'] as string,

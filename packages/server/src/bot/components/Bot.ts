@@ -1,7 +1,7 @@
 import { Client } from 'discord.js';
 import config from '../config';
 import commandState from './Commands';
-import FynniEmotionsController from '../state/emotions-state';
+import HelperEmotionsController from '../state/emotions-state';
 
 export const botState = {
   client: new Client({
@@ -10,7 +10,7 @@ export const botState = {
 
   initialized: false,
 
-  fynniController: undefined as FynniEmotionsController | undefined,
+  fynniController: undefined as HelperEmotionsController | undefined,
 
   // "private" members
   _initialize(force = false) {

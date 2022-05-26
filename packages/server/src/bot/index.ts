@@ -1,6 +1,6 @@
 import { botState } from './components/Bot';
 import { generateSlashCommands } from './commands';
-import FynniEmotionsController from './state/emotions-state';
+import HelperEmotionsController from './state/emotions-state';
 import { state as debuggerState } from './components/Debugger';
 import { mpState } from './components/MusicPlayer';
 
@@ -13,7 +13,7 @@ export const initialize = () => {
 
   generateSlashCommands(botState.client);
 
-  const fynniController = new FynniEmotionsController();
+  const fynniController = new HelperEmotionsController();
 
   return { botState, fynniController, debuggerState, mpState };
 };

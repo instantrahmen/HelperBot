@@ -4,9 +4,9 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
    */
   apps: [
-    // Fynni Server
+    // Helper Server
     {
-      name: 'Fynni',
+      name: 'Helper',
       // script: './packages/dist/index.js',
       script: './packages/server/dist/index.js',
       env_production: {
