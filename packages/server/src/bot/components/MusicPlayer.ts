@@ -60,7 +60,7 @@ export class MusicPlayer extends BaseComponent {
     });
 
     // Whenever song changes, play next song
-    this.player.on('stateChange', (oldState, newState) => {
+    this.player.on<'stateChange'>('stateChange', (oldState, newState) => {
       console.log(
         `Audio player transitioned from ${oldState.status} to ${newState.status}`
       );
