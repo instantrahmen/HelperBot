@@ -5,10 +5,12 @@
   "author": "Erika Cudd",
   "private": true,
   "workspaces": [
-    "packages/server"
+    "packages/server",
+    "packages/web-panel"
   ],
   "scripts": {
     "dev": "npm run dev -w @helper/server",
+    "web": "npm run dev -w @helper/web-panel",
     "build": "npm run build -w @helper/server",
     "pm2-dev": "pm2 start --env development"
   },
