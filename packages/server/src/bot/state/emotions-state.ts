@@ -85,7 +85,6 @@ export default class HelperEmotionsController {
 
   constructor() {
     this.client = botState.client;
-    console.log('new HelperController()');
 
     this.updateTimer = setInterval(async () => {
       // console.log('updating status...');

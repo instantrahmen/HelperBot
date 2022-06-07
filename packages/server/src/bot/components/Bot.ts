@@ -10,7 +10,7 @@ export const botState = {
 
   initialized: false,
 
-  fynniController: undefined as HelperEmotionsController | undefined,
+  helperController: undefined as HelperEmotionsController | undefined,
 
   // "private" members
   _initialize(force = false) {

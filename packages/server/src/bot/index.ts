@@ -13,7 +13,7 @@ export const initialize = () => {
 
   generateSlashCommands(botState.client);
 
-  const fynniController = new HelperEmotionsController();
+  const helperController = new HelperEmotionsController();
 
-  return { botState, fynniController, debuggerState, mpState };
+  return { botState, helperController, debuggerState, mpState };
 };
