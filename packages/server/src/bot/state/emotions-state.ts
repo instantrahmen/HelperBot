@@ -78,14 +78,13 @@ export class GlobalState {
   }
 }
 
-export default class FynniEmotionsController {
+export default class HelperEmotionsController {
   client: Client;
 
   private updateTimer: NodeJS.Timer;
 
   constructor() {
     this.client = botState.client;
-    console.log('new FynniController()');
 
     this.updateTimer = setInterval(async () => {
       // console.log('updating status...');

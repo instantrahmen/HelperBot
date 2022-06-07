@@ -4,9 +4,9 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
    */
   apps: [
-    // Fynni Server
+    // Helper Server
     {
-      name: 'Fynni',
+      name: 'Helper',
       // script: './packages/dist/index.js',
       script: './packages/server/dist/index.js',
       env_production: {
@@ -46,7 +46,7 @@ module.exports = {
       repo: 'git@github.com:instantrahmen/fynni-bot.git',
       path: '/var/www/rahmen/fynni-bot',
       'post-deploy':
-        'yarn install && yarn run build && /home/erika/.npm-packages/bin/pm2 reload ecosystem.config.js --env production',
+        '/home/erika/.local/share/pnpm/pnpm install && /home/erika/.local/share/pnpm/pnpm run build && /home/erika/.npm-packages/bin/pm2 reload ecosystem.config.js --env production',
     },
   },
 };

@@ -7,6 +7,7 @@ import {
   AudioPlayerStatus,
   createAudioPlayer,
   createAudioResource,
+  DiscordGatewayAdapterCreator,
   entersState,
   getVoiceConnection,
   joinVoiceChannel,
@@ -59,7 +60,7 @@ export class MusicPlayer extends BaseComponent {
     });
 
     // Whenever song changes, play next song
-    this.player.on('stateChange', (oldState, newState) => {
+    this.player.on<'stateChange'>('stateChange', (oldState, newState) => {
       console.log(
         `Audio player transitioned from ${oldState.status} to ${newState.status}`
       );
@@ -174,7 +175,8 @@ export class MusicPlayer extends BaseComponent {
       const connection = joinVoiceChannel({
         channelId,
         guildId,
-        adapterCreator: channel.guild.voiceAdapterCreator,
+        adapterCreator: channel.guild
+          .voiceAdapterCreator as DiscordGatewayAdapterCreator,
       });
 
       this.registerConnectionEventHandlers();

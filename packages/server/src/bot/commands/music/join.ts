@@ -30,7 +30,7 @@ export default () => {
       const { id: channelId, guild, guildId } = channel;
       const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
 
-      console.log('Fynni joining channel', {
+      console.log('Helper joining channel', {
         // channel,
       });
 
@@ -50,7 +50,7 @@ export default () => {
         const gif = 'https://c.tenor.com/bOR-CXcBQ8QAAAAC/djaymano-dj.gif';
 
         await interaction.editReply({
-          content: `DJ Fynni in the house~ \n\n(joined ${channel.toString()})`,
+          content: `DJ Helper in the house~ \n\n(joined ${channel.toString()})`,
           files: [gif],
         });
       } catch (e: any) {

@@ -90,6 +90,7 @@ export const commandState = {
   },
 
   async deployAll() {
+    console.log('deploying all commands...');
     const deploymentPromises = guilds.map((guildId: string) =>
       this.deployForGuild(guildId)
     );
@@ -99,6 +100,8 @@ export const commandState = {
     const data = await Promise.all(deploymentPromises).catch((e) => {
       console.warn(`Couldn't deploy commands`, e);
     });
+
+    console.log('deploying all commands finished.');
 
     if (!data) {
       throw new Error('No data returned from command deploy');
@@ -125,15 +128,16 @@ export const commandState = {
               commandId
             );
 
-            const permissions = getPermissionsArray(
-              appCommandOptions.permissions,
-              guildId!
-            );
+            // const permissions = getPermissionsArray(
+            //   appCommandOptions.permissions,
+            //   guildId!
+            // );
 
-            await fetchedCommand?.permissions.add({ permissions });
-            return fetchedCommand?.setDefaultPermission(
-              appCommandOptions.defaultPermission
-            );
+            // await fetchedCommand?.permissions.add({ permissions });
+            // return fetchedCommand?.setDefaultPermission(
+            //   appCommandOptions.defaultPermission
+            // );
+            return fetchedCommand;
           })
         );
       })
