@@ -1,7 +1,17 @@
-type MapFunction = (value?: any, index?: number, array?: any[]) => any;
+import { MessageInteraction } from 'discord.js';
 
-export const rollDice = (sides: number, amount: number) => {
-  return times(amount, () => rollDie(sides));
+type MapFunction = (value?: any, index?: number, array?: any[]) => any;
+type DiceResults = {
+  results: number[];
+  sum: number;
+};
+export const rollDice = (sides: number, amount: number): DiceResults => {
+  const results = times(amount, () => rollDie(sides));
+
+  return {
+    results,
+    sum: results.reduce((prev: number, current: number) => prev + current, 0),
+  };
 };
 
 const rollDie = (sides: number) => {
@@ -13,3 +23,26 @@ const rollDie = (sides: number) => {
 
 const times = (n: number, mapFunction: MapFunction) =>
   [...new Array(n)].map(mapFunction);
+
+export const createDiceEmbed = (
+  sides: number,
+  amount: number,
+  results: DiceResults
+) => ({
+  type: 'rich',
+  title: `Results (\`${amount} D${sides}\`)`,
+  description: ``,
+  color: 0xffb8d9,
+  fields: [
+    {
+      name: `Rolls:`,
+      value: ` \`${results.results.join(' · ')}\``,
+      inline: false,
+    },
+    {
+      name: `Total:`,
+      value: `\`${results.sum}\``,
+      inline: false,
+    },
+  ],
+});

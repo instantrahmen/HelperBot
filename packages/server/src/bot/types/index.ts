@@ -29,6 +29,8 @@ export type CommandOption = Merge<
     type: OptionType;
     options?: CommandOption;
     channel_types?: ChannelTypes[];
+    min_value?: number;
+    max_value?: number;
   }
 >;
 
