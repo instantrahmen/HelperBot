@@ -1,10 +1,12 @@
 import { MessageInteraction } from 'discord.js';
 
 type MapFunction = (value?: any, index?: number, array?: any[]) => any;
+
 type DiceResults = {
   results: number[];
   sum: number;
 };
+
 export const rollDice = (sides: number, amount: number): DiceResults => {
   const results = times(amount, () => rollDie(sides));
 

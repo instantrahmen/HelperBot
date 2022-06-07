@@ -42,13 +42,29 @@ export const initializeToolCommands = () => {
         });
       },
     }),
+
+    createCommand({
+      name: 'coinflip',
+      description: 'Flip a coin',
+      forceAvailable: false,
+      defaultPermission: true,
+      options: [],
+      do: async (interaction) => {
+        await animateReply('Flipping coin', interaction);
+        const rolls = rollDice(2, 1);
+        const result = rolls.sum === 1 ? 'heads' : 'tails';
+        await interaction.editReply({
+          content: `> Looks like it landed on *${result}*!`,
+        });
+      },
+    }),
   ];
 };
 
 const animateReply = async (
   text: string,
   interaction: CommandInteraction,
-  ticks = 6
+  ticks = 4
 ) => {
   await interaction.reply(`${text}`);
 
