@@ -6,3 +6,5 @@ export const sum = (a: number, b: number) => {
 };
 
 export * from './config';
+export * from './lib';
+export * from './types';

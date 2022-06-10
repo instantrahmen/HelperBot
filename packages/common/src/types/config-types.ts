@@ -1,4 +1,3 @@
-// export type NodeEnv = 'development' | 'production';
 export enum NodeEnv {
   PRODUCTION = 'production',
   DEVELOPMENT = 'development',

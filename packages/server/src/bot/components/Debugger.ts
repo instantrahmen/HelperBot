@@ -1,9 +1,10 @@
+import { NodeEnv } from '@helper/common';
+import config from '../config';
 import { stringify } from '../utils';
 import BaseComponent, { ComponentState } from './BaseComponent';
-
 export class Debugger extends BaseComponent {
   debugMode = false;
-  disableCommands = false;
+  disableCommands = config.environment === NodeEnv.DEVELOPMENT;
   static inMemoryDebugLog: any[] = [];
 
   constructor(guildId: string, state: ComponentState) {
