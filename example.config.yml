@@ -1,0 +1,27 @@
+# Rename this file to `.config.yml` and fill in the info below.
+# This file should not be committed to source control, as it contains sensitive info
+development:
+  # https://discord.com/developers/
+  DISCORD_CLIENT_ID: ''
+  DISCORD_CLIENT_SECRET: ''
+  DISCORD_BOT_TOKEN: ''
+  DISCORD_GUILD_ID: ''
+
+  # https://supabase.com/
+  SUPABASE_ENDPOINT: ''
+  SUPABASE_PUBLIC_KEY: ''
+  SUPABASE_SERVICE_KEY: ''
+  SUPABASE_SECRET: ''
+
+# Ideally you'd create a second application on Discord for production use to avoid and conflicts during development.
+# Same goes for the supabase database, to prevent accidentally deleting production data during development
+production:
+  DISCORD_CLIENT_ID: ''
+  DISCORD_CLIENT_SECRET: ''
+  DISCORD_BOT_TOKEN: ''
+  DISCORD_GUILD_ID: ''
+
+  SUPABASE_ENDPOINT: ''
+  SUPABASE_PUBLIC_KEY: ''
+  SUPABASE_SERVICE_KEY: ''
+  SUPABASE_SECRET: ''
