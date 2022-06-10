@@ -28,7 +28,7 @@ module.exports = {
       ref: 'origin/main',
       repo: 'git@github.com:instantrahmen/HelperBot.git',
       path: '/home/erika/apps/helper-bot',
-      'post-deploy': 'npm run post-deploy',
+      'post-deploy': 'pnpm run post-deploy',
     },
   },
 };
