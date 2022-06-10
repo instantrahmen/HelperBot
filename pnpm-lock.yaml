@@ -16,6 +16,8 @@ importers:
       '@types/js-yaml': ^4.0.5
       '@types/yaml': ^1.9.7
       js-yaml: ^4.1.0
+      pm2: ^5.2.0
+      pnpm: ^7.2.0
       tsdx: ^0.14.1
       yaml: ^2.1.1
     dependencies:
@@ -24,6 +26,8 @@ importers:
       js-yaml: 4.1.0
       yaml: 2.1.1
     devDependencies:
+      pm2: 5.2.0
+      pnpm: 7.2.0
       tsdx: 0.14.1
 
   packages/server:
@@ -8412,6 +8416,12 @@ packages:
 
   /pn/1.1.0:
     resolution: {integrity: sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==}
+    dev: true
+
+  /pnpm/7.2.0:
+    resolution: {integrity: sha512-bYRTXwdJDNJBSzzmWTGWldUDY1j4/2GFZJoIm8X2XNxSf3VRVxTcqnwddm22wTDsKN6suHtfAlsYeSvQ/xNK8g==}
+    engines: {node: '>=14.19'}
+    hasBin: true
     dev: true
 
   /posix-character-classes/0.1.1:

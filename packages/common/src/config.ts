@@ -3,12 +3,11 @@ import { loadYaml } from './lib/helpers';
 import { GlobalConfig, NodeEnv } from './types/config-types';
 
 const NODE_ENV = (process.env.NODE_ENV || 'development') as NodeEnv;
-// const globalConfig = yaml.load('../../../.config.yml') as GlobalConfig;
-// const globalConfig =
 
 const globalConfig = loadYaml(
   `${__dirname}/../../../.config.yml`
 ) as GlobalConfig;
+
 console.log({ globalConfig });
 
 export const config = {

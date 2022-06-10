@@ -2,6 +2,7 @@
 import { Intents } from 'discord.js';
 // import globalConfig from '../../../../globalConfig'
 import { config } from '@helper/common';
+
 console.log({ config });
 const {
   GUILDS,

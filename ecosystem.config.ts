@@ -28,8 +28,7 @@ module.exports = {
       ref: 'origin/main',
       repo: 'git@github.com:instantrahmen/HelperBot.git',
       path: '~/apps/helper-bot',
-      'post-deploy':
-        '/home/erika/.nvm/versions/node/v18.3.0/bin/pnpm install && /home/erika/.nvm/versions/node/v18.3.0/bin/pnpm run build && /home/erika/.nvm/versions/node/v18.3.0/bin/pm2 reload ecosystem.config.js --env production',
+      'post-deploy': 'npm run post-deploy',
     },
   },
 };

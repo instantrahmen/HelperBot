@@ -121,3 +121,4 @@ dist
 # Project-wide config file
 *.env.*
 .config.yml
+.DS_Store
