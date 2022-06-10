@@ -1,6 +1,6 @@
 {
   "name": "@helper/common",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "erika_tho",
   "module": "dist/common.esm.js",
   "size-limit": [
@@ -30,7 +30,8 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why"
+    "analyze": "size-limit --why",
+    "dev": "nodemon --exec npm run start"
   },
   "husky": {
     "hooks": {
@@ -39,7 +40,9 @@
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.5",
-    "js-yaml": "^4.1.0"
+    "@types/yaml": "^1.9.7",
+    "js-yaml": "^4.1.0",
+    "yaml": "^2.1.1"
   },
   "devDependencies": {
     "tsdx": "^0.14.1"

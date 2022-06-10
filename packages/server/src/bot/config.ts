@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
+// const globalConfig = require('../../../../env.js');
 import { Intents } from 'discord.js';
-
-dotenv.config();
-
+// import globalConfig from '../../../../globalConfig'
+import { config } from '@helper/common';
+console.log({ config });
 const {
   GUILDS,
   GUILD_MEMBERS,
@@ -21,23 +21,14 @@ const {
   DIRECT_MESSAGE_TYPING,
 } = Intents.FLAGS;
 
-const config = {
-  commandPrefix: 'fyn!',
+export default {
+  commandPrefix: 'helper!',
   status: 'starting',
-  guilds:
-    process.env.NODE_ENV === 'production'
-      ? [
-          // Midnight Oasis Server
-          '872562843688517693',
-
-          // Old test server
-          '862794834800410654',
-        ]
-      : ['862794834800410654', '872562843688517693'],
-  clientID: process.env['DISCORD_CLIENT_ID'] as string,
-  guildId: process.env['DISCORD_GUILD_ID'] as string,
-  botToken: process.env['DISCORD_BOT_TOKEN'] as string,
-  clientSecret: process.env['DISCORD_CLIENT_SECRET'] as string,
+  guilds: config.global.GUILDS,
+  clientID: config.global.DISCORD_CLIENT_ID,
+  guildId: config.global.DISCORD_GUILD_ID,
+  botToken: config.global.DISCORD_BOT_TOKEN,
+  clientSecret: config.global.DISCORD_CLIENT_SECRET,
 
   intents: [
     GUILDS,
@@ -57,5 +48,3 @@ const config = {
     DIRECT_MESSAGE_TYPING,
   ],
 };
-
-export default config;

@@ -1,5 +1,5 @@
 require('dotenv').config({ path: __dirname + '/.env' });
-// import server from "./graphql/server";
+
 import { initialize } from './bot';
 import stringify from 'safe-json-stringify';
 

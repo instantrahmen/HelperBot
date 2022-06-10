@@ -1,4 +1,10 @@
-export interface GlobalConfigENV {
+// export type NodeEnv = 'development' | 'production';
+export enum NodeEnv {
+  PRODUCTION = 'production',
+  DEVELOPMENT = 'development',
+}
+
+export type GlobalConfigENV = {
   DISCORD_CLIENT_ID: string;
   DISCORD_CLIENT_SECRET: string;
   DISCORD_BOT_TOKEN: string;
@@ -7,9 +13,9 @@ export interface GlobalConfigENV {
   SUPABASE_PUBLIC_KEY: string;
   SUPABASE_SERVICE_KEY: string;
   SUPABASE_SECRET: string;
-}
+  GUILDS: string[];
+};
 
-export interface GlobalConfig {
-  env_production: GlobalConfigENV;
-  env_development: GlobalConfigENV;
-}
+export type GlobalConfig = {
+  [key in NodeEnv]: GlobalConfigENV;
+};
