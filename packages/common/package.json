@@ -31,7 +31,7 @@
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "dev": "nodemon --exec npm run start"
+    "dev": "npm run start"
   },
   "husky": {
     "hooks": {

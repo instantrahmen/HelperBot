@@ -12,7 +12,7 @@ console.log({ globalConfig });
 
 export const config = {
   global: globalConfig[NODE_ENV],
-  environment: process.env.NODE_ENV,
+  environment: process.env.NODE_ENV as NodeEnv,
   botName: 'helper',
   botNameFriendly: 'Helper',
 };

@@ -1,6 +1,4 @@
-// const globalConfig = require('../../../../env.js');
 import { Intents } from 'discord.js';
-// import globalConfig from '../../../../globalConfig'
 import { config } from '@helper/common';
 
 console.log({ config });
@@ -30,7 +28,8 @@ export default {
   guildId: config.global.DISCORD_GUILD_ID,
   botToken: config.global.DISCORD_BOT_TOKEN,
   clientSecret: config.global.DISCORD_CLIENT_SECRET,
-
+  environment: config.environment,
+  // Discord.js intents (https://discordjs.guide/popular-topics/intents.html#privileged-intents)
   intents: [
     GUILDS,
     GUILD_MEMBERS,
