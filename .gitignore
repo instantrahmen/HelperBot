@@ -122,3 +122,4 @@ dist
 *.env.*
 .config.yml
 .DS_Store
+_update-server-config.zsh
