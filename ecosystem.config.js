@@ -27,7 +27,7 @@ module.exports = {
       host: 'helper.cudd.io',
       ref: 'origin/main',
       repo: 'git@github.com:instantrahmen/HelperBot.git',
-      path: '~/apps/helper-bot',
+      path: '/home/erika/apps/helper-bot',
       'post-deploy': 'npm run post-deploy',
     },
   },
