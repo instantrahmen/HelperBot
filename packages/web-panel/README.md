@@ -1,2 +1,2 @@
-# Helperbot Web Panel
-TODO: write readme and docs
+# @Helper/Web-Panel
+Admin panel for Helper
