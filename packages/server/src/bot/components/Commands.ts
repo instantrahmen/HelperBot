@@ -1,13 +1,12 @@
 import { REST } from '@discordjs/rest';
 import { CommandInteraction } from 'discord.js';
 import { snakeCase } from 'lodash';
+import { Routes } from 'discord-api-types/v9';
 
 import config from '../config';
 import { Command, CommandsArray, APIAppCommand } from '../types';
 import { Debugger, getDebugger } from './Debugger';
-import { Routes } from 'discord-api-types/v9';
 import { botState } from './Bot';
-import { getPermissionsArray, permissionLevels } from '../permissions';
 
 const { clientID, guilds, botToken } = config;
 
@@ -95,8 +94,6 @@ export const commandState = {
       this.deployForGuild(guildId)
     );
 
-    // data[0]
-
     const data = await Promise.all(deploymentPromises).catch((e) => {
       console.warn(`Couldn't deploy commands`, e);
     });
@@ -107,44 +104,7 @@ export const commandState = {
       throw new Error('No data returned from command deploy');
     }
 
-    Debugger.log({ data });
-
-    await this.setPermissions(data);
-
     return data;
-  },
-
-  async setPermissions(apiCommands: APIAppCommand[][]) {
-    const response = await Promise.all(
-      apiCommands.map((commands) => {
-        return Promise.all(
-          commands.map(async (command) => {
-            const { guild_id: guildId, id: commandId, name } = command;
-            const appCommandOptions = this.commands[name].commandOptions;
-            if (!appCommandOptions.permissions) return;
-
-            const fetchedCommand = await this.fetchCommandFromAPI(
-              guildId!,
-              commandId
-            );
-
-            // const permissions = getPermissionsArray(
-            //   appCommandOptions.permissions,
-            //   guildId!
-            // );
-
-            // await fetchedCommand?.permissions.add({ permissions });
-            // return fetchedCommand?.setDefaultPermission(
-            //   appCommandOptions.defaultPermission
-            // );
-            return fetchedCommand;
-          })
-        );
-      })
-    );
-
-    Debugger.log(response);
-    return response;
   },
 
   async fetchCommandFromAPI(guildId: string, commandId: string) {
@@ -161,10 +121,6 @@ class _AppCommand {
   constructor(commandOptions: Command) {
     this.commandOptions = commandOptions;
   }
-
-  // toCommandBase() {
-  //   return this.commandOptions as CommandBase;
-  // }
 
   toJSON() {
     // let newObject as API;

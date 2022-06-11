@@ -3,13 +3,10 @@ import {
   APIApplicationCommandOption,
   APIApplicationCommand,
 } from 'discord-api-types';
-import { PermissionLevel } from './permission-types';
 import { ChannelTypes } from 'discord.js/typings/enums';
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type Merge<M, N> = Omit<M, Extract<keyof M, keyof N>> & N;
-
-export * from './permission-types';
 
 export enum OptionType {
   SUB_COMMAND = 1, // SUB_COMMAND sets the option to be a subcommand
@@ -44,13 +41,11 @@ export type CommandBase = {
   name: string;
   description: string;
   options?: CommandOption[];
-  defaultPermission?: boolean;
 };
 
 export type Command = CommandBase & {
   debugOnly?: boolean;
   forceAvailable?: boolean;
-  permissions?: PermissionLevel[];
   do: (interaction: CommandInteraction) => Promise<void>;
 };
 
