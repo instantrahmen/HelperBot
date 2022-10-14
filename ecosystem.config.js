@@ -24,7 +24,9 @@ const ecosystem = {
    * Copy `example.deploy.config.js` and rename it to `deploy.config.js` and fill out info for your own server. This file also needs to be manually copied over to your server in order for deployment to work.
    * http://pm2.keymetrics.io/docs/usage/deployment/
    */
-  deploy,
+  deploy: {
+    production: deploy.production,
+  },
 };
 
 module.exports = ecosystem;
