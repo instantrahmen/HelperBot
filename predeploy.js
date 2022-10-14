@@ -29,7 +29,7 @@ const postDeploy = async () => {
     const uploadPromises = requiredFiles.map((file) => {
       return client.uploadFile(
         `./${file}`,
-        `${deploy[environment].path}/source-test/${file}`
+        `${deploy[environment].path}/source/${file}`
         // options?: TransferOptions
       );
     });
