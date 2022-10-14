@@ -1,4 +1,4 @@
-const deploy = require('./hooks/deploy.config');
+const deploy = require('./deploy.config');
 
 const ecosystem = {
   /**
