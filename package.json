@@ -1,6 +1,6 @@
 {
   "name": "helper-bot",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Monorepo for Helper discord bot",
   "author": "Erika Cudd",
   "private": true,
