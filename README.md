@@ -4,9 +4,6 @@ A general purpose Discord bot created for the Midnight Oasis server. Currently w
 
 <!-- TODO: Write getting started instructions -->
 
-## Known Issues:
- - Music player commands still work if Helper isn't connected to a VC
-
 ## Helpful Links:
 - [Discord.js docs](https://discord.js.org/#/docs/main/stable/general/welcome)  
 - [PNPM Workspaces](https://pnpm.io/workspaces)  
