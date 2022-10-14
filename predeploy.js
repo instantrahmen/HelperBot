@@ -1,5 +1,4 @@
 // Copy required non-commited files to server. Requires filling out deploy.config.js and running `pm2 deploy setup` first
-// scp file.txt remote_username@10.10.0.2:/remote/directory
 const { Client } = require('node-scp');
 const deploy = require('./deploy.config');
 const fs = require('fs');
@@ -10,8 +9,6 @@ const environment = process.argv[2] || 'production';
 
 const postDeploy = async () => {
   // Connect to the server
-
-  console.log({ deploy, environment });
 
   const client = await Client({
     host: deploy[environment].host,
