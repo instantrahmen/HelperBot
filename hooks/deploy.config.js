@@ -8,6 +8,6 @@ const loadYaml = (filePath) => {
   return YAML.parse(file);
 };
 
-const { deploy } = loadYaml(`${__dirname}/../.config.yml`);
+const { deploy, ssh } = loadYaml(`${__dirname}/../.config.yml`);
 
-module.exports = deploy;
+module.exports = { deploy, ssh };

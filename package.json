@@ -1,6 +1,6 @@
 {
   "name": "helper-bot",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Monorepo for Helper discord bot",
   "author": "Erika Cudd",
   "private": true,
@@ -17,8 +17,8 @@
     "pm2-dev": "pm2 start --env development",
     "post-deploy": "pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env production",
     "pre-deploy": "node ./hooks/predeploy.js",
-    "prepare-ecosystem": "node ./hooks/prepare-ecosystem.js",
-    "deploy:production": "pnpm prepare-ecosystem && pm2 deploy ./ecosystem.json production"
+    "deploy:production": "pm2 deploy production",
+    "deploy:prod": "pnpm run deploy:production"
   },
   "devDependencies": {
     "pm2": "^5.2.2"

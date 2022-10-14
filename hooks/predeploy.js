@@ -1,9 +1,9 @@
 // Copy required non-commited files to server. Requires filling out deploy.config.js and running `pm2 deploy setup` first
 const { Client } = require('node-scp');
-const deploy = require('./deploy.config');
+const { deploy, ssh } = require('./deploy.config');
 const fs = require('fs');
 
-const requiredFiles = ['.config.yml', 'ecosystem.json'];
+const requiredFiles = ['.config.yml'];
 
 const environment = process.argv[2] || 'production';
 
@@ -20,7 +20,7 @@ const uploadRequiredFiles = async () => {
     host: deploy[environment].host,
     username: deploy[environment].user,
     port: 22,
-    privateKey: fs.readFileSync(deploy[environment]['local-private-key']),
+    privateKey: fs.readFileSync(ssh['local-private-key']),
   }).catch((e) =>
     console.error(`Unable to connect to server. \n\n${e.message}`)
   );
