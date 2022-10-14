@@ -3,8 +3,10 @@ import config from '../config';
 import { stringify } from '../utils';
 import BaseComponent, { ComponentState } from './BaseComponent';
 export class Debugger extends BaseComponent {
-  debugMode = false;
-  disableCommands = config.environment === NodeEnv.DEVELOPMENT;
+  debugMode = !!process.env.DEBUG_MODE;
+  disableCommands = !!process.env.DEBUG_MODE
+    ? false
+    : config.environment === NodeEnv.DEVELOPMENT;
 
   static inMemoryDebugLog: any[] = [];
 

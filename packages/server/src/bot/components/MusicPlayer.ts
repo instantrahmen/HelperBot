@@ -275,39 +275,39 @@ export class MusicPlayer extends BaseComponent {
     user: User,
     skipPlay = false
   ): Promise<number> {
-    const oldQueue = [...this.queue];
-    try {
-      if (typeof song === 'string') {
-        this.queue = [...this.queue, { url: song, title: 'Loading...', user }];
+    // const oldQueue = [...this.queue];
+    // try {
+    if (typeof song === 'string') {
+      this.queue = [...this.queue, { url: song, title: 'Loading...', user }];
 
-        const position = this.queue.length - 1;
+      const position = this.queue.length - 1;
 
-        const queueItem = await this.createQueueItem(song, user);
+      const queueItem = await this.createQueueItem(song, user);
 
-        if (!Array.isArray(queueItem)) {
-          this.queue[position] = queueItem;
-        } else {
-          this.queue = [...this.queue, ...queueItem];
-        }
+      if (!Array.isArray(queueItem)) {
+        this.queue[position] = queueItem;
       } else {
-        this.queue = [...this.queue, song];
+        this.queue = [...this.queue, ...queueItem];
       }
-
-      const status = this.getPlayerStatus();
-      if (
-        status === AudioPlayerStatus.Idle ||
-        status === AudioPlayerStatus.Paused
-      ) {
-        if (!skipPlay) {
-          this.play();
-        }
-      }
-
-      return this.queue.length - 1;
-    } catch (e: any) {
-      this.queue = oldQueue;
-      throw new Error(e);
+    } else {
+      this.queue = [...this.queue, song];
     }
+
+    const status = this.getPlayerStatus();
+    if (
+      status === AudioPlayerStatus.Idle ||
+      status === AudioPlayerStatus.Paused
+    ) {
+      if (!skipPlay) {
+        this.play();
+      }
+    }
+
+    return this.queue.length - 1;
+    // } catch (e: any) {
+    //   this.queue = oldQueue;
+    //   throw new Error(e);
+    // }
   }
 
   async addPlaylist(playlistUrl: url, user: User) {
