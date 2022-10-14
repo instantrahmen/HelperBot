@@ -52,7 +52,7 @@ const addSong = async (
       }** to my queue at position ${songIndex + 1}`
     );
   } catch (e: any) {
-    throw new Error(e.message);
+    interaction.editReply(`Failed to add song. \n \`${e.message}\``);
   }
 };
 
@@ -67,6 +67,7 @@ const addPlaylist = async (
 
     interaction.editReply(`Added the playlist to my queue!`);
   } catch (e: any) {
-    throw new Error(e.message);
+    // throw new Error(e.message);
+    interaction.editReply(`Failed to add playlist. \n \`${e.message}\``);
   }
 };
