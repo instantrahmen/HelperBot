@@ -28,5 +28,3 @@ const ecosystem = {
 };
 
 module.exports = ecosystem;
-
-console.log(JSON.stringify(ecosystem, null, 2));

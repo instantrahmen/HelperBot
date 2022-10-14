@@ -24,7 +24,6 @@ export const state = new ComponentState(Debugger);
 export const initializeDebuggers = () => {
   state.createComponentsForEachGuild();
 
-  console.log({ debuggerState: state });
   return state;
 };
 

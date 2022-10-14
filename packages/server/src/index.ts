@@ -36,11 +36,6 @@ const start = async () => {
     app.log.error(err);
     process.exit(1);
   }
-
-  // ON_DEATH(() => {
-  //   console.log('Closing fastify app');
-  //   app.close();
-  // });
 };
 
 start();

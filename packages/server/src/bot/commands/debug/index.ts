@@ -4,7 +4,6 @@ import { initializeDebuggers, getDebugger } from '../../components/Debugger';
 import commandState from '../../components/Commands';
 
 export const initializeDebugCommands = () => {
-  // console.log('initializeDebugCommands');
   initializeDebuggers();
 
   const { createCommand } = commandState;

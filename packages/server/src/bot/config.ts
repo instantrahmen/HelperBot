@@ -1,7 +1,6 @@
 import { config } from '@helper/common';
 import { GatewayIntentBits } from 'discord.js';
 
-console.log({ config });
 const {
   Guilds,
   GuildMembers,

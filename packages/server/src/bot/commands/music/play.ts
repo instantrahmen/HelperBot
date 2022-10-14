@@ -17,6 +17,7 @@ export default () => {
         required: true,
       },
     ],
+
     do: async (interaction) => {
       const url = interaction.options.getString('url', true);
 
@@ -41,14 +42,18 @@ const addSong = async (
   interaction: CommandInteraction,
   musicPlayer: MusicPlayer
 ) => {
-  await interaction.reply(`Loading song info...`);
-  const songIndex = await musicPlayer.add(url, interaction.user);
+  try {
+    await interaction.reply(`Loading song info...`);
+    const songIndex = await musicPlayer.add(url, interaction.user);
 
-  interaction.editReply(
-    `Added **${musicPlayer.queue[songIndex].title}** to my queue at position ${
-      songIndex + 1
-    }`
-  );
+    interaction.editReply(
+      `Added **${
+        musicPlayer.queue[songIndex].title
+      }** to my queue at position ${songIndex + 1}`
+    );
+  } catch (e: any) {
+    throw new Error(e.message);
+  }
 };
 
 const addPlaylist = async (
@@ -56,8 +61,12 @@ const addPlaylist = async (
   interaction: CommandInteraction,
   musicPlayer: MusicPlayer
 ) => {
-  await interaction.reply(`Loading song info...`);
-  await musicPlayer.addPlaylist(url, interaction.user);
+  try {
+    await interaction.reply(`Loading song info...`);
+    await musicPlayer.addPlaylist(url, interaction.user);
 
-  interaction.editReply(`Added the playlist to my queue!`);
+    interaction.editReply(`Added the playlist to my queue!`);
+  } catch (e: any) {
+    throw new Error(e.message);
+  }
 };

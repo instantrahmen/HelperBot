@@ -165,6 +165,9 @@ export const initializeMusicCommands = () => {
         const includePlayed =
           interaction.options.getBoolean('includeplayed', false) || false;
 
+        console.log('creating queue', {
+          q: mp.queue,
+        });
         const embed1 = mp.createCurrentSongEmbed();
 
         const embed2 = mp.createQueueEmbed(includePlayed);
@@ -199,9 +202,41 @@ export const initializeMusicCommands = () => {
 
         const connectionState = mp.getConnectionState();
 
-        // mp.clearQueue();
-
         interaction.reply(jsonBlock(connectionState));
+      },
+    }),
+
+    // player info
+    createCommand({
+      name: 'player-info',
+      description: 'Get info about the audio player',
+      debugOnly: false,
+      do: async (interaction: ChatInputCommandInteraction) => {
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
+        const info = await mp.getInfo();
+
+        interaction.reply(jsonBlock(info));
+      },
+    }),
+
+    // disconnect
+    createCommand({
+      name: 'disconnect',
+      description: 'Disconnect from VC',
+      debugOnly: false,
+      do: async (interaction: ChatInputCommandInteraction) => {
+        const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
+
+        const inVC = await mp.validateConnection(interaction, false);
+
+        if (inVC) {
+          mp.disconnect();
+
+          interaction.reply(`I'm done for now, let's chill again sometime! 💙`);
+        } else {
+          interaction.reply(`Can't leave a channel if I'm not even in it!`);
+        }
       },
     }),
   ];

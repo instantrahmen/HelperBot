@@ -7,7 +7,6 @@ export const generateSlashCommands = (client: Client) => {
   registerAllCommands();
 
   client.on('interactionCreate', async (interaction) => {
-    // console.log({ interaction });
     if (!interaction.isChatInputCommand()) return;
 
     const { commandName } = interaction;

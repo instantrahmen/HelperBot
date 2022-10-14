@@ -2,7 +2,7 @@ import ytpl from 'ytpl';
 
 import playdl, { video_basic_info, stream, validate } from 'play-dl';
 import { CommandInteraction, User, VoiceChannel } from 'discord.js';
-// import ON_DEATH from 'death';
+import ON_DEATH from 'death';
 
 import {
   AudioPlayer,
@@ -37,7 +37,7 @@ import { Debugger } from './Debugger';
 import { APIEmbed, ChannelType } from 'discord-api-types/v10';
 export class MusicPlayer extends BaseComponent {
   queue: GuildQueue = [];
-  nowPlaying: number = 0;
+  private _nowPlaying: number = 0;
   private player: AudioPlayer = createAudioPlayer();
   repeatMethod: RepeatMethod = RepeatMethod.NONE;
 
@@ -47,6 +47,28 @@ export class MusicPlayer extends BaseComponent {
   constructor(guildId: string, state: ComponentState) {
     super(guildId, state);
     this.registerPlayerEventHandlers();
+  }
+
+  public get nowPlaying() {
+    if (
+      this._nowPlaying === null ||
+      isNaN(this._nowPlaying) ||
+      !!this._nowPlaying
+    )
+      this._nowPlaying = 0;
+    return this._nowPlaying;
+  }
+
+  public set nowPlaying(index: number) {
+    console.log({ setNowPlaying: index });
+    if (!!index) {
+      if (index !== 0) {
+        console.error('Index not a number');
+      }
+      this._nowPlaying = 0;
+    } else {
+      this._nowPlaying = index;
+    }
   }
 
   private registerPlayerEventHandlers() {
@@ -96,6 +118,7 @@ export class MusicPlayer extends BaseComponent {
         // Seems to be reconnecting to a new channel - ignore disconnect
       } catch (error) {
         // Seems to be a real disconnect which SHOULDN'T be recovered from
+        this.clearQueue();
         connection.destroy();
       }
     });
@@ -108,23 +131,40 @@ export class MusicPlayer extends BaseComponent {
     });
 
     // Handle application exit
-    // ON_DEATH(() => {
-    //   console.log('\n\nExiting music app...\n');
+    ON_DEATH(() => {
+      console.log('\n\nExiting music app...\n');
 
-    //   console.log(`Doing cleanup... ${this}`);
-    //   const connection = this.getConnection();
+      console.log(`Doing cleanup... ${this}`);
+      const connection = this.getConnection();
 
-    //   if (connection) {
-    //     // Disconnect from channel
-    //     connection.disconnect();
-    //   }
+      if (connection) {
+        // Disconnect from channel
+        connection.disconnect();
+      }
 
-    //   console.log('done.');
-    // });
+      console.log('done.');
+
+      return process.exit();
+    });
   }
+
+  async getInfo() {
+    const info = {
+      queue: this.queue,
+      nowPlaying: this.nowPlaying,
+      addingSong: this.addingSong,
+      canPlay: this.canPlay() || null,
+      status: this.getPlayerStatus() || null,
+      // playable: this.player.playable,
+      // connectionState: this.getConnectionState() || null,
+    };
+
+    return JSON.stringify(info, null, 2);
+  }
+
   // #region Control Methods
 
-  async disconnect() {
+  disconnect() {
     const connection = this.getConnection();
     if (connection) {
       // Disconnect from channel
@@ -135,6 +175,7 @@ export class MusicPlayer extends BaseComponent {
   // Play current song
   async play() {
     const song = this.getCurrentSong();
+    if (!this.canPlay() || !song) return;
 
     try {
       const musicStream = await stream(song.url);
@@ -167,11 +208,13 @@ export class MusicPlayer extends BaseComponent {
   }
 
   nextSong() {
+    if (this.queue.length <= 0) return;
     this.gotoSong(this.nowPlaying + 1);
   }
 
   async gotoSong(index: number, method: 'wrap' | 'clamp' = 'wrap') {
     this.autoplayDisabled = true;
+    if (!!index) index = 0;
     const newIndex =
       method === 'wrap'
         ? wrapWithinArray(this.queue, index)
@@ -187,6 +230,8 @@ export class MusicPlayer extends BaseComponent {
     this.stop();
     this.nowPlaying = 0;
     this.queue = [];
+
+    console.log({ info: this.getInfo() });
   }
 
   async connectToChannel(channel: VoiceChannel) {
@@ -268,32 +313,36 @@ export class MusicPlayer extends BaseComponent {
   async addPlaylist(playlistUrl: url, user: User) {
     const playlistRes = await ytpl(playlistUrl, {});
 
-    const songPromises = playlistRes.items.map(
-      ({ title, url, thumbnails, author, bestThumbnail }) =>
-        this.add(
-          {
-            title,
+    try {
+      const songPromises = playlistRes.items.map(
+        ({ title, url, thumbnails, author, bestThumbnail }) =>
+          this.add(
+            {
+              title,
+              user,
+              url,
+              thumbnail: bestThumbnail,
+              artist: author.name,
+            } as QueueItem,
             user,
-            url,
-            thumbnail: bestThumbnail,
-            artist: author.name,
-          } as QueueItem,
-          user,
-          true
-        )
-    );
+            true
+          )
+      );
 
-    console.log('Adding songs...');
-    const songs = await Promise.all(songPromises);
+      console.log('Adding songs...');
+      const songs = await Promise.all(songPromises);
 
-    if (
-      this.getPlayerStatus() === AudioPlayerStatus.Idle ||
-      this.getPlayerStatus() === AudioPlayerStatus.Paused
-    ) {
-      this.play();
+      if (
+        this.getPlayerStatus() === AudioPlayerStatus.Idle ||
+        this.getPlayerStatus() === AudioPlayerStatus.Paused
+      ) {
+        this.play();
+      }
+
+      return songs;
+    } catch (e) {
+      // console.error('Unable to add song(s) to queue');
     }
-
-    return songs;
   }
 
   // Remove a song from queue
@@ -309,7 +358,7 @@ export class MusicPlayer extends BaseComponent {
     try {
       const { video_details: videoDetails } = await video_basic_info(url);
 
-      Debugger.log({ videoDetails });
+      // Debugger.log({ videoDetails });
 
       return {
         title: videoDetails.title!,
@@ -378,7 +427,7 @@ export class MusicPlayer extends BaseComponent {
   };
 
   createCurrentSongEmbed(): APIEmbed {
-    if (this.queue.length === 0) {
+    if (this.queue.length === 0 || !this.queue[this.nowPlaying]) {
       return {
         title: `No song playing`,
         description: ``,
@@ -463,12 +512,17 @@ export class MusicPlayer extends BaseComponent {
     };
   }
 
-  validateConnection = async (interaction: CommandInteraction) => {
+  validateConnection = async (
+    interaction: CommandInteraction,
+    replyIfNot: boolean = true
+  ) => {
     if (this.canPlay()) return true;
 
-    await interaction.reply('Please use `/join` to connect me to a VC first');
+    if (replyIfNot) {
+      await interaction.reply('Please use `/join` to connect me to a VC first');
+    }
 
-    throw new Error('Not in VC');
+    return false;
   };
   //#endregion
 }

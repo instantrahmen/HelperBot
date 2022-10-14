@@ -89,26 +89,17 @@ export const commandState = {
   },
 
   async deployAll() {
-    console.log('deploying all commands...');
     const deploymentPromises = guilds.map((guildId: string) =>
       this.deployForGuild(guildId)
     );
-
-    // data[0]
 
     const data = await Promise.all(deploymentPromises).catch((e) => {
       console.warn(`Couldn't deploy commands`, e);
     });
 
-    console.log('deploying all commands finished.');
-
     if (!data) {
       throw new Error('No data returned from command deploy');
     }
-
-    Debugger.log({ data });
-
-    // await this.setPermissions(data);
 
     return data;
   },
