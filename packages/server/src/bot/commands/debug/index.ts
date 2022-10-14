@@ -1,5 +1,4 @@
-import { inspectCommand } from './inspect';
-import { permissionLevels } from '../../permissions';
+// import { inspectCommand } from './inspect';
 import { initializeDebuggers, getDebugger } from '../../components/Debugger';
 
 import commandState from '../../components/Commands';
@@ -11,14 +10,12 @@ export const initializeDebugCommands = () => {
   const { createCommand } = commandState;
 
   return [
-    inspectCommand,
+    // inspectCommand,
 
     createCommand({
       name: 'toggle-debug-mode',
       description: 'Enable debug mode',
       forceAvailable: true,
-      permissions: [permissionLevels.admin],
-      defaultPermission: false,
 
       do: async (interaction) => {
         const guildId = interaction.guild!.id;
@@ -40,8 +37,6 @@ export const initializeDebugCommands = () => {
       name: 'toggle-all-commands',
       description: 'Hide/show all commands',
       forceAvailable: true,
-      defaultPermission: false,
-      permissions: [permissionLevels.admin],
 
       do: async (interaction) => {
         const guildId = interaction.guild!.id;

@@ -13,7 +13,6 @@ export const initializeToolCommands = () => {
       name: 'roll',
       description: 'Roll some dice',
       forceAvailable: false,
-      defaultPermission: true,
       options: [
         {
           type: OptionType.INTEGER,
@@ -47,7 +46,6 @@ export const initializeToolCommands = () => {
       name: 'coinflip',
       description: 'Flip a coin',
       forceAvailable: false,
-      defaultPermission: true,
       options: [],
       do: async (interaction) => {
         await animateReply('Flipping coin', interaction);

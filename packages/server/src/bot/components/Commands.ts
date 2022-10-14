@@ -1,17 +1,16 @@
-import { REST } from '@discordjs/rest';
+import { ChatInputCommandInteraction, REST } from 'discord.js';
 import { CommandInteraction } from 'discord.js';
 import { snakeCase } from 'lodash';
 
 import config from '../config';
 import { Command, CommandsArray, APIAppCommand } from '../types';
 import { Debugger, getDebugger } from './Debugger';
-import { Routes } from 'discord-api-types/v9';
+import { Routes } from 'discord-api-types/v10';
 import { botState } from './Bot';
-import { getPermissionsArray, permissionLevels } from '../permissions';
 
 const { clientID, guilds, botToken } = config;
 
-const rest = new REST({ version: '9' }).setToken(botToken);
+const rest = new REST({ version: '10' }).setToken(botToken);
 
 export const commandState = {
   commands: {} as IndexedAppCommands,
@@ -109,43 +108,30 @@ export const commandState = {
 
     Debugger.log({ data });
 
-    await this.setPermissions(data);
+    // await this.setPermissions(data);
 
     return data;
   },
 
-  async setPermissions(apiCommands: APIAppCommand[][]) {
-    const response = await Promise.all(
-      apiCommands.map((commands) => {
-        return Promise.all(
-          commands.map(async (command) => {
-            const { guild_id: guildId, id: commandId, name } = command;
-            const appCommandOptions = this.commands[name].commandOptions;
-            if (!appCommandOptions.permissions) return;
+  // async setPermissions(apiCommands: APIAppCommand[][]) {
+  //   const response = await Promise.all(
+  //     apiCommands.map((commands) => {
+  //       return Promise.all(
+  //         commands.map(async (command) => {
+  //           const { guild_id: guildId, id: commandId } = command;
 
-            const fetchedCommand = await this.fetchCommandFromAPI(
-              guildId!,
-              commandId
-            );
+  //           const fetchedCommand = await this.fetchCommandFromAPI(
+  //             guildId!,
+  //             commandId
+  //           );
 
-            // const permissions = getPermissionsArray(
-            //   appCommandOptions.permissions,
-            //   guildId!
-            // );
-
-            // await fetchedCommand?.permissions.add({ permissions });
-            // return fetchedCommand?.setDefaultPermission(
-            //   appCommandOptions.defaultPermission
-            // );
-            return fetchedCommand;
-          })
-        );
-      })
-    );
-
-    Debugger.log(response);
-    return response;
-  },
+  //           return fetchedCommand;
+  //         })
+  //       );
+  //     })
+  //   );
+  //   return response;
+  // },
 
   async fetchCommandFromAPI(guildId: string, commandId: string) {
     const { client } = botState;
@@ -174,7 +160,7 @@ class _AppCommand {
     }, {});
   }
 
-  run(interaction: CommandInteraction) {
+  run(interaction: ChatInputCommandInteraction) {
     this.commandOptions.do(interaction);
   }
 }

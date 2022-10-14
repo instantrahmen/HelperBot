@@ -1,4 +1,4 @@
-import { MessageInteraction } from 'discord.js';
+import { APIEmbed } from 'discord-api-types/v10';
 
 type MapFunction = (value?: any, index?: number, array?: any[]) => any;
 
@@ -30,8 +30,7 @@ export const createDiceEmbed = (
   sides: number,
   amount: number,
   results: DiceResults
-) => ({
-  type: 'rich',
+): APIEmbed => ({
   title: `Results (\`${amount} D${sides}\`)`,
   description: ``,
   color: 0xffb8d9,

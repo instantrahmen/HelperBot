@@ -1,15 +1,16 @@
-import { ApplicationCommand, CommandInteraction } from 'discord.js';
+import {
+  ApplicationCommand,
+  CommandInteraction,
+  ChatInputCommandInteraction,
+} from 'discord.js';
 import {
   APIApplicationCommandOption,
   APIApplicationCommand,
-} from 'discord-api-types';
-import { PermissionLevel } from './permission-types';
-import { ChannelTypes } from 'discord.js/typings/enums';
+  ChannelType,
+} from 'discord-api-types/v10';
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type Merge<M, N> = Omit<M, Extract<keyof M, keyof N>> & N;
-
-export * from './permission-types';
 
 export enum OptionType {
   SUB_COMMAND = 1, // SUB_COMMAND sets the option to be a subcommand
@@ -28,7 +29,7 @@ export type CommandOption = Merge<
   {
     type: OptionType;
     options?: CommandOption;
-    channel_types?: ChannelTypes[];
+    channel_types?: ChannelType[];
     min_value?: number;
     max_value?: number;
   }
@@ -44,14 +45,12 @@ export type CommandBase = {
   name: string;
   description: string;
   options?: CommandOption[];
-  defaultPermission?: boolean;
 };
 
 export type Command = CommandBase & {
   debugOnly?: boolean;
   forceAvailable?: boolean;
-  permissions?: PermissionLevel[];
-  do: (interaction: CommandInteraction) => Promise<void>;
+  do: (interaction: ChatInputCommandInteraction) => Promise<void>;
 };
 
 export type CommandsArray = Command[];

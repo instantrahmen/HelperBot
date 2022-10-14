@@ -4,7 +4,9 @@ import { stringify } from '../utils';
 import BaseComponent, { ComponentState } from './BaseComponent';
 export class Debugger extends BaseComponent {
   debugMode = false;
-  disableCommands = config.environment === NodeEnv.DEVELOPMENT;
+  // disableCommands = config.environment === NodeEnv.DEVELOPMENT;
+  disableCommands = false;
+
   static inMemoryDebugLog: any[] = [];
 
   constructor(guildId: string, state: ComponentState) {

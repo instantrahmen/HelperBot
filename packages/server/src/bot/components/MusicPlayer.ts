@@ -2,6 +2,8 @@ import ytpl from 'ytpl';
 
 import playdl, { video_basic_info, stream, validate } from 'play-dl';
 import { CommandInteraction, User, VoiceChannel } from 'discord.js';
+// import ON_DEATH from 'death';
+
 import {
   AudioPlayer,
   AudioPlayerStatus,
@@ -23,7 +25,6 @@ import {
   url,
 } from '../types/music-player-types';
 
-// playdl.refreshToken
 import BaseComponent, { ComponentState } from './BaseComponent';
 
 import {
@@ -33,7 +34,7 @@ import {
 } from '../utils';
 
 import { Debugger } from './Debugger';
-
+import { APIEmbed, ChannelType } from 'discord-api-types/v10';
 export class MusicPlayer extends BaseComponent {
   queue: GuildQueue = [];
   nowPlaying: number = 0;
@@ -42,8 +43,6 @@ export class MusicPlayer extends BaseComponent {
 
   addingSong = false;
   autoplayDisabled = false;
-
-  // connected = false;
 
   constructor(guildId: string, state: ComponentState) {
     super(guildId, state);
@@ -60,7 +59,7 @@ export class MusicPlayer extends BaseComponent {
     });
 
     // Whenever song changes, play next song
-    this.player.on<'stateChange'>('stateChange', (oldState, newState) => {
+    this.player.on('stateChange', (oldState, newState) => {
       console.log(
         `Audio player transitioned from ${oldState.status} to ${newState.status}`
       );
@@ -80,6 +79,7 @@ export class MusicPlayer extends BaseComponent {
     const connection = this.getConnection()!;
 
     connection.on(VoiceConnectionStatus.Ready, () => {
+      // Allow Helper to play audio on this connection
       connection.subscribe(this.getPlayer());
       console.log(
         'The connection has entered the Ready state - ready to play audio!'
@@ -90,8 +90,8 @@ export class MusicPlayer extends BaseComponent {
     connection.on(VoiceConnectionStatus.Disconnected, async () => {
       try {
         await Promise.race([
-          entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
-          entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+          entersState(connection, VoiceConnectionStatus.Signalling, 5000),
+          entersState(connection, VoiceConnectionStatus.Connecting, 5000),
         ]);
         // Seems to be reconnecting to a new channel - ignore disconnect
       } catch (error) {
@@ -106,9 +106,31 @@ export class MusicPlayer extends BaseComponent {
         `Connection transitioned from ${oldState.status} to ${newState.status}`
       );
     });
-  }
 
+    // Handle application exit
+    // ON_DEATH(() => {
+    //   console.log('\n\nExiting music app...\n');
+
+    //   console.log(`Doing cleanup... ${this}`);
+    //   const connection = this.getConnection();
+
+    //   if (connection) {
+    //     // Disconnect from channel
+    //     connection.disconnect();
+    //   }
+
+    //   console.log('done.');
+    // });
+  }
   // #region Control Methods
+
+  async disconnect() {
+    const connection = this.getConnection();
+    if (connection) {
+      // Disconnect from channel
+      connection.disconnect();
+    }
+  }
 
   // Play current song
   async play() {
@@ -123,6 +145,7 @@ export class MusicPlayer extends BaseComponent {
       this.player.play(resource);
     } catch (e: any) {
       Debugger.log({ error: e });
+      console.log({ QUEUE: this.queue });
       throw new Error(`Unable to play song: ${e.message}`);
     }
   }
@@ -170,7 +193,8 @@ export class MusicPlayer extends BaseComponent {
     const { id: channelId, guild, guildId } = channel;
 
     try {
-      if (channel.type !== 'GUILD_VOICE') throw new Error('INVALID_CHANNEL');
+      if (channel.type !== ChannelType.GuildVoice)
+        throw new Error('INVALID_CHANNEL');
 
       const connection = joinVoiceChannel({
         channelId,
@@ -271,6 +295,7 @@ export class MusicPlayer extends BaseComponent {
 
     return songs;
   }
+
   // Remove a song from queue
   remove(index: number) {
     this.queue = removeElementFromArray(this.queue, index);
@@ -316,6 +341,14 @@ export class MusicPlayer extends BaseComponent {
 
   canPlay = (): boolean => {
     const connection = this.getConnection();
+    console.log({
+      canPlay: {
+        connection: !!connection,
+        'connection.state': !!connection?.state,
+        'connection.state.status === VoiceConnectionStatus.Ready':
+          connection?.state.status === VoiceConnectionStatus.Ready,
+      },
+    });
 
     return (
       !!connection &&
@@ -344,10 +377,9 @@ export class MusicPlayer extends BaseComponent {
     blue: 0x00f0ff,
   };
 
-  createCurrentSongEmbed() {
+  createCurrentSongEmbed(): APIEmbed {
     if (this.queue.length === 0) {
       return {
-        type: 'rich',
         title: `No song playing`,
         description: ``,
         color: this.colors.blue,
@@ -356,9 +388,9 @@ export class MusicPlayer extends BaseComponent {
         },
       };
     }
+
     const currentSong = this.queue[this.nowPlaying];
     return {
-      type: 'rich',
       title: `${currentSong.title}`,
       description: `- ${currentSong.artist}`,
       color: this.colors.blue,
@@ -370,21 +402,20 @@ export class MusicPlayer extends BaseComponent {
     };
   }
 
-  createEmptyQueueEmbed() {
+  createEmptyQueueEmbed(): APIEmbed {
     const noSongs = this.queue.length === 0;
     const message = noSongs
       ? 'None, add more songs with `/play`'
       : 'None, replaying the playlist after this song';
 
     return {
-      type: 'rich',
       title: `Up Next:`,
       description: message,
       color: this.colors.blue,
     };
   }
 
-  createQueueEmbed(includePlayedSongs = false) {
+  createQueueEmbed(includePlayedSongs = false): APIEmbed {
     // const upNext = this.this.queue[this.nowPlaying];
     const lastSong = this.nowPlaying === this.queue.length - 1;
     const noSongs = this.queue.length === 0;
@@ -424,7 +455,6 @@ export class MusicPlayer extends BaseComponent {
     ];
 
     return {
-      type: 'rich',
       title: `Up Next:`,
       description: includePlayedSongs ? playedPlusCurrent.join('\n') : '',
       color: this.colors.pink,

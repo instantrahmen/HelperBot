@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js';
+import { ActivityType, Client, Message } from 'discord.js';
 import { botState } from '../components/Bot';
 
 import { timeout } from '../utils';
@@ -102,12 +102,12 @@ export default class HelperEmotionsController {
 
   updateStatus() {
     const mood = GlobalState.getCurrentMood();
-    // console.log({ mood: GlobalState.moodValues });
     if (mood === 'neutral') {
       this.client.user?.setStatus('online');
       this.client.user?.setActivity({
         name: `Feeling alright. :)`,
-        type: 'PLAYING',
+        // type: 'PLAYING',
+        type: ActivityType.Playing,
       });
       return;
     }
@@ -115,7 +115,7 @@ export default class HelperEmotionsController {
       this.client.user?.setStatus('online');
       this.client.user?.setActivity({
         name: `Feeling pretty great! :D`,
-        type: 'PLAYING',
+        type: ActivityType.Playing,
       });
       return;
     }
@@ -123,7 +123,7 @@ export default class HelperEmotionsController {
       this.client.user?.setStatus('idle');
       this.client.user?.setActivity({
         name: `😳`,
-        type: 'PLAYING',
+        type: ActivityType.Playing,
       });
       return;
     }
@@ -131,7 +131,7 @@ export default class HelperEmotionsController {
       this.client.user?.setStatus('dnd');
       this.client.user?.setActivity({
         name: `Grrrrr >:(`,
-        type: 'PLAYING',
+        type: ActivityType.Playing,
       });
       return;
     }
@@ -139,7 +139,7 @@ export default class HelperEmotionsController {
       this.client.user?.setStatus('dnd');
       this.client.user?.setActivity({
         name: `darn...:(`,
-        type: 'PLAYING',
+        type: ActivityType.Playing,
       });
 
       return;

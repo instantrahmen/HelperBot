@@ -1,24 +1,24 @@
-import { Intents } from 'discord.js';
 import { config } from '@helper/common';
+import { GatewayIntentBits } from 'discord.js';
 
 console.log({ config });
 const {
-  GUILDS,
-  GUILD_MEMBERS,
-  GUILD_BANS,
-  GUILD_EMOJIS_AND_STICKERS,
-  GUILD_INTEGRATIONS,
-  GUILD_WEBHOOKS,
-  GUILD_INVITES,
-  GUILD_VOICE_STATES,
-  GUILD_PRESENCES,
-  GUILD_MESSAGES,
-  GUILD_MESSAGE_REACTIONS,
-  GUILD_MESSAGE_TYPING,
-  DIRECT_MESSAGES,
-  DIRECT_MESSAGE_REACTIONS,
-  DIRECT_MESSAGE_TYPING,
-} = Intents.FLAGS;
+  Guilds,
+  GuildMembers,
+  GuildBans,
+  GuildEmojisAndStickers,
+  GuildIntegrations,
+  GuildWebhooks,
+  GuildInvites,
+  GuildVoiceStates,
+  GuildPresences,
+  GuildMessages,
+  GuildMessageReactions,
+  GuildMessageTyping,
+  DirectMessageReactions,
+  DirectMessageTyping,
+  DirectMessages,
+} = GatewayIntentBits;
 
 export default {
   commandPrefix: 'helper!',
@@ -31,20 +31,20 @@ export default {
   environment: config.environment,
   // Discord.js intents (https://discordjs.guide/popular-topics/intents.html#privileged-intents)
   intents: [
-    GUILDS,
-    GUILD_MEMBERS,
-    GUILD_BANS,
-    GUILD_EMOJIS_AND_STICKERS,
-    GUILD_INTEGRATIONS,
-    GUILD_WEBHOOKS,
-    GUILD_INVITES,
-    GUILD_VOICE_STATES,
-    GUILD_PRESENCES,
-    GUILD_MESSAGES,
-    GUILD_MESSAGE_REACTIONS,
-    GUILD_MESSAGE_TYPING,
-    DIRECT_MESSAGES,
-    DIRECT_MESSAGE_REACTIONS,
-    DIRECT_MESSAGE_TYPING,
+    Guilds,
+    GuildMembers,
+    GuildBans,
+    GuildEmojisAndStickers,
+    GuildIntegrations,
+    GuildWebhooks,
+    GuildInvites,
+    GuildVoiceStates,
+    GuildPresences,
+    GuildMessages,
+    GuildMessageReactions,
+    GuildMessageTyping,
+    DirectMessageReactions,
+    DirectMessageTyping,
+    DirectMessages,
   ],
 };

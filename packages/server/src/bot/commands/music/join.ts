@@ -1,9 +1,9 @@
-import { VoiceChannel } from 'discord.js';
+import { ChannelType, VoiceChannel } from 'discord.js';
 import { OptionType } from '../../types';
 
 import { mpState, MusicPlayer } from '../../components/MusicPlayer';
 import commandState from '../../components/Commands';
-import { ChannelTypes } from 'discord.js/typings/enums';
+import { Channel } from 'diagnostics_channel';
 
 export default () => {
   const { createCommand } = commandState;
@@ -17,7 +17,7 @@ export default () => {
         name: 'channel',
         description: 'Which channel should I join?',
         required: true,
-        channel_types: [ChannelTypes.GUILD_VOICE],
+        channel_types: [ChannelType.GuildVoice],
       },
     ],
     do: async (interaction) => {
@@ -29,16 +29,6 @@ export default () => {
 
       const { id: channelId, guild, guildId } = channel;
       const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
-
-      console.log('Helper joining channel', {
-        // channel,
-      });
-
-      if (channel.type !== 'GUILD_VOICE') {
-        const errorResponse = `Can't do that, dummy! ${channel.toString()} isn't even a voice channel!`;
-
-        await interaction.reply(errorResponse);
-      }
 
       await interaction.reply({
         content: `I'll tryyyy to join ${channel.toString()}... no promises though.`,
@@ -61,7 +51,7 @@ export default () => {
         if (interaction.replied) {
           interaction.editReply(replyText);
         } else {
-          return await interaction.reply({
+          await interaction.reply({
             content: replyText,
           });
         }

@@ -1,6 +1,4 @@
-import { VoiceConnection } from '@discordjs/voice';
-import { CommandInteraction } from 'discord.js';
-import { createAudioPlayer } from '@discordjs/voice';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 import join from './join';
 import play from './play';
@@ -22,7 +20,7 @@ export const initializeMusicCommands = () => {
     createCommand({
       name: 'pause',
       description: 'Pause music',
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         // const mp = getMusicPlayer(interaction.guildId!);
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
@@ -39,7 +37,7 @@ export const initializeMusicCommands = () => {
     createCommand({
       name: 'unpause',
       description: 'Unpause music',
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
 
@@ -53,7 +51,7 @@ export const initializeMusicCommands = () => {
     createCommand({
       name: 'playerstatus',
       description: 'Get music player status',
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
 
@@ -70,7 +68,7 @@ export const initializeMusicCommands = () => {
     createCommand({
       name: 'skip',
       description: 'Skip to next track',
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
 
@@ -94,7 +92,7 @@ export const initializeMusicCommands = () => {
           required: true,
         },
       ],
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const track = interaction.options.getInteger('track', true);
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
@@ -112,7 +110,7 @@ export const initializeMusicCommands = () => {
     createCommand({
       name: 'prev',
       description: 'Go back to previous track',
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
 
@@ -130,7 +128,7 @@ export const initializeMusicCommands = () => {
     createCommand({
       name: 'replay',
       description: 'Replay this track',
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
 
@@ -160,7 +158,7 @@ export const initializeMusicCommands = () => {
           required: false,
         },
       ],
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
 
@@ -181,7 +179,7 @@ export const initializeMusicCommands = () => {
     createCommand({
       name: 'clear-queue',
       description: 'List the items in queue',
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
         await mp.validateConnection(interaction);
 
@@ -196,7 +194,7 @@ export const initializeMusicCommands = () => {
       name: 'connection-status',
       description: 'List the items in queue',
       debugOnly: true,
-      do: async (interaction: CommandInteraction) => {
+      do: async (interaction: ChatInputCommandInteraction) => {
         const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
 
         const connectionState = mp.getConnectionState();
