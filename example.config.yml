@@ -5,7 +5,6 @@ development:
   DISCORD_CLIENT_ID: ''
   DISCORD_CLIENT_SECRET: ''
   DISCORD_BOT_TOKEN: ''
-  DISCORD_GUILD_ID: ''
 
   # https://supabase.com/
   SUPABASE_ENDPOINT: ''
@@ -19,9 +18,23 @@ production:
   DISCORD_CLIENT_ID: ''
   DISCORD_CLIENT_SECRET: ''
   DISCORD_BOT_TOKEN: ''
-  DISCORD_GUILD_ID: ''
 
   SUPABASE_ENDPOINT: ''
   SUPABASE_PUBLIC_KEY: ''
   SUPABASE_SERVICE_KEY: ''
   SUPABASE_SECRET: ''
+
+# Info for the production server. Requires ssh access to said server.
+# If you're using a staging server, also add that here
+deploy:
+  production:
+    user: 'user1234'
+    host: 'example.com'
+    ref: 'origin/main' # The reference branch for deployment
+    repo: 'git@github.com:exampleuser/HelperBot.git' # Change this to your own fork
+    path: '/home/user1234/apps/helper-bot' # The path on the server where you want the app deployed
+    local-private-key: '/home/localuser1234/.ssh/id_rsa' # Location of private key, used in predeploy script to copy (with scp) required non-committed files to server
+
+    # Pre and post deploy scripts for pm2. Shouldn't need changing unless you know what you're doing.
+    pre-deploy-local: 'pnpm run pre-deploy'
+    post-deploy: pnpm run post-deploy

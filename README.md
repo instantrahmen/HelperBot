@@ -5,6 +5,8 @@ A general purpose Discord bot created for the Midnight Oasis server. Currently w
 ## Invite to server:
 `https://discord.com/api/oauth2/authorize?client_id={CLIENT_ID}&permissions=8&scope=bot%20applications.commands`
 
+<!-- TODO: Write getting started instructions -->
+
 ## Known Issues:
  - Music player commands still work if Helper isn't connected to a VC
 

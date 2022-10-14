@@ -1,4 +1,6 @@
-module.exports = {
+const deploy = require('./deploy.config');
+
+const ecosystem = {
   /**
    * Application configuration section
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
@@ -19,16 +21,12 @@ module.exports = {
 
   /**
    * Deployment section
+   * Copy `example.deploy.config.js` and rename it to `deploy.config.js` and fill out info for your own server. This file also needs to be manually copied over to your server in order for deployment to work.
    * http://pm2.keymetrics.io/docs/usage/deployment/
    */
-  deploy: {
-    production: {
-      user: 'erika',
-      host: 'helper.cudd.io',
-      ref: 'origin/main',
-      repo: 'git@github.com:instantrahmen/HelperBot.git',
-      path: '/home/erika/apps/helper-bot',
-      'post-deploy': 'pnpm run post-deploy',
-    },
-  },
+  deploy,
 };
+
+module.exports = ecosystem;
+
+console.log(JSON.stringify(ecosystem, null, 2));

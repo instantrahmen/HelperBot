@@ -15,12 +15,15 @@
     "build-server": "npm run build -w @helper/server",
     "build": "npm run build -w ./packages",
     "pm2-dev": "pm2 start --env development",
-    "post-deploy": "pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env production"
+    "post-deploy": "pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env production",
+    "pre-deploy": "node ./predeploy.js"
   },
   "devDependencies": {
     "pm2": "^5.2.0"
   },
   "dependencies": {
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "node-scp": "^0.0.21",
+    "yaml": "^2.1.1"
   }
 }
