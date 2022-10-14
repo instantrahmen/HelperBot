@@ -4,8 +4,7 @@ import { stringify } from '../utils';
 import BaseComponent, { ComponentState } from './BaseComponent';
 export class Debugger extends BaseComponent {
   debugMode = false;
-  // disableCommands = config.environment === NodeEnv.DEVELOPMENT;
-  disableCommands = false;
+  disableCommands = config.environment === NodeEnv.DEVELOPMENT;
 
   static inMemoryDebugLog: any[] = [];
 
