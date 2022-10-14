@@ -16,7 +16,9 @@
     "build": "npm run build -w ./packages",
     "pm2-dev": "pm2 start --env development",
     "post-deploy": "pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env production",
-    "pre-deploy": "node ./predeploy.js"
+    "pre-deploy": "node ./hooks/predeploy.js",
+    "prepare-ecosystem": "node ./hooks/prepare-ecosystem.js",
+    "deploy:production": "pnpm prepare-ecosystem && pm2 deploy ./ecosystem.json production"
   },
   "devDependencies": {
     "pm2": "^5.2.2"

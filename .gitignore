@@ -123,3 +123,6 @@ dist
 .config.yml
 .DS_Store
 _update-server-config.zsh
+
+ecosystem/
+ecosystem.json
