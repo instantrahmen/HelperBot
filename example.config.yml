@@ -35,7 +35,6 @@ deploy:
     path: '/home/user1234/apps/helper-bot' # The path on the server where you want the app deployed
 
     # Pre and post deploy scripts for pm2. Shouldn't need changing unless you know what you're doing.
-    pre-deploy-local: 'pnpm run pre-deploy'
     post-deploy: pnpm run post-deploy
 
 ssh:
