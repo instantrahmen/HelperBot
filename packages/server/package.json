@@ -36,7 +36,7 @@
     "graphql": "^16.6.0",
     "libsodium-wrappers": "^0.7.9",
     "lodash": "^4.17.21",
-    "play-dl": "^1.9.5",
+    "play-dl": "^1.9.6",
     "safe-json-stringify": "^1.2.0",
     "ytpl": "^2.2.3"
   },

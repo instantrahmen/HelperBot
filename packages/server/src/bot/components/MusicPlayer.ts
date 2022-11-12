@@ -355,10 +355,11 @@ export class MusicPlayer extends BaseComponent {
   // #region Helpers
 
   async getVideoInfoAsQueueItem(url: url, user: User): Promise<QueueItem> {
+    console.log('getVideoInfoAsQueueItem', { url, user });
     try {
       const { video_details: videoDetails } = await video_basic_info(url);
 
-      // Debugger.log({ videoDetails });
+      Debugger.log({ videoDetails });
 
       return {
         title: videoDetails.title!,
@@ -370,6 +371,9 @@ export class MusicPlayer extends BaseComponent {
           videoDetails.thumbnails[videoDetails.thumbnails.length - 1],
       };
     } catch (e: any) {
+      // console.error(e.message);
+      Debugger.log({ error: e });
+
       throw new Error(`Unable to get video details for ${url}`);
     }
   }
