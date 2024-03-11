@@ -26,6 +26,7 @@ const ecosystem = {
    */
   deploy: {
     production: deploy.production,
+    production_old: deploy.production_old,
   },
 };
 
