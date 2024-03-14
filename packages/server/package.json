@@ -1,7 +1,7 @@
 {
   "name": "@helper/server",
   "license": "MIT",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "devDependencies": {
     "@types/death": "^1.1.2",
     "@types/node": "^16.9.0",
