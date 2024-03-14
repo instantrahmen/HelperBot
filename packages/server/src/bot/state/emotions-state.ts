@@ -308,7 +308,7 @@ export default class HelperEmotionsController {
       const image = getFynbotMoodImage(mood, moodStrength);
       message.reply({
         content: responses.join(' '),
-        files: [image],
+        // files: [image],
       });
       this.updateStatus();
     } else {
@@ -317,7 +317,7 @@ export default class HelperEmotionsController {
 
       message.reply({
         content: `What are you even trying to say?!`,
-        files: [FynbotMoodImages.angry[1]],
+        // files: [FynbotMoodImages.angry[1]],
       });
     }
 
