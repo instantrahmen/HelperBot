@@ -327,25 +327,25 @@ export default class HelperEmotionsController {
 
 const FynbotMoodImages = {
   happy: [
-    'https://media.discordapp.net/attachments/862794834800410657/888466807139217479/Fynbot_Sweet_Smile.png',
-    'https://media.discordapp.net/attachments/862794834800410657/888465266302910464/Fynbot_Smug.png',
-    'https://media.discordapp.net/attachments/862794834800410657/888465761499238470/download20210905174538.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888466807139217479/Fynbot_Sweet_Smile.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888465266302910464/Fynbot_Smug.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888465761499238470/download20210905174538.png',
   ],
   flustered: [
-    'https://media.discordapp.net/attachments/862794834800410657/888467277140348958/download20210905175139.png',
-    'https://media.discordapp.net/attachments/862794834800410657/888465348473524254/Fynbot_Yell.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888467277140348958/download20210905175139.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888465348473524254/Fynbot_Yell.png',
   ],
   angry: [
-    'https://media.discordapp.net/attachments/862794834800410657/888467802183319552/download20210905175344.png',
-    'https://media.discordapp.net/attachments/862794834800410657/888465382145417256/Fynbot_Annoyed.png',
-    'https://media.discordapp.net/attachments/862794834800410657/888465348473524254/Fynbot_Yell.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888467802183319552/download20210905175344.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888465382145417256/Fynbot_Annoyed.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888465348473524254/Fynbot_Yell.png',
   ],
   sad: [
-    'https://media.discordapp.net/attachments/862794834800410657/888465406799540235/Fynbot_Surprised.png',
-    'https://media.discordapp.net/attachments/862794834800410657/888465311349743646/Fynbot_Sad.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888465406799540235/Fynbot_Surprised.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888465311349743646/Fynbot_Sad.png',
   ],
   neutral: [
-    'https://media.discordapp.net/attachments/862794834800410657/888466807139217479/Fynbot_Sweet_Smile.png',
+    // 'https://media.discordapp.net/attachments/862794834800410657/888466807139217479/Fynbot_Sweet_Smile.png',
   ],
 };
 
