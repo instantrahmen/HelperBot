@@ -24,10 +24,10 @@ export default {
   status: 'starting',
   guilds: config.global.GUILDS,
   clientID: config.global.DISCORD_CLIENT_ID,
-  // guildId: config.global.DISCORD_GUILD_ID,
   botToken: config.global.DISCORD_BOT_TOKEN,
   clientSecret: config.global.DISCORD_CLIENT_SECRET,
   environment: config.environment,
+  debugMode: config.global.DEBUG_MODE,
   // Discord.js intents (https://discordjs.guide/popular-topics/intents.html#privileged-intents)
   intents: [
     Guilds,

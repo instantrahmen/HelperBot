@@ -13,6 +13,7 @@ export type GlobalConfigENV = {
   SUPABASE_SERVICE_KEY: string;
   SUPABASE_SECRET: string;
   GUILDS: string[];
+  DEBUG_MODE?: boolean;
 };
 
 export type GlobalConfig = {

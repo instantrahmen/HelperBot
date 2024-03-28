@@ -55,11 +55,18 @@ export const clamp = (max: number, num: number) => {
   return num;
 };
 
-export const wrap = (max: number, num: number) => {
-  return num >= 0 ? num % max : ((num % max) + max) % max;
+export const wrap = (max: number, n: number) => {
+  max = max + 1;
+  const min = 0;
+  const diff = max - min;
+  return min + ((((n - min) % diff) + diff) % diff);
 };
-
 export const wrapWithinArray = (arr: Array<any>, value: number) => {
+  console.log({
+    arr,
+    length: arr.length,
+    value,
+  });
   return wrap(arr.length, value);
 };
 

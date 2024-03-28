@@ -50,20 +50,21 @@ export class MusicPlayer extends BaseComponent {
   }
 
   public get nowPlaying() {
-    if (
-      this._nowPlaying === null ||
-      isNaN(this._nowPlaying) ||
-      !!this._nowPlaying
-    )
+    if (this._nowPlaying === null || isNaN(this._nowPlaying)) {
+      console.log('nowPlaying not a valid number, setting to 0', {
+        nowPlaying: this._nowPlaying,
+      });
+
       this._nowPlaying = 0;
+    }
     return this._nowPlaying;
   }
 
   public set nowPlaying(index: number) {
     console.log({ setNowPlaying: index });
-    if (!!index) {
+    if (!index) {
       if (index !== 0) {
-        console.error('Index not a number');
+        console.error('Index not a valid number');
       }
       this._nowPlaying = 0;
     } else {
@@ -85,13 +86,17 @@ export class MusicPlayer extends BaseComponent {
       console.log(
         `Audio player transitioned from ${oldState.status} to ${newState.status}`
       );
+
       if (
         oldState.status === AudioPlayerStatus.Playing &&
         newState.status === AudioPlayerStatus.Idle
       ) {
+        console.log('The song is over, playing next song...');
         // Play next song
         if (!this.autoplayDisabled) {
           this.nextSong();
+        } else {
+          console.log('Autoplay disabled.');
         }
       }
     });
@@ -208,18 +213,28 @@ export class MusicPlayer extends BaseComponent {
   }
 
   nextSong() {
+    console.log('playing next song', {
+      from: this.nowPlaying,
+      to: this.nowPlaying + 1,
+    });
     if (this.queue.length <= 0) return;
     this.gotoSong(this.nowPlaying + 1);
   }
 
   async gotoSong(index: number, method: 'wrap' | 'clamp' = 'wrap') {
+    console.log({
+      index,
+      method,
+    });
+
     this.autoplayDisabled = true;
-    if (!!index) index = 0;
+
     const newIndex =
       method === 'wrap'
         ? wrapWithinArray(this.queue, index)
         : clampWithinArray(this.queue, index);
 
+    console.log({ index, newIndex });
     this.stop();
     this.nowPlaying = newIndex;
     await this.play();
@@ -257,7 +272,9 @@ export class MusicPlayer extends BaseComponent {
 
   createQueueItem(song: string, user: User) {
     if (song.includes('spotify')) {
-      throw new Error('Spotify support coming soon!');
+      throw new Error(
+        'Spotify support coming soon! Please use YouTube for now.'
+      );
     }
 
     // validate youtube link
@@ -304,17 +321,18 @@ export class MusicPlayer extends BaseComponent {
     }
 
     return this.queue.length - 1;
-    // } catch (e: any) {
-    //   this.queue = oldQueue;
-    //   throw new Error(e);
-    // }
   }
 
   async addPlaylist(playlistUrl: url, user: User) {
     const playlistRes = await ytpl(playlistUrl, {});
+    const params = new URLSearchParams(playlistUrl);
+    const playlistIndex: number = parseInt(params.get('index') || '1') - 1;
+    const absoluteIndex = playlistIndex + this.queue.length;
+
+    const playlistStartingAtIndex = playlistRes.items.slice(playlistIndex);
 
     try {
-      const songPromises = playlistRes.items.map(
+      const songPromises = playlistStartingAtIndex.map(
         ({ title, url, thumbnails, author, bestThumbnail }) =>
           this.add(
             {
