@@ -3,16 +3,16 @@
   "license": "MIT",
   "version": "1.4.2",
   "devDependencies": {
-    "@types/death": "^1.1.2",
-    "@types/node": "^16.9.0",
+    "@types/death": "^1.1.5",
+    "@types/node": "^20.11.30",
     "@types/node-fetch": "^3.0.3",
-    "@types/safe-json-stringify": "^1.1.2",
-    "nodemon": "^2.0.20",
+    "@types/safe-json-stringify": "^1.1.5",
+    "nodemon": "^3.1.0",
     "prisma": "4.4.0",
     "prisma-schema-to-graphql": "^1.0.0",
-    "rimraf": "^3.0.2",
-    "ts-node": "10.9.1",
-    "typescript": "4.8.4"
+    "rimraf": "^5.0.5",
+    "ts-node": "10.9.2",
+    "typescript": "5.4.3"
   },
   "scripts": {
     "dev": "nodemon src/index.ts --signal SIGINT",
@@ -20,25 +20,25 @@
     "bot-only": "nodemon src/bot/index.ts"
   },
   "dependencies": {
-    "@discordjs/voice": "^0.13.0",
+    "@discordjs/voice": "^0.16.1",
     "@helper/common": "workspace:0.2.0",
     "@prisma/client": "4.4.0",
     "@types/dotenv": "^8.2.0",
-    "@types/lodash": "^4.14.186",
+    "@types/lodash": "^4.17.0",
     "apollo-server": "^3.10.3",
     "death": "^1.1.0",
-    "discord-api-types": "0.37.12",
-    "discord.js": "^14.6.0",
-    "dotenv": "^16.0.0",
-    "fastify": "^4.8.1",
+    "discord-api-types": "0.37.76",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.26.2",
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^5.1.0",
     "graphql": "^16.6.0",
     "libsodium-wrappers": "^0.7.9",
     "lodash": "^4.17.21",
-    "play-dl": "^1.9.6",
+    "play-dl": "^1.9.7",
     "safe-json-stringify": "^1.2.0",
-    "ytpl": "^2.2.3"
+    "ytpl": "^2.3.0"
   },
   "engines": {
     "node": ">=12.2.0"

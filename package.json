@@ -21,11 +21,11 @@
     "deploy:prod": "pnpm run deploy:production"
   },
   "devDependencies": {
-    "pm2": "^5.2.2"
+    "pm2": "^5.3.1"
   },
   "dependencies": {
-    "dotenv": "^16.0.3",
-    "node-scp": "^0.0.21",
-    "yaml": "^2.1.1"
+    "dotenv": "^16.4.5",
+    "node-scp": "^0.0.23",
+    "yaml": "^2.4.1"
   }
 }

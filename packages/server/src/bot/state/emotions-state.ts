@@ -81,7 +81,7 @@ export class GlobalState {
 export default class HelperEmotionsController {
   client: Client;
 
-  private updateTimer: NodeJS.Timer;
+  private updateTimer: NodeJS.Timeout;
 
   constructor() {
     this.client = botState.client;
@@ -161,6 +161,8 @@ export default class HelperEmotionsController {
     }
     if (!message.mentions.has(this.client.user.id)) return;
     if (message.mentions.everyone) return; // Don't respond to @everyone
+    if (message.mentions.roles.size > 0) return; // Don't respond to role mentions
+
     console.log({
       mentions: message.mentions,
     });
