@@ -104,26 +104,6 @@ export const commandState = {
     return data;
   },
 
-  // async setPermissions(apiCommands: APIAppCommand[][]) {
-  //   const response = await Promise.all(
-  //     apiCommands.map((commands) => {
-  //       return Promise.all(
-  //         commands.map(async (command) => {
-  //           const { guild_id: guildId, id: commandId } = command;
-
-  //           const fetchedCommand = await this.fetchCommandFromAPI(
-  //             guildId!,
-  //             commandId
-  //           );
-
-  //           return fetchedCommand;
-  //         })
-  //       );
-  //     })
-  //   );
-  //   return response;
-  // },
-
   async fetchCommandFromAPI(guildId: string, commandId: string) {
     const { client } = botState;
     return client.guilds.cache.get(guildId)?.commands.fetch(commandId);
@@ -138,10 +118,6 @@ class _AppCommand {
   constructor(commandOptions: Command) {
     this.commandOptions = commandOptions;
   }
-
-  // toCommandBase() {
-  //   return this.commandOptions as CommandBase;
-  // }
 
   toJSON() {
     // let newObject as API;

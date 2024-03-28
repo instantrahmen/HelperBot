@@ -28,10 +28,12 @@ app.get('/bot/debug', async () => {
   return stringify(Debugger.inMemoryDebugLog, null, 2);
 });
 
-// Run the server!
+// Run the server
 const start = async () => {
   try {
-    await app.listen(5000);
+    await app.listen({
+      port: 5000,
+    });
   } catch (err) {
     app.log.error(err);
     process.exit(1);
