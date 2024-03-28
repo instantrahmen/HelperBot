@@ -3,7 +3,6 @@ import { OptionType } from '../../types';
 
 import { mpState, MusicPlayer } from '../../components/MusicPlayer';
 import commandState from '../../components/Commands';
-import { Channel } from 'diagnostics_channel';
 
 export default () => {
   const { createCommand } = commandState;
@@ -27,7 +26,6 @@ export default () => {
         true
       ) as VoiceChannel;
 
-      const { id: channelId, guild, guildId } = channel;
       const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
 
       await interaction.reply({
@@ -37,11 +35,9 @@ export default () => {
       try {
         await mp.connectToChannel(channel);
 
-        const gif = 'https://c.tenor.com/bOR-CXcBQ8QAAAAC/djaymano-dj.gif';
-
         await interaction.editReply({
-          content: `DJ Helper in the house~ \n\n(joined ${channel.toString()})`,
-          files: [gif],
+          content: `Joined ${channel.toString()}`,
+          // files: [gif],
         });
       } catch (e: any) {
         const replyText = `Darn coudn't join ${channel.toString()}! \n ${
