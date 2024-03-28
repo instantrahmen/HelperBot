@@ -4,6 +4,8 @@
   "description": "Monorepo for Helper discord bot",
   "author": "Erika Cudd",
   "private": true,
+  "license": "MIT",
+  "repository": "https://github.com/instantrahmen/HelperBot",
   "workspaces": [
     "packages/server",
     "packages/web-panel",
@@ -13,6 +15,8 @@
     "dev": "npm run dev -w @helper/server",
     "web": "npm run dev -w @helper/web-panel",
     "build-server": "npm run build -w @helper/server",
+    "build-common": "npm run build -w @helper/common",
+    "build-web": "npm run build -w @helper/web-panel",
     "build": "npm run build -w ./packages",
     "pm2-dev": "pm2 start --env development",
     "post-deploy": "pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env production",

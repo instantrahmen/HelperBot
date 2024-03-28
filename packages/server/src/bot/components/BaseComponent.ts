@@ -75,7 +75,7 @@ export class ComponentState {
   }
 
   public createComponentsForEachGuild() {
-    return config.guilds.map((guildId) => {
+    return config.guilds.map((guildId: string) => {
       return this.createComponent(guildId);
     });
   }
