@@ -121,8 +121,14 @@ dist
 # Project-wide config file
 *.env.*
 .config.yml
+*.config.yml
+# Don't ignore example config files
+!example.config.yml
+!example.public.config.yml
 .DS_Store
 _update-server-config.zsh
 
 ecosystem/
 ecosystem.json
+
+pb_data/
