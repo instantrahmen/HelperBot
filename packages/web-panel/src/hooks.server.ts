@@ -4,7 +4,7 @@ import type { TypedPocketBase } from '$lib/types/gen/pocketbase-types';
 
 import { PUBLIC_PB_URL as PB_URL } from '$env/static/public';
 import { serializeNonPOJOs } from '$lib/utils/';
-import { pb } from '$lib/pocketbase';
+import { pb } from '$lib/pocketbase.server';
 
 export const handle = async ({ event, resolve }) => {
   // event.locals.pb = new PocketBase(PB_URL) as TypedPocketBase;
@@ -23,10 +23,13 @@ export const handle = async ({ event, resolve }) => {
   } else {
     event.locals.user = undefined;
   }
-
+  const isProd = process.env.NODE_ENV === 'production';
   const response = await resolve(event);
 
-  response.headers.append('set-cookie', event.locals.pb.authStore.exportToCookie());
+  response.headers.append(
+    'set-cookie',
+    event.locals.pb.authStore.exportToCookie({ secure: isProd, sameSite: 'lax' })
+  );
 
   return response;
 };

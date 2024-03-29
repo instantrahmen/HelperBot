@@ -1,8 +1,4 @@
 <script lang="ts">
-  import { getDiscordProvider, createDiscordOath2Url } from '$lib/utils/auth';
-  import { onMount } from 'svelte';
-  import { pb } from '$lib/pocketbase';
-  import { page } from '$app/stores';
 </script>
 
 <main>

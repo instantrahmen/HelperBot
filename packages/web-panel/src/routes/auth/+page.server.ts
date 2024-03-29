@@ -49,7 +49,7 @@ const authWithDiscord = async (locals: App.Locals) => {
     });
 
     locals.user = res.record;
-    locals.oauth2State = { accessToken: res.meta?.accessToken };
+    locals.oauth2State = { accessToken: res.meta?.accessToken, meta: res.meta };
   } catch (err: any) {
     throw err;
   }
