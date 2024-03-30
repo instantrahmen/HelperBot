@@ -6,10 +6,6 @@ declare global {
     interface Locals {
       pb: import('./lib/types/gen/pocketbase-types').TypedPocketBase;
       user?: import('./lib/types/gen/pocketbase-types').UsersResponse;
-      oauth2State?: {
-        accessToken: string;
-        meta: any;
-      };
     }
     // interface PageData {}
     // interface PageState {}

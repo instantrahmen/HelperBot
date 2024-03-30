@@ -12,9 +12,7 @@ export const load = async ({ locals }) => {
 
 export const actions: Actions = {
   // Discord OAuth login action
-  default: async ({ cookies, url, locals }) => {
-    // const authMethods = await locals.pb.collection('users').listAuthMethods();
-
+  login: async ({ cookies, url, locals }) => {
     const redirectURL = `${url.origin}/auth/callback`;
 
     const [discordAuthProvider, authProviderUrl] = await createDiscordOath2Url(redirectURL, [
@@ -22,13 +20,6 @@ export const actions: Actions = {
       'email',
       'guilds',
     ]);
-
-    // const authProviderUrl = `${discordAuthProvider.authUrl}${redirectURL}`;
-    // const authProviderUrl = await createDiscordOath2Url(redirectURL, [
-    //   'identify',
-    //   'email',
-    //   'guilds',
-    // ]);
 
     const state = discordAuthProvider.state;
     const verifier = discordAuthProvider.codeVerifier;

@@ -1,33 +1,30 @@
 <script lang="ts">
   import Activity from 'lucide-svelte/icons/activity';
   import ArrowUpRight from 'lucide-svelte/icons/arrow-up-right';
-  import CircleUser from 'lucide-svelte/icons/circle-user';
   import CreditCard from 'lucide-svelte/icons/credit-card';
   import DollarSign from 'lucide-svelte/icons/dollar-sign';
-  import Menu from 'lucide-svelte/icons/menu';
-  import Package2 from 'lucide-svelte/icons/package-2';
-  import Search from 'lucide-svelte/icons/search';
   import Users from 'lucide-svelte/icons/users';
 
   import * as Avatar from '$lib/components/ui/avatar/';
-  import { Badge } from '$lib/components/ui/badge/';
   import { Button } from '$lib/components/ui/button/';
   import * as Card from '$lib/components/ui/card/';
-  import * as DropdownMenu from '$lib/components/ui/dropdown-menu/';
-  import { Input } from '$lib/components/ui/input/';
-  import * as Sheet from '$lib/components/ui/sheet/';
-  import * as Table from '$lib/components/ui/table/';
+
+  import { userStore } from '$lib/stores/user.svelte';
+  import { activeGuildStore } from '$lib/stores/active-guild.svelte';
+
+  let userState = userStore();
+  let guild = activeGuildStore();
 </script>
 
 <main class="flex flex-1 flex-col gap-4 p-4 md:gap-8">
   <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
     <Card.Root>
       <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-        <Card.Title class="text-sm font-medium">Total Revenue</Card.Title>
+        <Card.Title class="text-sm font-medium">Active Server</Card.Title>
         <DollarSign class="h-4 w-4 text-muted-foreground" />
       </Card.Header>
       <Card.Content>
-        <div class="text-2xl font-bold">$45,231.89</div>
+        <div class="text-2xl font-bold">{guild.state.selected.value}</div>
         <p class="text-xs text-muted-foreground">+20.1% from last month</p>
       </Card.Content>
     </Card.Root>
@@ -66,8 +63,8 @@
     <Card.Root class="xl:col-span-2">
       <Card.Header class="flex flex-row items-center">
         <div class="grid gap-2">
-          <Card.Title>Transactions</Card.Title>
-          <Card.Description>Recent transactions from your store.</Card.Description>
+          <Card.Title>Server Info</Card.Title>
+          <Card.Description>Discord server info</Card.Description>
         </div>
         <Button href="##" size="sm" class="ml-auto gap-1">
           View All
@@ -75,7 +72,9 @@
         </Button>
       </Card.Header>
       <Card.Content>
-        <Table.Root>
+        <!-- <pre>{JSON.stringify(userState, null, 2)}</pre> -->
+        <pre>{JSON.stringify(guild, null, 2)}</pre>
+        <!-- <Table.Root>
           <Table.Header>
             <Table.Row>
               <Table.Head>Customer</Table.Head>
@@ -157,7 +156,7 @@
               <Table.Cell class="text-right">$550.00</Table.Cell>
             </Table.Row>
           </Table.Body>
-        </Table.Root>
+        </Table.Root> -->
       </Card.Content>
     </Card.Root>
     <Card.Root>
@@ -167,7 +166,10 @@
       <Card.Content class="grid gap-8">
         <div class="flex items-center gap-4">
           <Avatar.Root class="hidden h-9 w-9 sm:flex">
-            <Avatar.Image src="/avatars/01.png" alt="Avatar" />
+            <Avatar.Image
+              src="https://placewaifu.com/image/200?random={Math.random()}"
+              alt="Avatar"
+            />
             <Avatar.Fallback>OM</Avatar.Fallback>
           </Avatar.Root>
           <div class="grid gap-1">
@@ -178,7 +180,10 @@
         </div>
         <div class="flex items-center gap-4">
           <Avatar.Root class="hidden h-9 w-9 sm:flex">
-            <Avatar.Image src="/avatars/02.png" alt="Avatar" />
+            <Avatar.Image
+              src="https://placewaifu.com/image/200?random={Math.random()}"
+              alt="Avatar"
+            />
             <Avatar.Fallback>JL</Avatar.Fallback>
           </Avatar.Root>
           <div class="grid gap-1">
@@ -189,7 +194,10 @@
         </div>
         <div class="flex items-center gap-4">
           <Avatar.Root class="hidden h-9 w-9 sm:flex">
-            <Avatar.Image src="/avatars/03.png" alt="Avatar" />
+            <Avatar.Image
+              src="https://placewaifu.com/image/200?random={Math.random()}"
+              alt="Avatar"
+            />
             <Avatar.Fallback>IN</Avatar.Fallback>
           </Avatar.Root>
           <div class="grid gap-1">
@@ -200,7 +208,10 @@
         </div>
         <div class="flex items-center gap-4">
           <Avatar.Root class="hidden h-9 w-9 sm:flex">
-            <Avatar.Image src="/avatars/04.png" alt="Avatar" />
+            <Avatar.Image
+              src="https://placewaifu.com/image/200?random={Math.random()}"
+              alt="Avatar"
+            />
             <Avatar.Fallback>WK</Avatar.Fallback>
           </Avatar.Root>
           <div class="grid gap-1">
@@ -211,7 +222,10 @@
         </div>
         <div class="flex items-center gap-4">
           <Avatar.Root class="hidden h-9 w-9 sm:flex">
-            <Avatar.Image src="/avatars/05.png" alt="Avatar" />
+            <Avatar.Image
+              src="https://placewaifu.com/image/200?random={Math.random()}"
+              alt="Avatar"
+            />
             <Avatar.Fallback>SD</Avatar.Fallback>
           </Avatar.Root>
           <div class="grid gap-1">
