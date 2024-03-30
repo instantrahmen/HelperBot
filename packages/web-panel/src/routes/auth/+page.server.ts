@@ -1,4 +1,5 @@
 import type { UsersResponse } from '$lib/types/gen/pocketbase-types';
+import { createDiscordOath2Url } from '$lib/utils/auth';
 import { redirect, type Actions, fail } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
@@ -6,25 +7,28 @@ export const load = async ({ locals }) => {
     redirect(303, '/');
   }
 
-  return {
-    // form,
-  };
+  return {};
 };
 
 export const actions: Actions = {
+  // Discord OAuth login action
   default: async ({ cookies, url, locals }) => {
-    const authMethods = await locals.pb.collection('users').listAuthMethods();
+    // const authMethods = await locals.pb.collection('users').listAuthMethods();
 
     const redirectURL = `${url.origin}/auth/callback`;
-    const discordAuthProvider = authMethods.authProviders.find(
-      (provider) => provider.name === 'discord'
-    );
 
-    if (!discordAuthProvider) {
-      throw fail(500, { message: 'Discord provider not found' });
-    }
+    const [discordAuthProvider, authProviderUrl] = await createDiscordOath2Url(redirectURL, [
+      'identify',
+      'email',
+      'guilds',
+    ]);
 
-    const authProviderUrl = `${discordAuthProvider.authUrl}${redirectURL}`;
+    // const authProviderUrl = `${discordAuthProvider.authUrl}${redirectURL}`;
+    // const authProviderUrl = await createDiscordOath2Url(redirectURL, [
+    //   'identify',
+    //   'email',
+    //   'guilds',
+    // ]);
 
     const state = discordAuthProvider.state;
     const verifier = discordAuthProvider.codeVerifier;
@@ -39,18 +43,4 @@ export const actions: Actions = {
 
     throw redirect(302, authProviderUrl);
   },
-};
-
-const authWithDiscord = async (locals: App.Locals) => {
-  try {
-    const res = await locals.pb.collection('users').authWithOAuth2({
-      provider: 'discord',
-      scopes: ['identify', 'email', 'guilds'],
-    });
-
-    locals.user = res.record;
-    locals.oauth2State = { accessToken: res.meta?.accessToken, meta: res.meta };
-  } catch (err: any) {
-    throw err;
-  }
 };

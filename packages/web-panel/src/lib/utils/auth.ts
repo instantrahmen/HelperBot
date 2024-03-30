@@ -1,16 +1,22 @@
-import {pb} from '$lib/pocketbase';
-
-export const getDiscordProvider = async () => {
+import { pb } from '$lib/pocketbase.server';
+import type { AuthProviderInfo } from 'pocketbase';
+export const getDiscordProvider = async (): Promise<AuthProviderInfo> => {
   const authMethods = await pb.collection('users').listAuthMethods();
-
   const discordAuthMethod = authMethods.authProviders.find(
     (provider) => provider.name === 'discord'
   );
 
-  return discordAuthMethod;
-}
+  if (!discordAuthMethod) {
+    throw new Error('Discord provider not found');
+  }
 
-export const createDiscordOath2Url = async (redirectUri: string, scopes: string[] = ['identify', 'email', 'guilds']): Promise<string> => {
+  return discordAuthMethod;
+};
+
+export const createDiscordOath2Url = async (
+  redirectUri: string,
+  scopes: string[] = ['identify', 'email', 'guilds']
+): Promise<[AuthProviderInfo, string]> => {
   const provider = await getDiscordProvider();
   if (!provider) {
     throw new Error('Discord provider not found');
@@ -18,9 +24,9 @@ export const createDiscordOath2Url = async (redirectUri: string, scopes: string[
   const url = new URL(provider.authUrl);
   url.searchParams.set('redirect_uri', redirectUri);
   url.searchParams.set('scope', scopes.join('+'));
-  
+
   console.log(url.href, url.toString());
 
   // replace %2B with + since discord doesn't like it when the + is encoded
-  return url.href.replaceAll('%2B', '+');
-}
+  return [provider, url.href.replaceAll('%2B', '+')];
+};

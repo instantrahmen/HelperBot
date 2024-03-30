@@ -47,15 +47,16 @@ export type GuildsRecord = {
 	name?: string
 }
 
-export type UsersRecord = {
+export type UsersRecord<Tmeta = unknown> = {
 	avatar?: string
+	meta?: null | Tmeta
 	name?: string
 }
 
 // Response types include system fields and match responses from the PocketBase API
 export type CommandsResponse<Tdata = unknown, Texpand = unknown> = Required<CommandsRecord<Tdata>> & BaseSystemFields<Texpand>
 export type GuildsResponse<Texpand = unknown> = Required<GuildsRecord> & BaseSystemFields<Texpand>
-export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
+export type UsersResponse<Tmeta = unknown, Texpand = unknown> = Required<UsersRecord<Tmeta>> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 

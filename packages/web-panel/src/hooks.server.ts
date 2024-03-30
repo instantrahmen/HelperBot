@@ -1,14 +1,7 @@
-import PocketBase from 'pocketbase';
-
-import type { TypedPocketBase } from '$lib/types/gen/pocketbase-types';
-
-import { PUBLIC_PB_URL as PB_URL } from '$env/static/public';
 import { serializeNonPOJOs } from '$lib/utils/';
 import { pb } from '$lib/pocketbase.server';
 
 export const handle = async ({ event, resolve }) => {
-  // event.locals.pb = new PocketBase(PB_URL) as TypedPocketBase;
-
   event.locals.pb = pb;
 
   event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
@@ -26,6 +19,8 @@ export const handle = async ({ event, resolve }) => {
   const isProd = process.env.NODE_ENV === 'production';
   const response = await resolve(event);
 
+  // Lax is unforunately required for the authstore to work properly after a redirect.
+  // More info: https://github.com/pocketbase/pocketbase/discussions/903
   response.headers.append(
     'set-cookie',
     event.locals.pb.authStore.exportToCookie({ secure: isProd, sameSite: 'lax' })
