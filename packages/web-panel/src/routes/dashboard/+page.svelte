@@ -161,7 +161,7 @@
     </Card.Root>
     <Card.Root>
       <Card.Header>
-        <Card.Title>Recent Sales</Card.Title>
+        <Card.Title>Members</Card.Title>
       </Card.Header>
       <Card.Content class="grid gap-8">
         <div class="flex items-center gap-4">

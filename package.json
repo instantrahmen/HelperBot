@@ -9,7 +9,8 @@
   "workspaces": [
     "packages/server",
     "packages/web-panel",
-    "packages/common"
+    "packages/common",
+    "packages/config"
   ],
   "scripts": {
     "dev": "npm run dev -w @helper/server",

@@ -26,3 +26,34 @@ export const fetchGuilds = async (fetch: Fetch, authToken?: string): Promise<API
 
 export const createBotInviteLink = () =>
   `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot`;
+
+type VerifiedAccessToken =
+  | {
+      ok: true;
+      message: undefined;
+    }
+  | {
+      ok: false;
+      message: string;
+    };
+
+export const verifyAccessToken = async (
+  accessToken: string | undefined
+): Promise<VerifiedAccessToken> => {
+  if (!accessToken) {
+    return { ok: false, message: 'No access token provided' };
+  }
+
+  // Check if access token is valid
+  const { ok, status } = await fetch('https://discord.com/api/v10/users/@me', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!ok) {
+    return { ok: false, message: 'Invalid access token' };
+  }
+
+  return { ok: true };
+};

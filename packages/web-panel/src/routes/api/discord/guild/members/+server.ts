@@ -19,14 +19,14 @@ export const GET = async ({ cookies, locals, url, fetch, request }) => {
     return new Response(JSON.stringify({ message: 'No guild id provided' }), { status: 400 });
   }
 
-  const guildData = await fetchGuildData(botToken, guildId);
+  const guildData = await fetchGuildMembers(botToken, guildId);
 
   return new Response(JSON.stringify(guildData));
 };
 
-const fetchGuildData = async (accessToken: string, guildId: string) => {
+const fetchGuildMembers = async (accessToken: string, guildId: string) => {
   try {
-    const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}`, {
+    const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members`, {
       headers: {
         Authorization: `Bot ${accessToken}`,
       },
@@ -34,6 +34,6 @@ const fetchGuildData = async (accessToken: string, guildId: string) => {
     return res;
   } catch (err) {
     console.error(err);
-    return {};
+    return [];
   }
 };

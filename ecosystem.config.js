@@ -17,6 +17,18 @@ const ecosystem = {
         NODE_ENV: 'development',
       },
     },
+
+    // Helper Web Panel
+    {
+      name: 'Helper Panel',
+      script: './packages/web-panel/dist/index.js',
+      env_production: {
+        NODE_ENV: 'production',
+      },
+      env_development: {
+        NODE_ENV: 'development',
+      },
+    },
   ],
 
   /**

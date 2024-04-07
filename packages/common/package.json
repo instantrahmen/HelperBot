@@ -2,7 +2,7 @@
   "name": "@helper/common",
   "version": "0.2.0",
   "author": "erika_tho",
-  "module": "dist/common.esm.js",
+  "module": "dist/index.mjs",
   "size-limit": [
     {
       "path": "dist/common.cjs.production.min.js",
@@ -24,14 +24,15 @@
     "node": ">=10"
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "start:tsdx": "tsdx watch",
+    "build:tsdx": "tsdx build",
+    "prepare:tsdx": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "dev": "npm run start"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "clean": "rimraf dist"
   },
   "husky": {
     "hooks": {
@@ -39,6 +40,7 @@
     }
   },
   "dependencies": {
+    "config": "workspace:0.1.0",
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^16.9.0",
     "@types/yaml": "^1.9.7",
@@ -46,8 +48,13 @@
     "yaml": "^2.1.1"
   },
   "devDependencies": {
+    "@modyfi/vite-plugin-yaml": "^1.1.0",
     "pm2": "^5.2.0",
     "pnpm": "^7.2.0",
-    "tsdx": "^0.14.1"
+    "rimraf": "^5.0.5",
+    "tsdx": "^0.14.1",
+    "vite": "^5.2.6",
+    "vite-plugin-dts": "^3.8.1",
+    "vite-plugin-node": "^3.1.0"
   }
 }

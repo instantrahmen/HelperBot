@@ -1,10 +1,13 @@
 import { serializeNonPOJOs } from '$lib/utils/';
 import { pb } from '$lib/pocketbase.server';
+import type { UsersRecord, TypedPocketBase, UsersResponse } from '$lib/types/gen/pocketbase-types';
 
 export const handle = async ({ event, resolve }) => {
   event.locals.pb = pb;
 
+  // Load auth store from cookies and refresh if necessary
   event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
+
   try {
     event.locals.pb.authStore.isValid && (await event.locals.pb.collection('users').authRefresh());
   } catch (_) {
