@@ -14,7 +14,6 @@
   import { Button } from '$lib/components/ui/button/';
   import * as Card from '$lib/components/ui/card/';
 
-  import { userStore } from '$lib/stores/user.svelte';
   import { activeGuildStore } from '$lib/stores/active-guild.svelte';
   import { fetchGuildData, guildDataStore } from '$lib/stores/guild-data.svelte';
   import { cn, createBotInviteLink } from '$lib/utils';

@@ -1,7 +1,7 @@
 // Server only discord utils go here
 import { getConfig } from '$lib/utils/config.server';
 import type { APIGuild } from 'discord.js';
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits, REST } from 'discord.js';
 
 import type { Fetch } from '$lib/types';
 import type { CompleteGuildDataResponse, GuildMemberResponse } from '$lib/types/discord';
@@ -140,3 +140,6 @@ export const fetchCompleteGuildData = async ({
   const [guild, members] = await Promise.all([guildPromise, membersPromise]);
   return { ...guild, members };
 };
+
+export const rest = new REST({ version: '10' }).setToken(botToken);
+// export const createREST = () => new REST({ version: '10' }).setToken(botToken);

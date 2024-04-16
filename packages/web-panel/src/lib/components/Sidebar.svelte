@@ -76,6 +76,7 @@
             class="rounded-lg"
             aria-label={link.name}
             builders={[builder]}
+            href={link.href}
           >
             <svelte:component this={link.icon} class="size-5" />
           </Button>
