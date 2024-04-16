@@ -1,64 +1,33 @@
 // import { createStore } from './store.svelte';
 import type { Selected } from 'bits-ui';
-import { createStore } from './store.svelte';
-import type { APIGuild, APIGuildMember } from 'discord-api-types/v10';
+import { createStore, type Store } from './store.svelte';
+import type { APIGuild } from 'discord-api-types/v10';
+import type { GuildMemberResponse } from '$lib/types/discord';
+import { browser } from '$app/environment';
+import { type MetaGuilds, userStore, type UserState } from './user.svelte';
 
-interface ActiveGuildState {
-  selected: Selected<string>;
-  guildData: APIGuild | null | 'loading';
-  guildMembers: APIGuildMember[];
-}
+export type ActiveGuildState = {
+  selected?: Selected<string> & MetaGuilds;
+  // guildData: APIGuild | null;
+  // guildMembers: GuildMemberResponse[];
+  // info: GuildInfo | null;
+};
 
-export const activeGuildStore = createStore<ActiveGuildState>(
-  {
-    selected: { value: '', label: '' },
-    guildData: null,
-    guildMembers: [],
-  },
-  'ACTIVE_GUILD_CTX'
-);
+export const activeGuildContext = 'ACTIVE_GUILD_CTX';
 
-export const fetchGuildData = async (accessToken: string, guildId?: string) => {
-  guildId = guildId || activeGuildStore().state.selected.value;
-  const guildStore = activeGuildStore();
+export const activeGuildStore = createStore<ActiveGuildState>({}, activeGuildContext);
 
-  guildStore.state.guildData = 'loading';
+export const setActiveGuild = (
+  guildId: string,
+  guildState: Store<ActiveGuildState>,
+  userState: Store<UserState>
+) => {
+  const guilds = userState.state.auth?.meta.guilds || [];
+  const guild = guilds.find((g) => g.id === guildId);
 
-  if (!guildId) {
-    guildStore.state.guildData = null;
-    return null;
-  }
-
-  try {
-    const res = await fetch(`/api/discord/guild?guildId=${guildId}`).then((res) => res.json());
-    guildStore.state.guildData = res;
-    return res;
-  } catch (err) {
-    console.error(err);
-    guildStore.state.guildData = null;
-    return null;
+  if (guild) {
+    guildState.state.selected = { value: guild.id, label: guild.name, ...guild };
   }
 };
 
-export const fetchGuildMembers = async (accessToken: string, guildId?: string) => {
-  guildId = guildId || activeGuildStore().state.selected.value;
-  const guildStore = activeGuildStore();
-
-  if (!guildId) {
-    guildStore.state.guildMembers = [];
-    return null;
-  }
-
-  try {
-    const res = await fetch(`/api/discord/guild/members?guildId=${guildId}`).then((res) =>
-      res.json()
-    );
-    guildStore.state.guildMembers = res;
-    return res;
-  } catch (err) {
-    console.error(err);
-    guildStore.state.guildMembers = [];
-    return null;
-  }
-};
 export default activeGuildStore;

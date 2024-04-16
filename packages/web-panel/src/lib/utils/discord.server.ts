@@ -1,14 +1,46 @@
 // Server only discord utils go here
 import { getConfig } from '$lib/utils/config.server';
 import type { APIGuild } from 'discord.js';
+import { Client, Events, GatewayIntentBits } from 'discord.js';
+
+import type { Fetch } from '$lib/types';
+import type { CompleteGuildDataResponse, GuildMemberResponse } from '$lib/types/discord';
 
 const config = getConfig();
 const {
   global: { DISCORD_BOT_TOKEN: botToken, DISCORD_CLIENT_ID: clientId },
 } = config;
 
-type Fetch = (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>;
+// Set up Discord client
+const {
+  Guilds,
+  GuildMembers,
+  GuildMessages,
+  MessageContent,
+  DirectMessages,
+  GuildPresences,
+  GuildIntegrations,
+} = GatewayIntentBits;
 
+export const createClient = async () => {
+  const client = new Client({
+    intents: [
+      Guilds,
+      GuildMembers,
+      GuildMessages,
+      MessageContent,
+      DirectMessages,
+      GuildPresences,
+      GuildIntegrations,
+    ],
+  });
+
+  await client.login(botToken);
+
+  return client;
+};
+
+// API Helpers
 export const fetchGuilds = async (fetch: Fetch, authToken?: string): Promise<APIGuild[]> => {
   const Authorization = authToken ? `Bearer ${authToken}` : `Bot ${botToken}`;
 
@@ -23,9 +55,6 @@ export const fetchGuilds = async (fetch: Fetch, authToken?: string): Promise<API
     throw new Error(err.message);
   }
 };
-
-export const createBotInviteLink = () =>
-  `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot`;
 
 type VerifiedAccessToken =
   | {
@@ -55,5 +84,59 @@ export const verifyAccessToken = async (
     return { ok: false, message: 'Invalid access token' };
   }
 
-  return { ok: true };
+  return { ok: true, message: undefined };
+};
+
+export const fetchGuildMembers = async (
+  client: Client,
+  guildId: string
+): Promise<GuildMemberResponse[]> => {
+  const guild = await client.guilds.fetch(guildId);
+
+  const members = await guild.members.fetch();
+  return (
+    members
+      .map((member) => {
+        return {
+          id: member.id,
+          username: member.user.username,
+          displayName: member.displayName,
+          avatar: member.displayAvatarURL(),
+          data: member,
+          joinedTimestamp: member.joinedTimestamp || Date.now(),
+          user: member.user,
+          status: member.presence?.status || 'offline',
+        };
+      })
+      // Remove Activities member
+      .filter((member) => member.username !== 'Activities')
+  );
+};
+
+export const fetchGuildData = (guildId: string, fetch: Fetch): Promise<APIGuild> => {
+  try {
+    return fetch(`https://discord.com/api/v10/guilds/${guildId}`, {
+      headers: {
+        Authorization: `Bot ${botToken}`,
+      },
+    }).then((res) => res.json()) as Promise<APIGuild>;
+  } catch (err: any) {
+    throw new Error(err.message);
+  }
+};
+
+export const fetchCompleteGuildData = async ({
+  guildId,
+  client,
+  fetch,
+}: {
+  guildId: string;
+  client: Client;
+  fetch: Fetch;
+}): Promise<CompleteGuildDataResponse> => {
+  const guildPromise = fetchGuildData(guildId, fetch);
+  const membersPromise = fetchGuildMembers(client, guildId);
+
+  const [guild, members] = await Promise.all([guildPromise, membersPromise]);
+  return { ...guild, members };
 };

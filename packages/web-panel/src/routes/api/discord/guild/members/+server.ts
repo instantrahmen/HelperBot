@@ -1,15 +1,17 @@
-import { getConfig } from '$lib/utils/config.server';
-import { verifyAccessToken } from '$lib/utils/discord.server';
+import type { GuildMemberResponse } from '$lib/types/discord';
+import { createClient, fetchGuildMembers, verifyAccessToken } from '$lib/utils/discord.server';
 
-export const GET = async ({ cookies, locals, url, fetch, request }) => {
+export const GET = async ({ cookies, locals, url, request }): Promise<Response> => {
   const guildId = url.searchParams.get('guildId');
-  const {
-    global: { DISCORD_BOT_TOKEN: botToken },
-  } = getConfig();
+
   const accessToken =
     cookies.get('accessToken') || request.headers.get('authorization')?.replace('Bearer ', '');
 
   const { ok, message } = await verifyAccessToken(accessToken);
+
+  if (!locals.discord.client) {
+    locals.discord.client = await createClient();
+  }
 
   if (!ok) {
     return new Response(JSON.stringify({ message }), { status: 401 });
@@ -19,21 +21,7 @@ export const GET = async ({ cookies, locals, url, fetch, request }) => {
     return new Response(JSON.stringify({ message: 'No guild id provided' }), { status: 400 });
   }
 
-  const guildData = await fetchGuildMembers(botToken, guildId);
+  const guildData = await fetchGuildMembers(locals.discord.client, guildId);
 
   return new Response(JSON.stringify(guildData));
-};
-
-const fetchGuildMembers = async (accessToken: string, guildId: string) => {
-  try {
-    const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members`, {
-      headers: {
-        Authorization: `Bot ${accessToken}`,
-      },
-    }).then((res) => res.json());
-    return res;
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
 };

@@ -5,7 +5,10 @@ declare global {
     // interface Error {}
     interface Locals {
       pb: import('./lib/types/gen/pocketbase-types').TypedPocketBase;
-      user?: import('./lib/types/gen/pocketbase-types').UsersResponse;
+      user?: import('./lib/types/').UserType;
+      discord: {
+        client: import('discord.js').Client | undefined;
+      };
     }
     // interface PageData {}
     // interface PageState {}

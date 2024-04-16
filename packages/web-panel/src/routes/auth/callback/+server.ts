@@ -26,22 +26,13 @@ export const GET = async ({ cookies, url, locals, fetch }) => {
 
     if (!res.meta?.accessToken) throw new Error('No access token provided');
 
-    // const userGuilds: Partial<APIGuild>[] = await fetch(
-    //   'https://discord.com/api/v10/users/@me/guilds',
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${res.meta?.accessToken}`,
-    //     },
-    //   }
-    // ).then((res) => res.json());
-
     const userGuilds = await fetchGuilds(fetch, res.meta?.accessToken);
     const botGuilds = (await fetchGuilds(fetch)).map((guild) => guild.id);
 
     // filter guilds in which the user has admin permissions and sort them with bot access first
-    const adminPermissionsCode = '562949953421311';
+    const adminPermissionsCodes = ['562949953421311', '1125899906842623'];
     const adminGuilds = userGuilds
-      .filter((guild) => guild.permissions === adminPermissionsCode)
+      .filter((guild) => adminPermissionsCodes.includes(guild.permissions || '0'))
       .map((guild) => ({
         id: guild.id,
         name: guild.name,
@@ -50,14 +41,15 @@ export const GET = async ({ cookies, url, locals, fetch }) => {
       }))
       .sort((a, b) => (a.botAccess ? -1 : 1));
 
+    console.log({
+      adminGuilds,
+      userGuilds,
+    });
+
     locals.user = await locals.pb
       .collection('users')
       .update(res.record.id, { meta: { guilds: adminGuilds || [] } });
 
-    // set oauth2 state
-    // locals.oauth2State = { accessToken: res.meta?.accessToken, meta: res.meta };
-    // locals.accessToken = res.meta?.accessToken || '';
-    // locals.meta = res.meta || undefined;
     cookies.set('accessToken', res.meta?.accessToken, {
       path: '/',
     });
@@ -67,7 +59,6 @@ export const GET = async ({ cookies, url, locals, fetch }) => {
 
     await locals.pb.collection('users').authRefresh();
 
-    console.log(locals.user);
     console.log('success');
   } catch (err: any) {
     console.error(err);

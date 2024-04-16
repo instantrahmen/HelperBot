@@ -4,6 +4,7 @@
     name: string;
     icon: any;
     href: string;
+    disabled?: boolean;
   };
 </script>
 
@@ -13,7 +14,7 @@
   import SquareUser from 'lucide-svelte/icons/square-user';
   import LogOut from 'lucide-svelte/icons/log-out';
 
-  import { Button } from '$lib/components/ui/button/';
+  import { Button } from '$lib/components/ui/button/index';
   import * as Tooltip from '$lib/components/ui/tooltip/';
   import { page } from '$app/stores';
 
@@ -56,6 +57,7 @@
             aria-label={link.name}
             builders={[builder]}
             href={link.href}
+            disabled={link.disabled}
           >
             <svelte:component this={link.icon} class="size-5" />
           </Button>
@@ -83,6 +85,3 @@
     {/each}
   </nav>
 </aside>
-
-<style lang="postcss">
-</style>
