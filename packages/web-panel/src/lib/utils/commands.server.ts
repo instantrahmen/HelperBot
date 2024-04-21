@@ -1,5 +1,4 @@
 import type { CacheType, Client, Interaction, Message } from 'discord.js';
-import { createClient } from './discord.server';
 import { CommandsTypeOptions, type CommandsResponse } from '$lib/types/gen/pocketbase-types';
 import { pb } from '$lib/pocketbase.server';
 

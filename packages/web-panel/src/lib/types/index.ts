@@ -18,6 +18,6 @@ export interface Meta {
   isNew: boolean;
 }
 
-export type UserType = UserResponse & {
+export type UserType = UsersRecord & {
   meta: Meta;
 };
