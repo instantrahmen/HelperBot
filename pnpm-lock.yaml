@@ -170,6 +170,9 @@ importers:
       '@helper/common':
         specifier: workspace:0.2.0
         version: link:../common
+      '@zerodevx/svelte-json-view':
+        specifier: ^1.0.9
+        version: 1.0.9(svelte@5.0.0-next.85)
       bits-ui:
         specifier: ^0.21.1
         version: 0.21.1(svelte@5.0.0-next.85)
@@ -203,6 +206,9 @@ importers:
       pocketbase:
         specifier: ^0.21.1
         version: 0.21.1
+      svelte-json-tree:
+        specifier: ^2.2.0
+        version: 2.2.0(svelte@5.0.0-next.85)
       svelte-loading-spinners:
         specifier: ^0.3.6
         version: 0.3.6
@@ -3789,6 +3795,14 @@ packages:
   /@vue/shared@3.4.21:
     resolution: {integrity: sha512-PuJe7vDIi6VYSinuEbUIQgMIRZGgM8e4R+G+/dQTk0X1NEdvgvvgv7m+rfmDH1gZzyA1OjjoWskvHlfRNfQf3g==}
     dev: true
+
+  /@zerodevx/svelte-json-view@1.0.9(svelte@5.0.0-next.85):
+    resolution: {integrity: sha512-2KKxBfDxEo7lM/kJSy+m1PdLAp5Q9c5nB6OYVBg7oWPdCLXB9JVH1Ytxn2hkqTn77m9MobqGI1fz9FFOTPONfA==}
+    peerDependencies:
+      svelte: ^3.57.0 || ^4.0.0
+    dependencies:
+      svelte: 5.0.0-next.85
+    dev: false
 
   /abab@2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
@@ -11323,6 +11337,14 @@ packages:
       svelte: ^3.19.0 || ^4.0.0
     dependencies:
       svelte: 5.0.0-next.85
+
+  /svelte-json-tree@2.2.0(svelte@5.0.0-next.85):
+    resolution: {integrity: sha512-zcfepTrJ6xhpdgRZEujmiFh+ainRw7HO4Bsoh8PMAsm7fkgUPtnrZi3An8tmCFY8jajYhMrauHsd1S1XTeuiCw==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      svelte: 5.0.0-next.85
+    dev: false
 
   /svelte-keyed@2.0.0(svelte@5.0.0-next.85):
     resolution: {integrity: sha512-7TeEn+QbJC2OJrHiuM0T8vMBkms3DNpTE+Ir+NtnVBnBMA78aL4f1ft9t0Hn/pBbD/TnIXi4YfjFRAgtN+DZ5g==}

@@ -1,0 +1,13 @@
+{
+  "name": "@helper/pocketbase",
+  "version": "1.0.0",
+  "description": "Pocketbase server for Helper bot",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pb:start": "./pocketbase serve",
+    "dev": "npm run pb:start"
+  },
+  "keywords": [],
+  "author": "Erika",
+  "license": "ISC"
+}

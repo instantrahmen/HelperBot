@@ -2,4 +2,5 @@ packages:
   - 'packages/server'
   - 'packages/web-panel'
   - 'packages/common'
+  - 'packages/pocketbase'
   - 'config'

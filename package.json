@@ -10,7 +10,8 @@
     "packages/server",
     "packages/web-panel",
     "packages/common",
-    "packages/config"
+    "packages/pocketbase",
+    "config"
   ],
   "scripts": {
     "dev": "npm run dev -w @helper/server",
