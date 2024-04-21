@@ -5,6 +5,7 @@ import { createStore } from './store.svelte';
 
 export type Breadcrumb = {
   label: string;
+  active?: boolean;
   href?: string;
 };
 

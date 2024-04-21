@@ -10,12 +10,17 @@
 
   setBreadcrumbs([
     {
+      label: 'Home',
+      href: `/`,
+    },
+    {
       label: 'Dashboard',
       href: `/dashboard/${data.guildId}`,
     },
     {
       label: 'Commands',
       href: `/dashboard/${data.guildId}/commands`,
+      active: true,
     },
   ]);
 </script>

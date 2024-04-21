@@ -30,8 +30,6 @@
 
 <ModeWatcher />
 
-<!-- TODO: Break out header and guild selection into separate component -->
-<!-- grid h-screen w-full pl-[53px] -->
 <div
   class={cn(
     'h-screen'

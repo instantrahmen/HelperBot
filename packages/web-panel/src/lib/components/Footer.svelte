@@ -40,10 +40,10 @@
   });
 </script>
 
-<footer class="flex flex-row justify-between border-t-border bg-card p-2 align-middle sm:pl-16">
+<footer class="flex flex-row justify-between border-t p-2 align-middle text-foreground sm:pl-16">
   <span class="my-auto inline-block h-fit align-middle text-sm">&copy; {year} Erika Cudd</span>
 
-  {themeState.state}
+  <!-- {themeState.state} -->
   <Dropdown label="Theme" items={themeDropdownOptions} bind:selected />
 </footer>
 

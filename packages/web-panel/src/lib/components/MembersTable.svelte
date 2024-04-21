@@ -2,7 +2,7 @@
 <script lang="ts">
   import type { GuildMemberResponse } from '$lib/types/discord';
   import { readable, type Readable } from 'svelte/store';
-  import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
+  import { createTable, Render, Subscribe, createRender, Column } from 'svelte-headless-table';
   import {
     addPagination,
     addSortBy,
@@ -38,6 +38,29 @@
     botUser: boolean;
   };
 
+  const sortStatus = (a: AvatarProps, b: AvatarProps) => {
+    // sort in the order of: online, idle, dnd, offline
+    const statuses = ['online', 'idle', 'dnd', 'offline'];
+    const aStatus = statuses.indexOf(a.status || 'default');
+    const bStatus = statuses.indexOf(b.status || 'default');
+    if (aStatus > bStatus) return 1;
+    if (aStatus < bStatus) return -1;
+    return 0;
+  };
+
+  const sortDate = (a: TransformedMember['joined'], b: TransformedMember['joined']) => {
+    let aDate = new Date(a.timestamp);
+    let bDate = new Date(b.timestamp);
+
+    return bDate.getTime() - aDate.getTime();
+  };
+
+  const sortBool = (a: boolean, b: boolean) => {
+    if (a > b) return 1;
+    if (a < b) return -1;
+    return 0;
+  };
+
   let { members }: { members: GuildMemberResponse[] } = $props();
 
   const transformMember = (member: GuildMemberResponse) => {
@@ -64,28 +87,6 @@
     resize: addResizedColumns(),
   });
 
-  const sortStatus = (a: AvatarProps, b: AvatarProps) => {
-    // sort in the order of: online, idle, dnd, offline
-    const statuses = ['online', 'idle', 'dnd', 'offline'];
-    const aStatus = statuses.indexOf(a.status || 'default');
-    const bStatus = statuses.indexOf(b.status || 'default');
-    if (aStatus > bStatus) return 1;
-    if (aStatus < bStatus) return -1;
-    return 0;
-  };
-
-  const sortDate = (a: TransformedMember['joined'], b: TransformedMember['joined']) => {
-    let aDate = new Date(a.timestamp);
-    let bDate = new Date(b.timestamp);
-
-    return bDate.getTime() - aDate.getTime();
-  };
-
-  const sortBool = (a: boolean, b: boolean) => {
-    if (a > b) return 1;
-    if (a < b) return -1;
-    return 0;
-  };
   const columns = table.createColumns([
     table.column({
       header: '',
@@ -113,12 +114,12 @@
     //   accessor: 'displayName',
     // }),
     table.column({
-      header: 'Username',
+      header: 'Name',
       accessor: 'username',
       plugins: {
         resize: {
-          minWidth: 85,
-          initialWidth: 100,
+          minWidth: 50,
+          initialWidth: 85,
           maxWidth: 100,
         } as ResizedColumnsColumnOptions,
       },
@@ -135,23 +136,28 @@
           compareFn: sortDate,
         },
         resize: {
-          minWidth: 85,
+          minWidth: 45,
           initialWidth: 85,
           maxWidth: 85,
         } as ResizedColumnsColumnOptions,
       },
     }),
     table.column({
-      header: 'Booster',
+      header: (props) => {
+        return createRender(DiscordBoost, {
+          show: true,
+        });
+      },
+
       accessor: 'boostStatus',
       cell: (props) => {
         return createRender(DiscordBoost, { show: props.value });
       },
       plugins: {
         resize: {
-          minWidth: 85,
-          initialWidth: 85,
-          maxWidth: 85,
+          minWidth: 28,
+          initialWidth: 50,
+          maxWidth: 50,
         } as ResizedColumnsColumnOptions,
         sort: {
           compareFn: sortBool,
@@ -172,9 +178,9 @@
       },
       plugins: {
         resize: {
-          minWidth: 36,
-          initialWidth: 85,
-          maxWidth: 85,
+          minWidth: 28,
+          initialWidth: 36,
+          maxWidth: 36,
         } as ResizedColumnsColumnOptions,
         sort: {
           compareFn: sortBool,

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from '$app/stores';
   import * as Breadcrumb from '$lib/components/ui/breadcrumb/';
   import breadcrumbsStore, {
     setBreadcrumbs,
@@ -8,11 +7,15 @@
 
   let breadcrumbsState = breadcrumbsStore();
 
-  let { maxBreadcrumbs = 5 }: { maxBreadcrumbs: number } = $props();
+  let {
+    maxBreadcrumbs = 5,
+    showLastSeparator = false,
+  }: { maxBreadcrumbs?: number; showLastSeparator?: boolean } = $props();
 
-  const ellipsisBreadcrumb = {
+  const ellipsisBreadcrumb: BreadcrumbType = {
     label: 'ELLIPSIS',
     href: '',
+    active: false,
   };
 
   const filterBreadcrumbs = (bcs: BreadcrumbType[]) => {
@@ -23,13 +26,6 @@
   };
 
   let breadcrumbs = $derived(filterBreadcrumbs(breadcrumbsState.state));
-
-  setBreadcrumbs([
-    {
-      label: 'Dashboard',
-      href: `/dashboard/${$page.params.guildId}`,
-    },
-  ]);
 </script>
 
 <Breadcrumb.Root>
@@ -38,12 +34,18 @@
       <Breadcrumb.Item>
         {#if bc.label === 'ELLIPSIS'}
           <Breadcrumb.Ellipsis />
+        {:else if !bc.active}
+          {#if bc.href}
+            <Breadcrumb.Link href={bc.href}>{bc.label}</Breadcrumb.Link>
+          {:else}
+            <Breadcrumb.Item>{bc.label}</Breadcrumb.Item>
+          {/if}
         {:else}
-          <Breadcrumb.Link href={bc.href}>{bc.label}</Breadcrumb.Link>
+          <Breadcrumb.Page>{bc.label}</Breadcrumb.Page>
         {/if}
       </Breadcrumb.Item>
 
-      {#if i < breadcrumbs.length - 1}
+      {#if i < breadcrumbs.length - 1 || showLastSeparator}
         <Breadcrumb.Separator />
       {/if}
     {/each}

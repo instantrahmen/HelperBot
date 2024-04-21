@@ -28,12 +28,13 @@
 
   setBreadcrumbs([
     {
-      label: 'Dashboard',
-      href: `/dashboard/${data.guildId}`,
+      label: 'Home',
+      href: `/`,
     },
     {
-      label: 'Home',
+      label: 'Dashboard',
       href: `/dashboard/${data.guildId}`,
+      active: true,
     },
   ]);
 
@@ -137,7 +138,7 @@
           <Users class="h-4 w-4 text-muted-foreground" />
         </Card.Header>
         <Card.Content>
-          <div class="text-2xl font-bold">{guildData.members.length}</div>
+          <div class="text-2xl font-bold">{guildData.members?.length || 0}</div>
         </Card.Content>
       </Card.Root>
 

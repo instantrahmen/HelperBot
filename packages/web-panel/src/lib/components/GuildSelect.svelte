@@ -48,6 +48,7 @@
   {items}
   bind:selected={activeGuildState.state.selected}
   onChange={(selected) => changeGuild(selected?.value || guilds[0].id)}
+  class="border-0 sm:border sm:border-input sm:bg-background"
 >
   {#snippet renderItem(item)}
     {#if !item.botAccess}
