@@ -6,6 +6,13 @@
   import { page } from '$app/stores';
   import { cn } from '$lib/utils';
   import type { Meta } from '$lib/types';
+  import Footer from '$lib/components/Footer.svelte';
+  import { initializeTheme } from '$lib/stores/theme.svelte';
+  import { onMount } from 'svelte';
+
+  onMount(() => {
+    initializeTheme();
+  });
 
   let { data } = $props();
 
@@ -31,8 +38,11 @@
     // $page.route.id?.startsWith('/dashboard') ? 'pl-[53px]' : 'pl-0'
   )}
 >
-  <div class="flex flex-col">
+  <div class="flex h-screen flex-col">
     <Header />
-    <slot />
+    <div class="flex-1">
+      <slot />
+    </div>
+    <Footer></Footer>
   </div>
 </div>

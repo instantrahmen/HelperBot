@@ -13,7 +13,11 @@ export type Store<T> = {
  * @param  subscribe - optional callback function for subscribing to state changes
  * @return A function that returns a store
  */
-export const createStore = <T>(_startValue: T, _context: string) => {
+export const createStore = <T>(
+  _startValue: T,
+  _context: string,
+  subscribe?: (state: T) => void
+) => {
   return (startValue = _startValue, context = _context): Store<T> => {
     if (hasContext(context)) {
       return getContext(context);
@@ -22,11 +26,7 @@ export const createStore = <T>(_startValue: T, _context: string) => {
     let _state = $state(startValue);
 
     type SubscribeFunction = (state: T) => void;
-    let subscribeFunctions: SubscribeFunction[] = [
-      (val) => {
-        console.log(`${context} changed`, val);
-      },
-    ];
+    let subscribeFunctions: SubscribeFunction[] = [subscribe ? subscribe : () => {}];
 
     const _store = {
       get state(): T {
@@ -40,7 +40,6 @@ export const createStore = <T>(_startValue: T, _context: string) => {
       subscribe(fn: SubscribeFunction) {
         subscribeFunctions.push(fn);
         return fn;
-        // return _state.subscribe(fn);
       },
       unsubscribe(fn: SubscribeFunction) {
         subscribeFunctions = subscribeFunctions.filter((f) => f !== fn);

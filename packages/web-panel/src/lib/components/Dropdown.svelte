@@ -20,7 +20,7 @@
   }: {
     items: T[];
     renderItem?: ItemSnippet;
-    selected?: T;
+    selected?: T | undefined;
     class?: string;
     onChange?: (item: T) => void;
     label?: string;
