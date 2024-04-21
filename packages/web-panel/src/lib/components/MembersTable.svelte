@@ -7,16 +7,22 @@
     addPagination,
     addSortBy,
     addHiddenColumns,
+    addResizedColumns,
+    type ResizedColumnsColumnOptions,
+    type ResizedColumnsState,
     type HiddenColumnsState,
     type PaginationState,
   } from 'svelte-headless-table/plugins';
   import * as Table from '$lib/components/ui/table';
   import { Button } from '$lib/components/ui/button';
   import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
+  import Bot from 'lucide-svelte/icons/bot';
   import Avatar from './Avatar.svelte';
   import type { PresenceStatus } from 'discord.js';
   import { formatDate } from 'date-fns';
   import Timestamp from './Timestamp.svelte';
+  import DiscordBoost from '$lib/components/icons/discord-boost.svelte';
+  import Conditional from './Conditional.svelte';
 
   let tableWidth: number = $state(0);
 
@@ -28,6 +34,8 @@
       timestamp: number;
       formatted: string;
     };
+    boostStatus: boolean;
+    botUser: boolean;
   };
 
   let { members }: { members: GuildMemberResponse[] } = $props();
@@ -40,6 +48,8 @@
         timestamp: member.joinedTimestamp,
         formatted: formatDate(member.joinedTimestamp, 'P'),
       },
+      boostStatus: member.data.premiumSinceTimestamp !== null,
+      botUser: member.user.bot,
     };
   };
 
@@ -51,6 +61,7 @@
       toggleOrder: ['asc', 'desc'],
     }),
     hide: addHiddenColumns(),
+    resize: addResizedColumns(),
   });
 
   const sortStatus = (a: AvatarProps, b: AvatarProps) => {
@@ -70,9 +81,14 @@
     return bDate.getTime() - aDate.getTime();
   };
 
+  const sortBool = (a: boolean, b: boolean) => {
+    if (a > b) return 1;
+    if (a < b) return -1;
+    return 0;
+  };
   const columns = table.createColumns([
     table.column({
-      header: 'Avatar',
+      header: '',
       accessor: 'avatarProps',
       cell: (props) => {
         // const attrs = props.attrs();
@@ -85,6 +101,11 @@
         sort: {
           compareFn: sortStatus,
         },
+        resize: {
+          minWidth: 46,
+          initialWidth: 46,
+          maxWidth: 46,
+        } as ResizedColumnsColumnOptions,
       },
     }),
     // table.column({
@@ -94,7 +115,15 @@
     table.column({
       header: 'Username',
       accessor: 'username',
+      plugins: {
+        resize: {
+          minWidth: 85,
+          initialWidth: 100,
+          maxWidth: 100,
+        } as ResizedColumnsColumnOptions,
+      },
     }),
+
     table.column({
       header: 'Joined',
       accessor: 'joined',
@@ -104,6 +133,51 @@
       plugins: {
         sort: {
           compareFn: sortDate,
+        },
+        resize: {
+          minWidth: 85,
+          initialWidth: 85,
+          maxWidth: 85,
+        } as ResizedColumnsColumnOptions,
+      },
+    }),
+    table.column({
+      header: 'Booster',
+      accessor: 'boostStatus',
+      cell: (props) => {
+        return createRender(DiscordBoost, { show: props.value });
+      },
+      plugins: {
+        resize: {
+          minWidth: 85,
+          initialWidth: 85,
+          maxWidth: 85,
+        } as ResizedColumnsColumnOptions,
+        sort: {
+          compareFn: sortBool,
+        },
+      },
+    }),
+    table.column({
+      header: 'Bot',
+      accessor: 'botUser',
+      cell: (props) => {
+        return createRender(Conditional, {
+          show: props.value,
+          component: {
+            component: Bot,
+            props: {},
+          },
+        });
+      },
+      plugins: {
+        resize: {
+          minWidth: 36,
+          initialWidth: 85,
+          maxWidth: 85,
+        } as ResizedColumnsColumnOptions,
+        sort: {
+          compareFn: sortBool,
         },
       },
     }),
@@ -116,7 +190,7 @@
   };
 
   const tableBreakpoints = {
-    sm: 410,
+    sm: 450,
     md: 512,
     lg: 938,
 
@@ -131,7 +205,7 @@
   let currentBreakpoint: keyof TableBeakpoints = $derived(tableBreakpoints.current(tableWidth));
 
   const hiddenCols: Record<keyof TableBeakpoints, string[]> = {
-    sm: ['username'],
+    sm: ['joined'],
     md: [],
     lg: [],
   };
@@ -147,27 +221,40 @@
     console.log('hiddenIds', hiddenIds);
     $hiddenColumnIds = hiddenIds;
   });
+
+  let totalCols = $derived(flatColumns.length);
+
+  const lastCol = (curCol: number) => curCol >= totalCols - 1;
 </script>
 
 <div>
   <div class="rounded-md border" bind:clientWidth={tableWidth}>
+    <!-- {JSON.stringify($hiddenColumnIds)}
+    {JSON.stringify(hiddenIds)} -->
     <Table.Root {...$tableAttrs}>
       <Table.Header>
         {#each $headerRows as headerRow}
           <Subscribe rowAttrs={headerRow.attrs()}>
             <Table.Row>
-              {#each headerRow.cells as cell (cell.id)}
+              {#each headerRow.cells as cell, i (cell.id)}
+                {@const firstColumn = i === 0}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-                  {#if cell.id === 'avatar'}
-                    <Table.Head {...attrs}>
-                      <Render of={cell.render()} />
+                  {#if firstColumn}
+                    <Table.Head {...attrs} class="m-0 p-0 text-center">
+                      <Button variant="ghost" class="m-0 w-full p-1" on:click={props.sort.toggle}>
+                        <Render of={cell.render()} />
+                        <ArrowUpDown class={'h-4 w-4'} />
+                      </Button>
                     </Table.Head>
                   {:else}
-                    <Table.Head {...attrs}>
-                      <!-- <Render of={cell.render()} /> -->
-                      <Button variant="ghost" on:click={props.sort.toggle}>
+                    <Table.Head {...attrs} class="m-0 p-0 text-center">
+                      <Button
+                        variant="ghost"
+                        class="m-0 w-full justify-center gap-1 p-1 text-center"
+                        on:click={props.sort.toggle}
+                      >
                         <Render of={cell.render()} />
-                        <ArrowUpDown class={'ml-2 h-4 w-4'} />
+                        <ArrowUpDown class={'h-4 w-4'} />
                       </Button>
                     </Table.Head>
                   {/if}
@@ -181,17 +268,13 @@
         {#each $pageRows as row (row.id)}
           <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
             <Table.Row {...rowAttrs}>
-              {#each row.cells as cell (cell.id)}
+              {#each row.cells as cell, i (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs>
-                  {#if cell.id === 'avatar'}
-                    <Table.Cell {...attrs}>
+                  <Table.Cell {...attrs} class="m-0 overflow-ellipsis p-1 text-center">
+                    <span class="mx-auto inline-block w-fit text-center">
                       <Render of={cell.render()} />
-                    </Table.Cell>
-                  {:else}
-                    <Table.Cell {...attrs}>
-                      <Render of={cell.render()} />
-                    </Table.Cell>
-                  {/if}
+                    </span>
+                  </Table.Cell>
                 </Subscribe>
               {/each}
             </Table.Row>

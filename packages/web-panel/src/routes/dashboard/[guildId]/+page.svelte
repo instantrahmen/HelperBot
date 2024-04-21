@@ -5,7 +5,6 @@
   import Users from 'lucide-svelte/icons/users';
   import { Shadow as Loading } from 'svelte-loading-spinners';
   import DiscordBoost from '$lib/components/icons/discord-boost.svelte';
-  import { format, formatDate } from 'date-fns';
   import { Button } from '$lib/components/ui/button/';
   import * as Card from '$lib/components/ui/card/';
 
@@ -15,6 +14,9 @@
   import type { GuildMemberResponse } from '$lib/types/discord';
   import MembersTable from '$lib/components/MembersTable.svelte';
   import { setBreadcrumbs } from '$lib/stores/breadcrumbs.svelte';
+  import Json from '$lib/components/Json.svelte';
+  import { onMount } from 'svelte';
+
   let activeGuildState = activeGuildStore();
   let guildDataState = guildDataStore();
   let botAccess = $derived(activeGuildState.state.selected?.botAccess);
@@ -23,8 +25,6 @@
   let members = $derived(guildData?.members || []);
 
   let { data } = $props();
-
-  export const ssr = false;
 
   setBreadcrumbs([
     {
@@ -41,11 +41,15 @@
 
   let loadingDots = $state(0);
   const loadingDotsSpeed = 500;
-  const loadingDotsInterval = setInterval(() => {
-    if (loadingDots >= 3) return (loadingDots = 0);
-    loadingDots += 1;
-  }, loadingDotsSpeed);
 
+  onMount(() => {
+    let loadingDotsInterval = setInterval(() => {
+      if (loadingDots >= 3) return (loadingDots = 0);
+      loadingDots += 1;
+    }, loadingDotsSpeed);
+
+    return () => clearInterval(loadingDotsInterval);
+  });
   let dots = $derived('.'.repeat(loadingDots));
 
   const filterOnline = (m: GuildMemberResponse) => m.status === 'online';
@@ -60,7 +64,7 @@
       : { width: 0, height: 0 };
 </script>
 
-<main class="flex min-h-64 flex-1 flex-col gap-4 p-4 md:gap-8">
+<main class="relative flex min-h-64 flex-1 flex-col gap-4 p-4 md:gap-8">
   <!-- {$page.url.pathname} -->
   <span class={cn('flex flex-row justify-between', botAccess ? 'items-center' : 'items-start')}>
     <h1 class="text-3xl font-bold">Dashboard</h1>
@@ -153,7 +157,7 @@
     </div>
 
     <!-- Server Info -->
-    <div class="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-5">
+    <div class="relative grid w-full max-w-full gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-5">
       <Card.Root class="xl:col-span-2">
         <Card.Header class="flex flex-row items-center">
           <div class="grid gap-2">
@@ -165,8 +169,8 @@
             <ArrowUpRight class="h-4 w-4" />
           </Button>
         </Card.Header>
-        <Card.Content>
-          <pre>{JSON.stringify(guildData, null, 2)}</pre>
+        <Card.Content class="w-full">
+          <Json value={guildData} />
         </Card.Content>
       </Card.Root>
 

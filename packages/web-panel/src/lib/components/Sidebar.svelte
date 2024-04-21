@@ -40,49 +40,57 @@
   $: pathname = $page.url.pathname;
 </script>
 
-<aside class="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
-  <div class="border-b p-2">
-    <Button variant="outline" size="icon" aria-label="Home" href="/">
-      <IceCreamBowl class="size-5" />
-    </Button>
-  </div>
-  <nav class="grid gap-1 p-2">
+<aside class="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+  <nav class="mt-[57px] flex flex-col items-center gap-4 px-2 sm:py-5">
     {#each links as link}
       <Tooltip.Root>
         <Tooltip.Trigger asChild let:builder>
-          <Button
-            variant="ghost"
-            size="icon"
-            class={cn('rounded-lg', pathname === link.href ? 'bg-muted' : 'bg-transparent')}
-            aria-label={link.name}
-            builders={[builder]}
+          <a
             href={link.href}
-            disabled={link.disabled}
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+            use:builder.action
+            {...builder}
           >
-            <svelte:component this={link.icon} class="size-5" />
-          </Button>
+            <svelte:component this={link.icon} class="h-5 w-5" />
+            <span class="sr-only">Dashboard</span>
+          </a>
         </Tooltip.Trigger>
-        <Tooltip.Content side="right" sideOffset={5}>{link.name}</Tooltip.Content>
+        <Tooltip.Content side="right">Dashboard</Tooltip.Content>
       </Tooltip.Root>
     {/each}
   </nav>
-  <nav class="mt-auto grid gap-1 p-2">
+
+  <!-- Tail Links -->
+  <nav class="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
     {#each tailLinks as link}
       <Tooltip.Root>
         <Tooltip.Trigger asChild let:builder>
-          <Button
-            variant="ghost"
-            size="icon"
-            class="rounded-lg"
-            aria-label={link.name}
-            builders={[builder]}
+          <a
             href={link.href}
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+            use:builder.action
+            {...builder}
           >
-            <svelte:component this={link.icon} class="size-5" />
-          </Button>
+            <svelte:component this={link.icon} class="h-5 w-5" />
+            <span class="sr-only">{link.name}</span>
+          </a>
         </Tooltip.Trigger>
-        <Tooltip.Content side="right" sideOffset={5}>{link.name}</Tooltip.Content>
+        <Tooltip.Content side="right">{link.name}</Tooltip.Content>
       </Tooltip.Root>
     {/each}
+    <!-- <Tooltip.Root>
+      <Tooltip.Trigger asChild let:builder>
+        <a
+          href="##"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+          use:builder.action
+          {...builder}
+        >
+          <Settings class="h-5 w-5" />
+          <span class="sr-only">Settings</span>
+        </a>
+      </Tooltip.Trigger>
+      <Tooltip.Content side="right">Settings</Tooltip.Content>
+    </Tooltip.Root> -->
   </nav>
 </aside>

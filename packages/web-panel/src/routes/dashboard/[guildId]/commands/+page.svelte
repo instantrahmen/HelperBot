@@ -5,7 +5,7 @@
   import { CommandsTypeOptions } from '$lib/types/gen/pocketbase-types';
   import { FileEditIcon } from 'lucide-svelte';
   import * as Avatar from '$lib/components/ui/avatar';
-
+  import Json from '$lib/components/Json.svelte';
   let { data } = $props();
 
   setBreadcrumbs([
@@ -67,11 +67,13 @@
       {/each}
     </div>
     <div class="mt-8 flex justify-end">
-      <Button href="/dashboard/{data.guildId}/commands/new">Create new command</Button>
+      <Button href="/dashboard/{data.guildId}/commands/create">Create new command</Button>
     </div>
   </div>
 
-  <pre>{JSON.stringify(data, null, 2)}</pre>
+  <!-- <pre>{JSON.stringify(data, null, 2)}</pre> -->
+
+  <Json value={data} />
 </main>
 
 <style lang="postcss">

@@ -14,6 +14,7 @@
 	},
 	"dependencies": {
 		"@helper/common": "workspace:0.2.0",
+		"@zerodevx/svelte-json-view": "^1.0.9",
 		"bits-ui": "^0.21.1",
 		"clsx": "^2.1.0",
 		"date-fns": "^3.6.0",
@@ -25,6 +26,7 @@
 		"mode-watcher": "^0.3.0",
 		"paneforge": "^0.0.4",
 		"pocketbase": "^0.21.1",
+		"svelte-json-tree": "^2.2.0",
 		"svelte-loading-spinners": "^0.3.6",
 		"svelte-radix": "^1.1.0",
 		"sveltekit-superforms": "^2.12.0",

@@ -13,8 +13,12 @@
   let loggedIn = $derived(!!user && !!meta);
 </script>
 
-<header class="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
-  <h1 class="text-xl font-semibold">Helper Bot</h1>
+<header
+  class="sticky top-0 z-20 flex h-[57px] items-center gap-1 border-b bg-background px-4 sm:pl-14"
+>
+  <a href="/" class="flex-1 justify-center text-center text-xl font-semibold">
+    <h1>Helper Bot</h1>
+  </a>
   <div class="ml-auto flex gap-2">
     <ModeToggle />
     {#if loggedIn}

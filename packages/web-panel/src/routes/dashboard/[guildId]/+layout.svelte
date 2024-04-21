@@ -24,8 +24,6 @@
   });
 
   let breadCrumbsState = breadcrumbsStore();
-
-  let breadcrumbs = $derived(breadCrumbsState.state);
 </script>
 
 <Sidebar
@@ -44,11 +42,10 @@
   ]}
 />
 
-<div class="m-4 flex-1 overflow-auto">
+<div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
   <div class="p-4">
     <Breadcrumbs maxBreadcrumbs={3} />
   </div>
-  <!-- <pre>{JSON.stringify(breadcrumbs)}</pre> -->
 
   <slot />
 </div>

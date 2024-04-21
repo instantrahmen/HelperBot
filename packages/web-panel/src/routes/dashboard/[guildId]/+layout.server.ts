@@ -2,6 +2,7 @@
 
 import { getConfig } from '$lib/utils/config.server';
 import { redirect } from '@sveltejs/kit';
+export const ssr = false;
 
 export const load = async ({ locals, params, fetch }) => {
   const { guildId }: { guildId: string } = params;

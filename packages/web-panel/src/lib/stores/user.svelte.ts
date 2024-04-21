@@ -12,7 +12,7 @@ export interface MetaGuilds {
 }
 
 export interface AuthMeta {
-  guilds: MetaGuilds[];
+  guilds?: MetaGuilds[];
 }
 
 export interface UserState {

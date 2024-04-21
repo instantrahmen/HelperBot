@@ -5,6 +5,7 @@
   import userStore, { type AuthMeta } from '$lib/stores/user.svelte';
   import { page } from '$app/stores';
   import { cn } from '$lib/utils';
+  import type { Meta } from '$lib/types';
 
   let { data } = $props();
 
@@ -15,7 +16,7 @@
   userState.state.auth = data.user
     ? {
         accessToken: data.accessToken,
-        meta: data.user.meta as AuthMeta,
+        meta: data.user.meta as Meta,
       }
     : undefined;
 </script>
@@ -26,8 +27,8 @@
 <!-- grid h-screen w-full pl-[53px] -->
 <div
   class={cn(
-    'grid h-screen w-full',
-    $page.route.id?.startsWith('/dashboard') ? 'pl-[53px]' : 'pl-0'
+    'h-screen'
+    // $page.route.id?.startsWith('/dashboard') ? 'pl-[53px]' : 'pl-0'
   )}
 >
   <div class="flex flex-col">
