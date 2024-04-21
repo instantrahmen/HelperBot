@@ -2,9 +2,10 @@ import type { CacheType, Client, Interaction, Message } from 'discord.js';
 import { CommandsTypeOptions, type CommandsResponse } from '$lib/types/gen/pocketbase-types';
 import { pb } from '$lib/pocketbase.server';
 
-export const commandListeners: { [key: string]: (...args: any) => void } = {};
+export let commandListeners: { [key: string]: (...args: any) => void } = {};
 export const listenForAllCommands = async (client: Client) => {
   console.log('Listening for all commands');
+  unregisterAllCommands(client);
 
   // get commands from pocketbase
   const records = await pb.collection('commands').getFullList<CommandsResponse>({
@@ -53,4 +54,9 @@ export const listenForAllCommands = async (client: Client) => {
       client.on('interactionCreate', commandListeners[key]);
     }
   });
+};
+
+export const unregisterAllCommands = (client: Client) => {
+  commandListeners = {};
+  return client.removeAllListeners();
 };

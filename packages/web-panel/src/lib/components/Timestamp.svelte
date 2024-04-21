@@ -1,11 +1,11 @@
 <script lang="ts">
   import { formatDate } from 'date-fns';
 
-  let { timestamp }: { timestamp: number } = $props();
+  let { timestamp, formatString = 'P' }: { timestamp: number; formatString?: string } = $props();
 
   const formatTimestamp = (timestamp: number) => {
     const date = new Date(timestamp);
-    return formatDate(date, 'P');
+    return formatDate(date, formatString);
   };
 
   let formatted = $derived(formatTimestamp(timestamp));
