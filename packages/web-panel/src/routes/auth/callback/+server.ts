@@ -1,3 +1,4 @@
+import type { Meta } from '$lib/types';
 import { getDiscordProvider } from '$lib/utils/auth';
 import { fetchGuilds } from '$lib/utils/discord.server';
 import { redirect } from '@sveltejs/kit';
@@ -46,9 +47,13 @@ export const GET = async ({ cookies, url, locals, fetch }) => {
       userGuilds,
     });
 
-    locals.user = await locals.pb
-      .collection('users')
-      .update(res.record.id, { meta: { guilds: adminGuilds || [] } });
+    const meta: Meta = res.meta as Meta;
+
+    locals.user = await locals.pb.collection('users').update(res.record.id, {
+      meta: { guilds: adminGuilds || [] },
+      name: meta.rawUser.global_name || meta.rawUser.username,
+      avatar: meta.avatarUrl,
+    });
 
     cookies.set('accessToken', res.meta?.accessToken, {
       path: '/',

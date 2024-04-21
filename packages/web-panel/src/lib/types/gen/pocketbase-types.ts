@@ -35,11 +35,17 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
+export enum CommandsTypeOptions {
+	"slash" = "slash",
+	"response" = "response",
+}
 export type CommandsRecord<Tdata = unknown> = {
 	created_by?: RecordIdString
 	data?: null | Tdata
-	guild?: RecordIdString
+	guild: string
 	name?: string
+	reply?: HTMLString
+	type: CommandsTypeOptions[]
 }
 
 export type GuildsRecord = {
@@ -50,7 +56,6 @@ export type GuildsRecord = {
 export type UsersRecord<Tmeta = unknown, Tstate = unknown> = {
 	active_guild?: string
 	avatar?: string
-	discord_avatar?: string
 	meta?: null | Tmeta
 	name?: string
 	state?: null | Tstate

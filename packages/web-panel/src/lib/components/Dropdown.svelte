@@ -14,6 +14,9 @@
     class: className,
     onChange,
     label = 'Select an item',
+    name,
+    placeholder = 'Select an item',
+    ...restProps
   }: {
     items: T[];
     renderItem?: ItemSnippet;
@@ -21,6 +24,8 @@
     class?: string;
     onChange?: (item: T) => void;
     label?: string;
+    name?: string;
+    placeholder?: string;
   } = $props();
 
   const handleChange = (item?: Selected<string>) => {
@@ -31,9 +36,9 @@
   };
 </script>
 
-<Select.Root portal={null} bind:selected onSelectedChange={handleChange}>
+<Select.Root portal={null} bind:selected onSelectedChange={handleChange} {name} {...restProps}>
   <Select.Trigger class={cn('w-[180px]', className)}>
-    <Select.Value placeholder="Select a server" />
+    <Select.Value {placeholder} />
   </Select.Trigger>
   <Select.Content>
     <Select.Group>

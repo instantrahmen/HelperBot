@@ -10,6 +10,12 @@ export const generateSlashCommands = (client: Client) => {
     if (!interaction.isChatInputCommand()) return;
 
     const { commandName } = interaction;
-    commandState.getCommand(commandName).run(interaction);
+    try {
+      commandState.getCommand(commandName).run(interaction);
+    } catch (error) {
+      // Command probably doesn't exist. We'll warn and continue, it's probably handled in the web-panel server.
+      // We'll likely eventually make it so all commands are handled in one place.
+      console.warn(error);
+    }
   });
 };

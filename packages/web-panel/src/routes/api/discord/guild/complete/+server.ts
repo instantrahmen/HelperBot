@@ -1,5 +1,6 @@
 import type { CompleteGuildDataResponse } from '$lib/types/discord';
-import { createClient, fetchCompleteGuildData, verifyAccessToken } from '$lib/utils/discord.server';
+import { fetchCompleteGuildData, verifyAccessToken } from '$lib/utils/discord.server';
+import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ locals, url, fetch, cookies }) => {
@@ -7,6 +8,9 @@ export const GET: RequestHandler = async ({ locals, url, fetch, cookies }) => {
 
   const guildId = url.searchParams.get('guildId');
 
+  console.log({
+    accessToken,
+  });
   const { ok, message } = await verifyAccessToken(accessToken || '');
 
   if (!ok) {
@@ -18,7 +22,7 @@ export const GET: RequestHandler = async ({ locals, url, fetch, cookies }) => {
   }
 
   if (!locals.discord.client) {
-    locals.discord.client = await createClient();
+    return new Response(JSON.stringify({ message: 'No discord client' }), { status: 500 });
   }
 
   try {

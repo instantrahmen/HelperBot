@@ -1,5 +1,5 @@
 import type { GuildMemberResponse } from '$lib/types/discord';
-import { createClient, fetchGuildMembers, verifyAccessToken } from '$lib/utils/discord.server';
+import { getClient, fetchGuildMembers, verifyAccessToken } from '$lib/utils/discord.server';
 
 export const GET = async ({ cookies, locals, url, request }): Promise<Response> => {
   const guildId = url.searchParams.get('guildId');
@@ -10,7 +10,7 @@ export const GET = async ({ cookies, locals, url, request }): Promise<Response> 
   const { ok, message } = await verifyAccessToken(accessToken);
 
   if (!locals.discord.client) {
-    locals.discord.client = await createClient();
+    locals.discord.client = await getClient();
   }
 
   if (!ok) {

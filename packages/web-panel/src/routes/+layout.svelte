@@ -2,7 +2,7 @@
   import '../app.pcss';
   import { ModeWatcher } from 'mode-watcher';
   import Header from '$lib/components/Header.svelte';
-  import userStore from '$lib/stores/user.svelte';
+  import userStore, { type AuthMeta } from '$lib/stores/user.svelte';
   import { page } from '$app/stores';
   import { cn } from '$lib/utils';
 
@@ -12,10 +12,12 @@
 
   userState.state.user = data.user;
 
-  userState.state.auth = {
-    accessToken: data.accessToken,
-    meta: data.user?.meta,
-  };
+  userState.state.auth = data.user
+    ? {
+        accessToken: data.accessToken,
+        meta: data.user.meta as AuthMeta,
+      }
+    : undefined;
 </script>
 
 <ModeWatcher />

@@ -7,6 +7,9 @@
   import activeGuildStore, { setActiveGuild } from '$lib/stores/active-guild.svelte';
   import { fetchGuildData, guildDataStore } from '$lib/stores/guild-data.svelte';
   import userStore from '$lib/stores/user.svelte';
+  import breadcrumbsStore from '$lib/stores/breadcrumbs.svelte';
+  import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+
   let { data } = $props();
 
   let activeGuildState = activeGuildStore();
@@ -19,6 +22,10 @@
 
     fetchGuildData(data.guildId, guildDataState);
   });
+
+  let breadCrumbsState = breadcrumbsStore();
+
+  let breadcrumbs = $derived(breadCrumbsState.state);
 </script>
 
 <Sidebar
@@ -38,8 +45,10 @@
 />
 
 <div class="m-4 flex-1 overflow-auto">
-  <!-- <h2>Dashboard for {data.guildId}</h2>
-  <sub>{data.guildId} should === {activeGuildState.state.selected?.id}</sub> -->
+  <div class="p-4">
+    <Breadcrumbs maxBreadcrumbs={3} />
+  </div>
+  <!-- <pre>{JSON.stringify(breadcrumbs)}</pre> -->
 
   <slot />
 </div>

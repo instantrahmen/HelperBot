@@ -2,15 +2,10 @@
   import { browser } from '$app/environment';
   import Activity from 'lucide-svelte/icons/activity';
   import ArrowUpRight from 'lucide-svelte/icons/arrow-up-right';
-  import CreditCard from 'lucide-svelte/icons/credit-card';
   import Users from 'lucide-svelte/icons/users';
   import { Shadow as Loading } from 'svelte-loading-spinners';
-
   import DiscordBoost from '$lib/components/icons/discord-boost.svelte';
-
   import { format, formatDate } from 'date-fns';
-
-  import * as Avatar from '$lib/components/ui/avatar/';
   import { Button } from '$lib/components/ui/button/';
   import * as Card from '$lib/components/ui/card/';
 
@@ -19,18 +14,28 @@
   import { cn, createBotInviteLink } from '$lib/utils';
   import type { GuildMemberResponse } from '$lib/types/discord';
   import MembersTable from '$lib/components/MembersTable.svelte';
-
+  import { setBreadcrumbs } from '$lib/stores/breadcrumbs.svelte';
   let activeGuildState = activeGuildStore();
   let guildDataState = guildDataStore();
-
-  // let activeMembers = $derived(members.filter((m) => m.status === 'online').length);
-  // let idleMembers = $derived(members.filter((m) => m.status === 'idle').length);
   let botAccess = $derived(activeGuildState.state.selected?.botAccess);
   let guildData = $derived(guildDataState.state !== 'loading' ? guildDataState.state : null);
   let loading = $derived(guildDataState.state === 'loading');
   let members = $derived(guildData?.members || []);
 
   let { data } = $props();
+
+  export const ssr = false;
+
+  setBreadcrumbs([
+    {
+      label: 'Dashboard',
+      href: `/dashboard/${data.guildId}`,
+    },
+    {
+      label: 'Home',
+      href: `/dashboard/${data.guildId}`,
+    },
+  ]);
 
   let refetchData = () => fetchGuildData(data.guildId, guildDataState);
 
@@ -45,17 +50,6 @@
 
   const filterOnline = (m: GuildMemberResponse) => m.status === 'online';
   const filterIdle = (m: GuildMemberResponse) => m.status === 'idle';
-
-  const userInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('');
-  };
-
-  const formatJoinDate = (date: number) => {
-    return format(new Date(date), 'dd MMM yyyy');
-  };
 
   const getScreenSize = () =>
     browser
@@ -159,7 +153,7 @@
     </div>
 
     <!-- Server Info -->
-    <div class="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
+    <div class="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-5">
       <Card.Root class="xl:col-span-2">
         <Card.Header class="flex flex-row items-center">
           <div class="grid gap-2">
@@ -177,7 +171,7 @@
       </Card.Root>
 
       <!-- Members List -->
-      <Card.Root>
+      <Card.Root class="xl:col-span-3">
         <Card.Header>
           <Card.Title>Members</Card.Title>
         </Card.Header>

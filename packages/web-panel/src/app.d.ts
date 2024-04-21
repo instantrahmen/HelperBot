@@ -8,6 +8,7 @@ declare global {
       user?: import('./lib/types/').UserType;
       discord: {
         client: import('discord.js').Client | undefined;
+        rest: import('discord.js').REST | undefined;
       };
     }
     // interface PageData {}

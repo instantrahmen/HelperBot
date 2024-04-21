@@ -27,7 +27,7 @@ export default {
   botToken: config.global.DISCORD_BOT_TOKEN,
   clientSecret: config.global.DISCORD_CLIENT_SECRET,
   environment: config.environment,
-  debugMode: config.global.DEBUG_MODE,
+  debugMode: true,
   // Discord.js intents (https://discordjs.guide/popular-topics/intents.html#privileged-intents)
   intents: [
     Guilds,

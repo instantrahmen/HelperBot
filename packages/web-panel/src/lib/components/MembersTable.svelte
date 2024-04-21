@@ -1,58 +1,156 @@
 <!-- Members Table -->
 <script lang="ts">
   import type { GuildMemberResponse } from '$lib/types/discord';
-  import { readable } from 'svelte/store';
+  import { readable, type Readable } from 'svelte/store';
   import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
-  import { addPagination, addSortBy } from 'svelte-headless-table/plugins';
+  import {
+    addPagination,
+    addSortBy,
+    addHiddenColumns,
+    type HiddenColumnsState,
+    type PaginationState,
+  } from 'svelte-headless-table/plugins';
   import * as Table from '$lib/components/ui/table';
   import { Button } from '$lib/components/ui/button';
   import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
   import Avatar from './Avatar.svelte';
+  import type { PresenceStatus } from 'discord.js';
+  import { formatDate } from 'date-fns';
+  import Timestamp from './Timestamp.svelte';
+
+  let tableWidth: number = $state(0);
+
+  type AvatarProps = { src: string; status: PresenceStatus | null };
+
+  type TransformedMember = GuildMemberResponse & {
+    avatarProps: AvatarProps;
+    joined: {
+      timestamp: number;
+      formatted: string;
+    };
+  };
 
   let { members }: { members: GuildMemberResponse[] } = $props();
 
-  const table = createTable<GuildMemberResponse>(readable(members), {
+  const transformMember = (member: GuildMemberResponse) => {
+    return {
+      ...member,
+      avatarProps: { src: member.avatar, status: member.status },
+      joined: {
+        timestamp: member.joinedTimestamp,
+        formatted: formatDate(member.joinedTimestamp, 'P'),
+      },
+    };
+  };
+
+  const transformedMembers: Readable<TransformedMember[]> = readable(members.map(transformMember));
+
+  const table = createTable<TransformedMember>(transformedMembers, {
     page: addPagination(),
-    sort: addSortBy(),
+    sort: addSortBy({
+      toggleOrder: ['asc', 'desc'],
+    }),
+    hide: addHiddenColumns(),
   });
+
+  const sortStatus = (a: AvatarProps, b: AvatarProps) => {
+    // sort in the order of: online, idle, dnd, offline
+    const statuses = ['online', 'idle', 'dnd', 'offline'];
+    const aStatus = statuses.indexOf(a.status || 'default');
+    const bStatus = statuses.indexOf(b.status || 'default');
+    if (aStatus > bStatus) return 1;
+    if (aStatus < bStatus) return -1;
+    return 0;
+  };
+
+  const sortDate = (a: TransformedMember['joined'], b: TransformedMember['joined']) => {
+    let aDate = new Date(a.timestamp);
+    let bDate = new Date(b.timestamp);
+
+    return bDate.getTime() - aDate.getTime();
+  };
 
   const columns = table.createColumns([
     table.column({
       header: 'Avatar',
-      accessor: 'avatar',
+      accessor: 'avatarProps',
       cell: (props) => {
         // const attrs = props.attrs();
         return createRender(Avatar, {
-          src: props.value,
+          src: props.value.src || '',
+          status: props.value.status || 'default',
         });
       },
       plugins: {
         sort: {
-          disable: true,
+          compareFn: sortStatus,
         },
       },
     }),
-    table.column({
-      header: 'Name',
-      accessor: 'displayName',
-    }),
+    // table.column({
+    //   header: 'Name',
+    //   accessor: 'displayName',
+    // }),
     table.column({
       header: 'Username',
       accessor: 'username',
     }),
     table.column({
-      header: 'Status',
-      accessor: 'status',
+      header: 'Joined',
+      accessor: 'joined',
+      cell: (props) => {
+        return createRender(Timestamp, { timestamp: props.value.timestamp });
+      },
+      plugins: {
+        sort: {
+          compareFn: sortDate,
+        },
+      },
     }),
   ]);
 
-  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
+  type TableBeakpoints = {
+    sm: number;
+    md: number;
+    lg: number;
+  };
+
+  const tableBreakpoints = {
+    sm: 410,
+    md: 512,
+    lg: 938,
+
+    current(tableWidth: number) {
+      if (tableWidth < this.sm) return 'sm';
+      if (tableWidth < this.md) return 'md';
+      if (tableWidth < this.lg) return 'lg';
+      return 'lg';
+    },
+  } as const;
+
+  let currentBreakpoint: keyof TableBeakpoints = $derived(tableBreakpoints.current(tableWidth));
+
+  const hiddenCols: Record<keyof TableBeakpoints, string[]> = {
+    sm: ['username'],
+    md: [],
+    lg: [],
+  };
+
+  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns } =
     table.createViewModel(columns);
-  const { hasNextPage, hasPreviousPage, pageIndex } = pluginStates.page;
+  const { hasNextPage, hasPreviousPage, pageIndex } = pluginStates.page as PaginationState;
+  const { hiddenColumnIds } = pluginStates.hide as HiddenColumnsState;
+  let hiddenIds = $derived(hiddenCols[currentBreakpoint]);
+
+  $effect(() => {
+    console.log('currentBreakpoint', currentBreakpoint);
+    console.log('hiddenIds', hiddenIds);
+    $hiddenColumnIds = hiddenIds;
+  });
 </script>
 
 <div>
-  <div class="rounded-md border">
+  <div class="rounded-md border" bind:clientWidth={tableWidth}>
     <Table.Root {...$tableAttrs}>
       <Table.Header>
         {#each $headerRows as headerRow}
