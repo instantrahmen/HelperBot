@@ -6,12 +6,13 @@ import ViteYaml from '@modyfi/vite-plugin-yaml';
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    commonjsOptions: { transformMixedEsModules: true },
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       formats: ['es', 'cjs'],
     },
   },
-  resolve: { alias: { src: resolve('src/') } },
+  resolve: { alias: { src: resolve('src/'), '#root': resolve(__dirname) + '../../' } },
   plugins: [
     ViteYaml(),
     dts(),

@@ -1,3 +1,5 @@
+import envConfig from '@helper/config';
+
 export enum NodeEnv {
   PRODUCTION = 'production',
   DEVELOPMENT = 'development',
@@ -9,6 +11,7 @@ export type GlobalConfigENV = {
   DISCORD_BOT_TOKEN: string;
   GUILDS: string[];
   DEBUG_MODE?: boolean;
+  PB_URL: string;
 };
 
 export type PublicConfigENV = {
@@ -16,9 +19,7 @@ export type PublicConfigENV = {
   SUPABASE_ANON_KEY: string;
 };
 
-export type GlobalConfig = {
-  [key in NodeEnv]: GlobalConfigENV;
-};
+export type GlobalConfig = typeof envConfig;
 
 export type PublicConfig = {
   [key in NodeEnv]: PublicConfigENV;

@@ -2,13 +2,9 @@ import { serializeNonPOJOs } from '$lib/utils/';
 import { pb } from '$lib/pocketbase.server';
 import { getClient, createDiscordRESTClient } from '$lib/utils/discord.server';
 
-import {
-  CommandsTypeOptions,
-  type CommandsRecord,
-  type CommandsResponse,
-} from '$lib/types/gen/pocketbase-types';
-import type { CacheType, Client, Interaction, Message } from 'discord.js';
+import type { Client } from 'discord.js';
 import { listenForAllCommands } from '$lib/utils/commands.server';
+import { getConfig } from '$lib/utils/config.server';
 
 let initialized = false;
 const init = async ({ client }: { client: Client }) => {

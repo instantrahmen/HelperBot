@@ -40,7 +40,7 @@
     }
   },
   "dependencies": {
-    "config": "workspace:0.1.0",
+    "@helper/config": "workspace:1.0.0",
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^16.9.0",
     "@types/yaml": "^1.9.7",

@@ -1,20 +1,21 @@
 {
-  "name": "config",
-  "version": "0.1.0",
+  "name": "@helper/config",
+  "version": "1.0.0",
   "description": "",
-  "module": "index.js",
-  "main": "index.js",
+  "main": "config.cjs",
+  "exports": {
+    "default": "./config.js",
+    "types": "./types/config.d.ts",
+    "import": "./config.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Erika",
+  "author": "Erika Tho",
+  "typings": "./types/config.d.ts",
   "license": "ISC",
-  "files": [
-    "./"
-  ],
-  "dependencies": {
-    "@types/node": "^20.12.2"
+  "devDependencies": {
+    "typescript": "^5.4.5"
   }
 }

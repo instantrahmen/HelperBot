@@ -122,6 +122,8 @@ dist
 *.env.*
 *config.yml
 *config.mjs
+config/config.js
+
 # Don't ignore example config files
 !example.config.yml
 !example.public.config.yml
