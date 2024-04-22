@@ -74,6 +74,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(vite@5.2.6)
 
+  packages/pocketbase: {}
+
   packages/server:
     dependencies:
       '@discordjs/voice':
@@ -206,6 +208,9 @@ importers:
       pocketbase:
         specifier: ^0.21.1
         version: 0.21.1
+      svelte-dnd-action:
+        specifier: ^0.9.43
+        version: 0.9.43(svelte@5.0.0-next.85)
       svelte-json-tree:
         specifier: ^2.2.0
         version: 2.2.0(svelte@5.0.0-next.85)
@@ -11301,6 +11306,14 @@ packages:
       - stylus
       - sugarss
     dev: true
+
+  /svelte-dnd-action@0.9.43(svelte@5.0.0-next.85):
+    resolution: {integrity: sha512-KBt8NL3zTBCTw1DJBUFU4zLw0Dr0rsJaimYA5yqsQeV9ZiTZ2ic4Llbe8MdkhhyWzBI0bw0mXElzkrc3+dg5ag==}
+    peerDependencies:
+      svelte: '>=3.23.0'
+    dependencies:
+      svelte: 5.0.0-next.85
+    dev: false
 
   /svelte-eslint-parser@0.34.0-next.12(svelte@5.0.0-next.85):
     resolution: {integrity: sha512-KJTStZILapiwY6ULdUaAf+6GgJs0qGZJrRy5PHtgAGKr8xNHtst9Cax0xbxz2ONDvDGaR26SZRDl9vI2f1KBAQ==}

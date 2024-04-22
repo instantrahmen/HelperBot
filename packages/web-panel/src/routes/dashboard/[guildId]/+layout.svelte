@@ -42,7 +42,7 @@
   ]}
 />
 
-<div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+<div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-16">
   <div class="p-4">
     <Breadcrumbs maxBreadcrumbs={3} />
   </div>

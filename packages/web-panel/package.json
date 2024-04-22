@@ -26,6 +26,7 @@
 		"mode-watcher": "^0.3.0",
 		"paneforge": "^0.0.4",
 		"pocketbase": "^0.21.1",
+		"svelte-dnd-action": "^0.9.43",
 		"svelte-json-tree": "^2.2.0",
 		"svelte-loading-spinners": "^0.3.6",
 		"svelte-radix": "^1.1.0",

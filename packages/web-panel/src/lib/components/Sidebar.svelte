@@ -40,8 +40,8 @@
   $: pathname = $page.url.pathname;
 </script>
 
-<aside class="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-  <nav class="mt-[57px] flex flex-col items-center gap-4 px-2 sm:py-5">
+<aside class="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-background sm:flex">
+  <nav class="mt-[57px] flex flex-col items-center gap-8 px-2 sm:py-8">
     {#each links as link}
       <Tooltip.Root>
         <Tooltip.Trigger asChild let:builder>
@@ -51,11 +51,11 @@
             use:builder.action
             {...builder}
           >
-            <svelte:component this={link.icon} class="h-5 w-5" />
-            <span class="sr-only">Dashboard</span>
+            <svelte:component this={link.icon} class="h-7 w-7" />
+            <span class="sr-only">{link.name}</span>
           </a>
         </Tooltip.Trigger>
-        <Tooltip.Content side="right">Dashboard</Tooltip.Content>
+        <Tooltip.Content side="right">{link.name}</Tooltip.Content>
       </Tooltip.Root>
     {/each}
   </nav>

@@ -149,9 +149,9 @@
           <Activity class="h-4 w-4 text-muted-foreground" />
         </Card.Header>
         <Card.Content>
-          <div class="text-2xl font-bold">{guildData.members.filter(filterOnline).length}</div>
+          <div class="text-2xl font-bold">{guildData.members?.filter(filterOnline).length}</div>
           <p class="text-xs text-muted-foreground">
-            {guildData.members.filter(filterIdle).length} currently idle
+            {guildData.members?.filter(filterIdle).length} currently idle
           </p>
         </Card.Content>
       </Card.Root>

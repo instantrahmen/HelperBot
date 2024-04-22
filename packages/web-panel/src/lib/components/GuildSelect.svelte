@@ -27,7 +27,9 @@
     if (!loggedIn) return;
     if ($page.params.guildId === guildId) return;
 
-    goto(`/dashboard/${guildId}`);
+    if ($page.route.id?.startsWith('/dashboard')) {
+      goto(`/dashboard/${guildId}`);
+    }
   };
 
   onMount(async () => {

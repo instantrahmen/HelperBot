@@ -14,7 +14,7 @@
 </script>
 
 <header
-  class="sticky top-0 z-20 flex h-[57px] items-center gap-1 border-b bg-background px-4 sm:py-1 sm:pl-14"
+  class="sticky top-0 z-20 flex h-[57px] items-center gap-1 border-b bg-background px-4 sm:py-1 sm:pl-16"
 >
   <a href="/" class="flex-1 justify-center text-center text-xl font-semibold">
     <h1>Helper Bot</h1>

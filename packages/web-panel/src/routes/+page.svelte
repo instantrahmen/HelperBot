@@ -2,7 +2,7 @@
   import Json from '$lib/components/Json.svelte';
   import userStore from '$lib/stores/user.svelte';
   import LinksGrid from '$lib/components/LinksGrid.svelte';
-  import { Cog, LayoutDashboard, SquareTerminal, User, Users } from 'lucide-svelte';
+  import { Cog, FlaskConical, LayoutDashboard, SquareTerminal, User, Users } from 'lucide-svelte';
   import activeGuildStore from '$lib/stores/active-guild.svelte';
   import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
   import { setBreadcrumbs } from '$lib/stores/breadcrumbs.svelte';
@@ -30,7 +30,7 @@
     >Login</a
   >
 {:else}
-  <div class="flex flex-1 flex-col px-14 py-4 sm:gap-4">
+  <div class="flex flex-1 flex-col px-16 py-4 sm:gap-4">
     <div class="p-4">
       <Breadcrumbs maxBreadcrumbs={3} />
     </div>
@@ -58,6 +58,11 @@
           name: 'Profile',
           url: `/me/profile`,
           icon: User,
+        },
+        {
+          name: 'Testing Page',
+          url: `/testing`,
+          icon: FlaskConical,
         },
       ]}
     ></LinksGrid>
