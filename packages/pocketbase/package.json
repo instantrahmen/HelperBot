@@ -4,10 +4,15 @@
   "description": "Pocketbase server for Helper bot",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "pb:start": "./pocketbase serve",
+    "pb:mac": "./bin/pocketbase_0.22.9_darwin_amd64/pocketbase serve --dir=./pb_data --migrationsDir=./pb_migrations",
+    "pb:linux": "./bin/pocketbase_0.22.9_linux_amd64/pocketbase serve --dir=./pb_data --migrationsDir=./pb_migrations",
+    "pb:start": "npm run pb:mac || npm run pb:linux",
     "dev": "npm run pb:start"
   },
   "keywords": [],
   "author": "Erika",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "extract-zip": "^2.0.1"
+  }
 }
