@@ -41,11 +41,17 @@ export type APIAppCommandsForGuild = {
   commands: APIAppCommand[];
 };
 
-export type CommandBase = {
-  name: string;
-  description: string;
-  options?: CommandOption[];
-};
+export type CommandBase =
+  | {
+      name: string;
+      description: string;
+      options?: CommandOption[];
+      // type?: ApplicationCommand['type'];
+    }
+  | {
+      name: string;
+      type: 2;
+    };
 
 export type Command = CommandBase & {
   debugOnly?: boolean;

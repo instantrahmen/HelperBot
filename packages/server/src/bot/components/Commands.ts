@@ -73,24 +73,29 @@ export const commandState = {
     return postBody;
   },
 
-  async deployForGuild(guildId: string): Promise<APIAppCommand[]> {
+  async deployForGuild(
+    guildId: string,
+    destroy = false
+  ): Promise<APIAppCommand[]> {
+    console.log('deployForGuild', { guildId, destroy });
     try {
       const res = await rest.put(
         Routes.applicationGuildCommands(clientID, guildId),
         {
-          body: commandState.toJSON(guildId),
+          body: destroy ? [] : commandState.toJSON(guildId),
         }
       );
 
+      console.log('deployed');
       return res as APIAppCommand[];
     } catch (error: any) {
       throw new Error(error);
     }
   },
 
-  async deployAll() {
+  async deployAll(destroy = false) {
     const deploymentPromises = guilds.map((guildId: string) =>
-      this.deployForGuild(guildId)
+      this.deployForGuild(guildId, destroy)
     );
 
     const data = await Promise.all(deploymentPromises).catch((e) => {
@@ -100,6 +105,8 @@ export const commandState = {
     if (!data) {
       throw new Error('No data returned from command deploy');
     }
+
+    console.log('deployed all');
 
     return data;
   },

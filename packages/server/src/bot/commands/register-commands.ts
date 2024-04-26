@@ -9,6 +9,13 @@ export const registerAllCommands = (): void => {
   const debugCommands = initializeDebugCommands();
   const toolCommands = initializeToolCommands();
   commandState.registerCommands([
+    {
+      do: async () => {
+        console.log('test command');
+      },
+      name: 'test-command',
+      type: 2,
+    },
     ...musicCommands,
     ...debugCommands,
     ...toolCommands,

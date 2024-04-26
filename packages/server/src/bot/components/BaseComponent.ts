@@ -1,13 +1,15 @@
 import config from '../config';
 
-type ComponentsByGuild = { [guildId: string]: BaseComponent };
+type ComponentsByGuild<T extends BaseComponent = BaseComponent> = {
+  [guildId: string]: T;
+};
 
 interface ComponentConstructor<T extends BaseComponent> {
   new (...args: any[]): T;
 }
 
-interface GlobalState {
-  [key: string]: any;
+interface GlobalState<T = any> {
+  [key: string]: T;
 }
 
 interface StateInstances {
@@ -15,12 +17,12 @@ interface StateInstances {
 }
 
 type GlobalStateInitializer = (self: ComponentState) => GlobalState;
-export class ComponentState {
+export class ComponentState<T extends BaseComponent = BaseComponent> {
   private static _instances: StateInstances = {};
 
   componentClass: ComponentConstructor<any>;
 
-  componentsByGuild: ComponentsByGuild = {};
+  componentsByGuild: ComponentsByGuild<T> = {};
   globalState: GlobalState = {};
 
   constructor(

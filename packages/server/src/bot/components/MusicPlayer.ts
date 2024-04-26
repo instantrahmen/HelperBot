@@ -124,6 +124,7 @@ export class MusicPlayer extends BaseComponent {
       } catch (error) {
         // Seems to be a real disconnect which SHOULDN'T be recovered from
         this.clearQueue();
+        this.disconnect();
         connection.destroy();
       }
     });
@@ -547,9 +548,13 @@ export class MusicPlayer extends BaseComponent {
     return false;
   };
   //#endregion
+
+  destroy() {
+    this.disconnect();
+  }
 }
 
-export const mpState = new ComponentState(MusicPlayer);
+export const mpState = new ComponentState<MusicPlayer>(MusicPlayer);
 
 export const initializeMP = () => {
   mpState.createComponentsForEachGuild();
