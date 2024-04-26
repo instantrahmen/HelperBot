@@ -11,5 +11,6 @@ export const load = async ({ data, params, fetch }) => {
     guildId,
     meta: data.meta,
     clientId: data.clientId,
+    guildData: data.guildData,
   };
 };

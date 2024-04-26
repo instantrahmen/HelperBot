@@ -22,7 +22,9 @@
     console.log({ guildChange: data.guildId });
     setActiveGuild(data.guildId, activeGuildState, userState);
 
-    fetchGuildData(data.guildId, guildDataState);
+    fetchGuildData(data.guildId, guildDataState, {
+      guildData: data.guildData || undefined,
+    });
   });
 
   let breadCrumbsState = breadcrumbsStore();
