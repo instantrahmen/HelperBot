@@ -2,15 +2,15 @@
   import type { HTMLAttributes } from 'svelte/elements';
   import { cn } from '$lib/utils/';
 
-  type $$Props = HTMLAttributes<HTMLDivElement>;
-
-  let className: $$Props['class'] = undefined;
-  export { className as class };
+  let {
+    class: className,
+    level = 1,
+    ...restProps
+  }: HTMLAttributes<HTMLDivElement> & {
+    level?: number;
+  } = $props();
 </script>
 
-<div
-  class={cn('rounded-lg border bg-card text-card-foreground shadow-sm', className)}
-  {...$$restProps}
->
+<div class={cn('card', `level-${level}`, className)} {...restProps}>
   <slot />
 </div>

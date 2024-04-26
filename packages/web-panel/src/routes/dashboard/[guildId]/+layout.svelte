@@ -9,6 +9,8 @@
   import userStore from '$lib/stores/user.svelte';
   import breadcrumbsStore from '$lib/stores/breadcrumbs.svelte';
   import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+  import { sidebarStore } from '$lib/stores/sidebar.svelte';
+  import { beforeNavigate } from '$app/navigation';
 
   let { data } = $props();
 
@@ -24,6 +26,15 @@
   });
 
   let breadCrumbsState = breadcrumbsStore();
+
+  let sidebarState = sidebarStore();
+
+  beforeNavigate((navigation: import('@sveltejs/kit').BeforeNavigate) => {
+    console.log({ beforeNavigate: navigation });
+    if (!navigation.to?.route.id?.startsWith('dashboard')) {
+      sidebarState.state.open = false;
+    }
+  });
 </script>
 
 <Sidebar

@@ -1,7 +1,7 @@
 import { createStore, type Store } from './store.svelte';
 import { type CompleteGuildDataResponse } from '$lib/types/discord';
 import { goto } from '$app/navigation';
-
+import { userStore } from './user.svelte';
 export const guildDataContext = 'GUILD_DATA_CTX';
 
 type GuildDataState = CompleteGuildDataResponse | 'loading' | null;
@@ -9,7 +9,9 @@ export const guildDataStore = createStore<GuildDataState>('loading', guildDataCo
 // export const guildMembersStore = createStore<GuildDataState>('loading', guildDataContext);
 
 export const fetchGuildData = async (guildId: string, guildState: Store<GuildDataState>) => {
-  // if (guildState.state !== 'loading') guildState.state = 'loading';
+  if (!guildId) {
+    return (guildState.state = null);
+  }
   guildState.state = 'loading';
 
   try {
@@ -22,6 +24,8 @@ export const fetchGuildData = async (guildId: string, guildState: Store<GuildDat
     console.error(err);
     console.error('Auth token likely expired, logging out');
     guildState.state = null;
+    // let user = userStore();
+
     return goto('/auth/logout');
   }
 };

@@ -1,7 +1,16 @@
+<script context="module" lang="ts">
+  import { type Props } from './';
+
+  type ArrayElement<ArrayType extends readonly unknown[]> =
+    ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+
+  export type Builder = ArrayElement<NonNullable<Props['builders']>>;
+</script>
+
 <script lang="ts">
   import { Button as ButtonPrimitive } from 'bits-ui';
   import { cn } from '$lib/utils/';
-  import { buttonVariants, type Props, type Events } from './index.js';
+  import { buttonVariants, type Events } from './index.js';
 
   type $$Props = Props & {
     disabled?: boolean;

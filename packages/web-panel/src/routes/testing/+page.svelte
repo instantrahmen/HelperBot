@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CreateCommand from '$lib/components/forms/CreateCommand.svelte';
+  import CreateCommand from '$lib/components/forms/CreateCommand/CreateCommand.svelte';
   import { cn } from '$lib/utils';
 </script>
 

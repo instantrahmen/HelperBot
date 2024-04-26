@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CircleAlert, SquareUser } from 'lucide-svelte';
+  import { SquareUser } from 'lucide-svelte';
   import ModeToggle from '$lib/components/ModeToggle.svelte';
   import { Button } from '$lib/components/ui/button/';
   import userStore from '$lib/stores/user.svelte';
@@ -13,10 +13,8 @@
   let loggedIn = $derived(!!user && !!meta);
 </script>
 
-<header
-  class="sticky top-0 z-20 flex h-[57px] items-center gap-1 border-b bg-background px-4 sm:py-1 sm:pl-16"
->
-  <a href="/" class="flex-1 justify-center text-center text-xl font-semibold">
+<header class="bg-background sticky top-0 z-20 flex h-[57px] items-center gap-1 border-b p-4 px-4">
+  <a href="/" class="flex-1 justify-center text-xl font-semibold">
     <h1>Helper Bot</h1>
   </a>
   <div class="ml-auto flex gap-2">

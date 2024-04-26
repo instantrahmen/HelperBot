@@ -15,15 +15,15 @@
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     {#each links as link}
       <a
-        class="group block overflow-hidden rounded-lg border bg-muted text-muted-foreground shadow-lg transition-all hover:bg-card hover:text-card-foreground"
+        class="text-muted-foreground bg-card-level-3 hover:bg-card-level-1 hover:text-card-foreground group block overflow-hidden rounded-lg border shadow-lg transition-all"
         href={link.url}
         data-sveltekit-preload-data
         data-sveltekit-preload-code
       >
-        <div class="flex h-32 items-center justify-center bg-card">
+        <div class="bg-card-level-1 level-1 flex h-32 items-center justify-center">
           <svelte:component this={link.icon} class="h-10 w-10" />
         </div>
-        <div class="p-4 text-center">
+        <div class="border-t p-4 text-center">
           <h3 class="text-lg font-semibold tracking-tight">{link.name}</h3>
           <p class="text-sm text-gray-500 dark:text-gray-400">{link.description}</p>
         </div>

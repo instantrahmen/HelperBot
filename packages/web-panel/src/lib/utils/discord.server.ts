@@ -5,6 +5,7 @@ import { Client, Events, GatewayIntentBits, REST } from 'discord.js';
 
 import type { Fetch } from '$lib/types';
 import type { CompleteGuildDataResponse, GuildMemberResponse } from '$lib/types/discord';
+import { sleep } from '.';
 
 const config = getConfig();
 const {
@@ -68,7 +69,7 @@ export const fetchGuilds = async (fetch: Fetch, authToken?: string): Promise<API
   }
 };
 
-type VerifiedAccessToken =
+export type VerifiedAccessToken =
   | {
       ok: true;
       message: undefined;
@@ -97,6 +98,13 @@ export const verifyAccessToken = async (
   });
 
   if (!ok) {
+    if (data.retry_after) {
+      console.log(`waiting for ${data.retry_after} seconds to try again`);
+      await sleep(data.retry_after * 1000 + 100); // Add 100ms to be safe
+      return verifyAccessToken(accessToken, guildId);
+    }
+    console.log('failed', accessToken);
+    console.log('data', data);
     return { ok: false, message: 'Invalid access token' };
   }
 

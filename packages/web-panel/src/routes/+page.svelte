@@ -23,6 +23,14 @@
       active: true,
     },
   ]);
+
+  let userState = userStore();
+
+  let jsonData = $derived({
+    data_user: data.user,
+    userState,
+    activeGuildState,
+  });
 </script>
 
 {#if !data.user}
@@ -66,7 +74,7 @@
         },
       ]}
     ></LinksGrid>
-    <Json value={data.user} />
+    <Json value={jsonData} />
     <a
       href="/auth/logout"
       class="inline-block rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-red-700"

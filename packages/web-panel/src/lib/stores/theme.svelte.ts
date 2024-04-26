@@ -4,6 +4,8 @@ import { createStore } from './store.svelte';
 export const themes = {
   default: undefined,
   deepBlue: 'theme-deep-blue',
+  pink: 'theme-pink',
+  indigo: 'theme-indigo',
 } as const;
 export type Theme = (typeof themes)[keyof typeof themes];
 

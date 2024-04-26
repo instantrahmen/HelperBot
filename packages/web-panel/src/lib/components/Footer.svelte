@@ -1,7 +1,9 @@
 <script lang="ts">
   import { themeStore, themes, type Theme } from '$lib/stores/theme.svelte';
   import type { Selected } from 'bits-ui';
-  import Dropdown from './Dropdown.svelte';
+  import Dropdown from './SelectDropdown.svelte';
+  import { sidebarStore } from '$lib/stores/sidebar.svelte';
+  import { cn } from '$lib/utils';
 
   let themeState = themeStore();
 
@@ -38,13 +40,20 @@
   $effect(() => {
     themeState.state = themes[selected.value as ThemeKey];
   });
+
+  let sidebarState = sidebarStore();
 </script>
 
-<footer class="flex flex-row justify-between border-t p-2 align-middle text-foreground sm:pl-16">
+<footer
+  class={cn(
+    'text-foreground flex flex-row justify-between border-t p-2 align-middle',
+    sidebarState.state.open && 'sm:pl-[4.5rem]'
+  )}
+>
   <span class="my-auto inline-block h-fit align-middle text-sm">&copy; {year} Erika Cudd</span>
 
-  <!-- {themeState.state} -->
-  <Dropdown label="Theme" items={themeDropdownOptions} bind:selected />
+  {sidebarState.state.open}
+  <Dropdown label="Theme" items={themeDropdownOptions} bind:selected class="bg-none" />
 </footer>
 
 <style lang="postcss">

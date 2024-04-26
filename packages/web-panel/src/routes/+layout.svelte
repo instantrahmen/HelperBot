@@ -18,6 +18,7 @@
 
   let userState = userStore();
 
+  console.log('data', data);
   userState.state.user = data.user;
 
   userState.state.auth = data.user
@@ -29,6 +30,8 @@
 </script>
 
 <ModeWatcher />
+
+<svelte:body class="bg-red-500  " />
 
 <div
   class={cn(

@@ -4,7 +4,7 @@
   import * as Card from '$lib/components/ui/card/';
   import { Input } from '$lib/components/ui/input';
   import { CommandsTypeOptions } from '$lib/types/gen/pocketbase-types';
-  import Dropdown from '$lib/components/Dropdown.svelte';
+  import Dropdown from '$lib/components/SelectDropdown.svelte';
   import { userStore } from '$lib/stores/user.svelte';
   import { activeGuildStore } from '$lib/stores/active-guild.svelte';
   import type { Selected } from 'bits-ui';
