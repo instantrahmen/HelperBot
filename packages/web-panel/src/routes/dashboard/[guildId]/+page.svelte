@@ -16,6 +16,8 @@
   import { setBreadcrumbs } from '$lib/stores/breadcrumbs.svelte';
   import Json from '$lib/components/Json.svelte';
   import { onMount } from 'svelte';
+  import { navigating } from '$app/stores';
+  import DiscordButton from '$lib/components/DiscordButton.svelte';
 
   let activeGuildState = activeGuildStore();
   let guildDataState = guildDataStore();
@@ -71,7 +73,7 @@
     <h1 class="text-3xl font-bold">Dashboard</h1>
     <Button on:click={refetchData}>Refresh</Button>
   </span>
-  {#if loading}
+  {#if loading || $navigating}
     <div class="mx-auto flex h-full flex-1 flex-col justify-center text-center">
       <!-- <Card.Content> -->
       <span class="inline-block p-6">
@@ -93,17 +95,15 @@
       </Card.Header>
       <Card.Content>
         <div class="text-2xl font-bold">Please invite the bot to your server</div>
-        <Button
-          variant="outline"
+        <DiscordButton
+          label="Invite Helper"
           on:click={() =>
             window.open(
               createBotInviteLink(data.clientId),
               '_blank',
               `height=600,width=800,resizable=1,left=${getScreenSize().width / 2 - 200},top=${getScreenSize().height / 2 - 150}`
             )}
-        >
-          Invite Helper
-        </Button>
+        />
       </Card.Content>
     </Card.Root>
   {:else}
@@ -123,11 +123,11 @@
       <Card.Root>
         <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
           <Card.Title class="text-sm font-medium">Server Boosts</Card.Title>
-          <DiscordBoost class="h-4 w-4 text-muted-foreground" />
+          <DiscordBoost class="text-muted-foreground h-4 w-4" />
         </Card.Header>
         <Card.Content>
           <div class="text-2xl font-bold">{guildData.premium_subscription_count}</div>
-          <p class="text-xs text-muted-foreground">Server level {guildData.premium_tier}</p>
+          <p class="text-muted-foreground text-xs">Server level {guildData.premium_tier}</p>
         </Card.Content>
       </Card.Root>
 
@@ -135,7 +135,7 @@
       <Card.Root>
         <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
           <Card.Title class="text-sm font-medium">Server Members</Card.Title>
-          <Users class="h-4 w-4 text-muted-foreground" />
+          <Users class="text-muted-foreground h-4 w-4" />
         </Card.Header>
         <Card.Content>
           <div class="text-2xl font-bold">{guildData.members?.length || 0}</div>
@@ -146,11 +146,11 @@
       <Card.Root>
         <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
           <Card.Title class="text-sm font-medium">Active Now</Card.Title>
-          <Activity class="h-4 w-4 text-muted-foreground" />
+          <Activity class="text-muted-foreground h-4 w-4" />
         </Card.Header>
         <Card.Content>
           <div class="text-2xl font-bold">{guildData.members?.filter(filterOnline).length}</div>
-          <p class="text-xs text-muted-foreground">
+          <p class="text-muted-foreground text-xs">
             {guildData.members?.filter(filterIdle).length} currently idle
           </p>
         </Card.Content>

@@ -18,6 +18,7 @@ const config = {
         border: 'hsl(var(--border) / <alpha-value>)',
         input: 'hsl(var(--input) / <alpha-value>)',
         ring: 'hsl(var(--ring) / <alpha-value>)',
+        blurple: 'hsl(var(--blurple) / <alpha-value>)',
         background: {
           DEFAULT: 'hsl(var(--background) / <alpha-value>)',
         },
@@ -50,9 +51,9 @@ const config = {
           DEFAULT: 'hsl(var(--card) / <alpha-value>)',
           foreground: 'hsl(var(--card-foreground) / <alpha-value>)',
           level: {
-            1: 'color-mix(in lch, hsl(var(--card)) 10%, hsl(var(--background)))',
-            2: 'color-mix(in lch, hsl(var(--card)) 40%, hsl(var(--background)))',
-            3: 'color-mix(in lch, hsl(var(--card)) 70%, hsl(var(--background)))',
+            1: 'color-mix(in lch, hsl(var(--card)) 25%, hsl(var(--background)))',
+            2: 'color-mix(in lch, hsl(var(--card)) 50%, hsl(var(--background)))',
+            3: 'color-mix(in lch, hsl(var(--card)) 75%, hsl(var(--background)))',
             4: 'color-mix(in lch, hsl(var(--card)) 100%, hsl(var(--background)))',
           },
         },

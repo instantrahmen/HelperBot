@@ -21,6 +21,12 @@ export type BotParamValueTypes = {
   date: string;
 };
 
+export type Values = {
+  [key in keyof BotParamValueTypes]: {
+    [id: string]: BotParamValueTypes[key];
+  };
+};
+
 export type BotEventAction = {
   id: string;
   label: string;
@@ -29,7 +35,7 @@ export type BotEventAction = {
   params: BotEventParams<keyof BotParamValueTypes>[];
 };
 
-export type BotEventParams<T extends keyof BotParamValueTypes> = {
+export type BotEventParams<T extends keyof BotParamValueTypes = keyof BotParamValueTypes> = {
   id: string;
   label: string;
   type: T;

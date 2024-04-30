@@ -56,9 +56,10 @@
   });
 </script>
 
-<aside class="bg-background fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r sm:flex">
-  {sidebarState.state.open}
-  <nav class="mt-[57px] flex flex-col items-center gap-8 px-2 sm:py-8">
+<aside
+  class="bg-background fixed inset-y-0 left-0 z-10 mt-[57px] hidden w-16 flex-col border-r sm:flex"
+>
+  <nav class=" flex flex-col items-center gap-8 px-2 sm:py-8">
     {#each links as link}
       <Tooltip.Root>
         <Tooltip.Trigger asChild let:builder>

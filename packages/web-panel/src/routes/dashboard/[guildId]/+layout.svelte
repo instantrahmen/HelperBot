@@ -33,7 +33,8 @@
 
   beforeNavigate((navigation: import('@sveltejs/kit').BeforeNavigate) => {
     console.log({ beforeNavigate: navigation });
-    if (!navigation.to?.route.id?.startsWith('dashboard')) {
+    if (!navigation.to?.route.id?.startsWith('/dashboard')) {
+      console.log('close sidebar', navigation.to?.route.id);
       sidebarState.state.open = false;
     }
   });

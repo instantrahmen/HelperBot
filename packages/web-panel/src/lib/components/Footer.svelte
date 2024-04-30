@@ -47,12 +47,12 @@
 <footer
   class={cn(
     'text-foreground flex flex-row justify-between border-t p-2 align-middle',
-    sidebarState.state.open && 'sm:pl-[4.5rem]'
+    sidebarState.state.open && 'sm:ml-16'
   )}
 >
   <span class="my-auto inline-block h-fit align-middle text-sm">&copy; {year} Erika Cudd</span>
 
-  {sidebarState.state.open}
+  <!-- {sidebarState.state.open} -->
   <Dropdown label="Theme" items={themeDropdownOptions} bind:selected class="bg-none" />
 </footer>
 

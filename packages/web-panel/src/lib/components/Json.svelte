@@ -5,7 +5,7 @@
 </script>
 
 <div
-  class=" max-w-full overflow-x-auto overflow-y-auto rounded-lg border bg-card p-2 text-card-foreground shadow-sm shadow-sm"
+  class=" bg-card-level-2 text-card-foreground max-w-full overflow-x-auto overflow-y-auto rounded-lg border p-2 shadow-sm"
 >
   <div class="ml-[-1.5rem] w-[100px] overflow-scroll md:w-full">
     <JsonTree

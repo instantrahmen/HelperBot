@@ -18,7 +18,7 @@
 
   let userState = userStore();
 
-  console.log('data', data);
+  // console.log('data', data);
   userState.state.user = data.user;
 
   userState.state.auth = data.user

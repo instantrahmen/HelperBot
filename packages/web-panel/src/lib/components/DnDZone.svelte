@@ -9,74 +9,124 @@
     disableDrag: () => void;
     keyDown: (e: KeyboardEvent) => void;
   };
+
+  export type DragHandleAction = (element: HTMLElement) => {
+    update(): void;
+    destroy(): void;
+  };
 </script>
 
 <script lang="ts" generics="T extends DnDZoneItem">
-  import { cn } from '$lib/utils';
-
-  import { dndzone, type Options, type DndEvent, SOURCES, TRIGGERS } from 'svelte-dnd-action';
-  import type { HTMLAttributes } from 'svelte/elements';
   import type { Snippet } from 'svelte';
+  import type { HTMLAttributes } from 'svelte/elements';
+  import { dndzone, type Options, type DndEvent, SOURCES, TRIGGERS } from 'svelte-dnd-action';
+  import { cn, dedupItems } from '$lib/utils';
 
   type DivProps = HTMLAttributes<HTMLDivElement>;
-  type ItemSnippet = Snippet<[item: T, attrs: DnDZoneAttrs]>;
+  type ItemSnippet = Snippet<[item: T, dragHandle: DragHandleAction]>;
 
   let {
     items = $bindable<T[]>([]),
     options = {},
     renderItem,
     dragDisabled = $bindable(false),
-    useDragHandle = false,
     class: className,
+    zoneName,
   }: DivProps & {
     items: T[];
     options?: Omit<Options<T>, 'items'>;
     renderItem: ItemSnippet;
     dragDisabled?: boolean;
     useDragHandle?: boolean;
+    zoneName?: string;
   } = $props();
 
-  const handleConsider = (e: CustomEvent<DndEvent<T>>) => {
+  let dragHandles: HTMLElement[] = $state([]);
+  let useDragHandle = $derived(dragHandles.length > 0);
+
+  const handleConsiderWithDragHandle = (e: CustomEvent<DndEvent<T>>) => {
     const {
-      items: newItems,
       info: { source, trigger },
     } = e.detail;
 
-    items = e.detail.items;
+    handleSort(e);
 
-    if (useDragHandle) {
-      if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) {
-        dragDisabled = true;
-      }
+    // Ensure dragging is stopped on drag finish via keyboard
+    if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) {
+      dragDisabled = true;
     }
   };
 
-  const handleFinalize = (e: CustomEvent<DndEvent<T>>) => {
+  const handleFinalizeWithDragHandle = (e: CustomEvent<DndEvent<T>>) => {
     const {
-      items: newItems,
-      info: { source, trigger },
+      info: { source },
     } = e.detail;
 
-    items = e.detail.items;
+    handleSort(e);
 
-    if (dragDisabled) {
-      if (source === SOURCES.POINTER) {
-        dragDisabled = true;
-      }
+    // Ensure dragging is stopped on drag finish via pointer (mouse, touch)
+    if (source === SOURCES.POINTER) {
+      dragDisabled = true;
     }
   };
 
-  const enableDrag = () => {
-    dragDisabled = false;
+  const handleSort = (e: CustomEvent<DndEvent<T>>) => {
+    items = e.detail.items;
   };
 
-  const disableDrag = () => {
-    dragDisabled = true;
+  // use:dragHandle action
+  const dragHandle = (element: HTMLElement) => {
+    element.setAttribute('data-drag-handle', '');
+
+    const startDrag = (e: MouseEvent | TouchEvent) => {
+      e.preventDefault();
+      dragDisabled = false;
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.key === 'Enter' || e.key === ' ') && dragDisabled) dragDisabled = false;
+    };
+
+    dragHandles = [...dragHandles, element];
+
+    // Add event listeners to handle enabling and disabling drag
+    element.addEventListener('mousedown', startDrag);
+    element.addEventListener('touchstart', startDrag);
+    element.addEventListener('keydown', handleKeyDown);
+
+    // Set aria role to button to mark as interactive
+    element.role = 'button';
+    element.ariaLabel = 'Drag Handle';
+    return {
+      update() {},
+      destroy() {
+        element.removeAttribute('data-drag-handle');
+        element.removeEventListener('mousedown', startDrag);
+        element.removeEventListener('touchstart', startDrag);
+        element.removeEventListener('keydown', handleKeyDown);
+
+        const dragHandleIndex = dragHandles.indexOf(element);
+        dragHandles.splice(dragHandleIndex, 1);
+      },
+    };
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if ((e.key === 'Enter' || e.key === ' ') && dragDisabled) dragDisabled = false;
+  $effect(() => {
+    // console.log('items', items);
+  });
+
+  const hasDuplicateId = (items: T[]) => {
+    const ids = items.map((item) => item.id);
+    return ids.length !== new Set(ids).size;
   };
+
+  $effect(() => {
+    // HACK: De-duplicate if needed to counteract duplication bug with svelte-dnd-action and state runes when an item is dragged back to its original zone
+    if (hasDuplicateId(items)) {
+      console.log(zoneName, hasDuplicateId(items), items);
+      items = dedupItems(items);
+    }
+  });
 </script>
 
 <div
@@ -85,14 +135,14 @@
     items,
     flipDurationMs: 200,
     dragDisabled,
+    centreDraggedOnCursor: true,
     ...options,
   }}
-  on:consider={handleConsider}
-  on:finalize={handleFinalize}
+  on:consider={useDragHandle ? handleConsiderWithDragHandle : handleSort}
+  on:finalize={useDragHandle ? handleFinalizeWithDragHandle : handleSort}
 >
-  {useDragHandle}
   {#each items as item (item.id)}
-    {@render renderItem(item, { dragDisabled, enableDrag, disableDrag, keyDown: handleKeyDown })}
+    {@render renderItem(item, dragHandle)}
   {/each}
 </div>
 

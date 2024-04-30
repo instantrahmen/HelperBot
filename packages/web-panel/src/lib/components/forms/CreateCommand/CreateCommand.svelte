@@ -1,22 +1,19 @@
 <script lang="ts">
-  import Json from '$lib/components/Json.svelte';
-  import { cn } from '$lib/utils';
+  import { cn, dedupItems } from '$lib/utils';
   import * as Card from '$lib/components/ui/card';
   import { Input } from '$lib/components/ui/input';
   import { Label } from '$lib/components/ui/label';
   import { Textarea } from '$lib/components/ui/textarea';
   import Button from '$lib/components/ui/button/button.svelte';
   import { PlusIcon } from 'lucide-svelte';
-  import DnDZone from '$lib/components/DnDZone.svelte';
-  import type { BotEvent, BotAction, BotEventAction } from '$lib/types/commands';
-  import { dndzone } from 'svelte-dnd-action';
+  import DnDZone, { type DragHandleAction } from '$lib/components/DnDZone.svelte';
+  import type { BotEvent, BotAction, BotEventAction, Values } from '$lib/types/commands';
+
   import { createEvents, createActions } from '$lib/utils/commands';
-  import CommandEventCard, { type Values } from './CommandEventCard.svelte';
+  import CommandEventCard from './CommandEventCard.svelte';
   import Dropdown from '$lib/components/Dropdown.svelte';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/';
-  import { Item } from '$lib/components/ui/accordion';
-
-  let windowElement: HTMLBodyElement | undefined = $state();
+  import { flip } from 'svelte/animate';
 
   let events = $state(
     createEvents([
@@ -197,10 +194,13 @@
     ])
   );
 
+  // Extracted this to get the linter to shut up. I know the initial state of currentEvents won't update, that's why it's the *initial* state ffs.
+  const getFirstEvent = () => events[0];
+
   let currentEvents: BotEvent[] = $state(
     createEvents([
       {
-        ...events[0],
+        ...getFirstEvent(),
         id: 'event__message-includes-2',
       },
     ])
@@ -241,21 +241,14 @@
   };
 
   const maxDnDWidth = 768;
-  let bodyWidth: number = $derived(windowElement?.clientWidth ?? 0);
 
-  // let dndEnabled = $derived(bodyWidth > maxDnDWidth);
-  const getWindowTooSmall = (width: number = bodyWidth) => bodyWidth <= maxDnDWidth;
-  let dragDisabled = $state(getWindowTooSmall());
-  let windowTooSmall = $derived(getWindowTooSmall(bodyWidth));
-
-  $effect(() => {
-    dragDisabled = windowTooSmall;
-  });
+  const hasDuplicateId = (items: DropdownParams<BotEvent | BotAction>['items']) => {
+    const ids = items.map((item) => item.id);
+    return ids.length !== new Set(ids).size;
+  };
 </script>
 
-<svelte:body bind:this={windowElement} />
-
-<div class="grid w-full grid-cols-1 gap-6 md:grid-cols-[1fr_300px]">
+<div class="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 md:grid-cols-[1fr_300px]">
   <Card.Root class="bg-card-level-1 flex flex-col">
     <Card.Header class="text-center">
       <Card.Title>Create Command</Card.Title>
@@ -279,7 +272,10 @@
       <div class="space-y-6">
         <div>
           <div class="flex items-center justify-between">
-            <h3 class="text-lg font-medium">Events</h3>
+            <div class="flex flex-col space-y-1">
+              <h3 class="text-lg font-medium">Events</h3>
+              <span class="text-muted-foreground text-sm">When this happens:</span>
+            </div>
             {@render dropdownBotEvent({
               items: events,
               name: 'events',
@@ -288,20 +284,23 @@
           </div>
 
           <DnDZone
+            zoneName="current-events"
             bind:items={currentEvents}
             options={{
               type: 'event',
               dropTargetClasses: ['border-primary'],
               dropTargetStyle: {},
             }}
-            bind:dragDisabled
             renderItem={eventCard}
             class="bg-card-level-2 mt-2 min-h-24 space-y-2 rounded-lg border-2 border-dashed p-2 "
           />
         </div>
         <div>
           <div class="flex items-center justify-between">
-            <h3 class="text-lg font-medium">Actions</h3>
+            <div class="flex flex-col space-y-1">
+              <h3 class="text-lg font-medium">Actions</h3>
+              <span class="text-muted-foreground text-sm">Do this:</span>
+            </div>
             {@render dropdownBotAction({
               items: actions,
               name: 'action',
@@ -310,13 +309,13 @@
           </div>
 
           <DnDZone
+            zoneName="current-actions"
             bind:items={currentActions}
             options={{
               type: 'action',
               dropTargetClasses: ['border-primary'],
               dropTargetStyle: {},
             }}
-            bind:dragDisabled
             renderItem={actionCard}
             class="bg-card-level-2 mt-2 min-h-24 space-y-2 rounded-lg border-2 border-dashed p-2"
           />
@@ -339,6 +338,7 @@
       <!-- {$inspect(console.log(events))} -->
 
       <DnDZone
+        zoneName="events"
         bind:items={events}
         options={{
           type: 'event',
@@ -356,6 +356,7 @@
 
     <Card.Content class="space-y-4">
       <DnDZone
+        zoneName="actions"
         bind:items={actions}
         options={{
           type: 'action',
@@ -369,19 +370,21 @@
   </Card.Root>
 </div>
 
-{#snippet eventCard(item: BotEvent)}
+{#snippet eventCard(item: BotEvent, dragHandle: DragHandleAction)}
   <CommandEventCard
     {item}
     onValuesChange={(values) => (eventParamValues[item.id] = values)}
     onRequestRemove={removeEvent}
+    {dragHandle}
   />
 {/snippet}
 
-{#snippet actionCard(item: BotAction)}
+{#snippet actionCard(item: BotAction, dragHandle: (e: HTMLElement) => any)}
   <CommandEventCard
     {item}
     onValuesChange={(values) => (actionParamValues[item.id] = values)}
     onRequestRemove={removeAction}
+    {dragHandle}
   />
 {/snippet}
 

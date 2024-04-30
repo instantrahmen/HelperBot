@@ -70,3 +70,17 @@ export const createBotInviteLink = (clientId: string) =>
   `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot`;
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+type ItemWithId = { id: number | string };
+export const dedupItems = <T extends ItemWithId>(input: T[]): T[] => {
+  return input.reduce((accumulator, current) => {
+    let exists = accumulator.find((item) => {
+      return item.id === current.id;
+    });
+
+    if (!exists) {
+      accumulator = accumulator.concat(current);
+    }
+    return accumulator;
+  }, [] as T[]);
+};
