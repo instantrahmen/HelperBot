@@ -14,12 +14,47 @@
     update(): void;
     destroy(): void;
   };
+
+  export const copyItem = <T extends DnDZoneItem>(item: T): T => {
+    const { id, ...restItem } = item;
+    const newId = `${id}_copy_${Date.now()}_${Math.round(Math.random() * 100000)}`;
+    const newItem: T = {
+      ...restItem,
+      id: newId,
+    } as T;
+    return newItem;
+  };
+  export const copyItems = <T extends DnDZoneItem>(items: T[]): T[] => {
+    return items.map(copyItem);
+  };
+
+  export const addItemAsCopy = <T extends DnDZoneItem>(items: T[], item: T): T[] => {
+    const itemsWithoutNewItem = items.filter((i) => i.id !== item.id);
+    const newItem = copyItem(item);
+    return [...itemsWithoutNewItem, newItem];
+  };
+
+  export const addItemsAsCopies = <T extends DnDZoneItem>(
+    initialItems: T[],
+    itemsToAdd: T[]
+  ): T[] => {
+    const itemsWithoutNewItems = initialItems.filter((i) => !itemsToAdd.some((a) => a.id === i.id));
+    const newItems = itemsToAdd.map(copyItem);
+    return [...itemsWithoutNewItems, ...newItems];
+  };
 </script>
 
 <script lang="ts" generics="T extends DnDZoneItem">
-  import type { Snippet } from 'svelte';
+  import { type Snippet, untrack } from 'svelte';
   import type { HTMLAttributes } from 'svelte/elements';
-  import { dndzone, type Options, type DndEvent, SOURCES, TRIGGERS } from 'svelte-dnd-action';
+  import {
+    dndzone,
+    type Options,
+    type DndEvent,
+    SOURCES,
+    TRIGGERS,
+    SHADOW_ITEM_MARKER_PROPERTY_NAME,
+  } from 'svelte-dnd-action';
   import { cn, dedupItems } from '$lib/utils';
 
   type DivProps = HTMLAttributes<HTMLDivElement>;
@@ -32,6 +67,8 @@
     dragDisabled = $bindable(false),
     class: className,
     zoneName,
+    duplicateOnDrop = false,
+    awaitingCopy = $bindable(false),
   }: DivProps & {
     items: T[];
     options?: Omit<Options<T>, 'items'>;
@@ -39,10 +76,14 @@
     dragDisabled?: boolean;
     useDragHandle?: boolean;
     zoneName?: string;
+    duplicateOnDrop?: boolean;
+    awaitingCopy?: boolean;
   } = $props();
 
   let dragHandles: HTMLElement[] = $state([]);
   let useDragHandle = $derived(dragHandles.length > 0);
+
+  const initialItems = items;
 
   const handleConsiderWithDragHandle = (e: CustomEvent<DndEvent<T>>) => {
     const {
@@ -62,7 +103,7 @@
       info: { source },
     } = e.detail;
 
-    handleSort(e);
+    handleDrop(e);
 
     // Ensure dragging is stopped on drag finish via pointer (mouse, touch)
     if (source === SOURCES.POINTER) {
@@ -74,6 +115,13 @@
     items = e.detail.items;
   };
 
+  const handleDrop = (e: CustomEvent<DndEvent<T>>) => {
+    handleSort(e);
+
+    if (duplicateOnDrop) {
+      awaitingCopy = true;
+    }
+  };
   // use:dragHandle action
   const dragHandle = (element: HTMLElement) => {
     element.setAttribute('data-drag-handle', '');
@@ -111,10 +159,6 @@
     };
   };
 
-  $effect(() => {
-    // console.log('items', items);
-  });
-
   const hasDuplicateId = (items: T[]) => {
     const ids = items.map((item) => item.id);
     return ids.length !== new Set(ids).size;
@@ -127,6 +171,15 @@
       items = dedupItems(items);
     }
   });
+
+  $effect(() => {
+    if (duplicateOnDrop && awaitingCopy) {
+      awaitingCopy = false;
+      const missingItems = initialItems.filter((item) => !items.includes(item));
+
+      items = addItemsAsCopies(initialItems, missingItems);
+    }
+  });
 </script>
 
 <div
@@ -136,10 +189,11 @@
     flipDurationMs: 200,
     dragDisabled,
     centreDraggedOnCursor: true,
+    dropFromOthersDisabled: duplicateOnDrop,
     ...options,
   }}
   on:consider={useDragHandle ? handleConsiderWithDragHandle : handleSort}
-  on:finalize={useDragHandle ? handleFinalizeWithDragHandle : handleSort}
+  on:finalize={useDragHandle ? handleFinalizeWithDragHandle : handleDrop}
 >
   {#each items as item (item.id)}
     {@render renderItem(item, dragHandle)}

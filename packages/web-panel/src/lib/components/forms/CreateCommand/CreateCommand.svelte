@@ -6,7 +6,7 @@
   import { Textarea } from '$lib/components/ui/textarea';
   import Button from '$lib/components/ui/button/button.svelte';
   import { PlusIcon } from 'lucide-svelte';
-  import DnDZone, { type DragHandleAction } from '$lib/components/DnDZone.svelte';
+  import DnDZone, { addItemAsCopy, type DragHandleAction } from '$lib/components/DnDZone.svelte';
   import type { BotEvent, BotAction, BotEventAction, Values } from '$lib/types/commands';
 
   import { createEvents, createActions } from '$lib/utils/commands';
@@ -14,6 +14,7 @@
   import Dropdown from '$lib/components/Dropdown.svelte';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/';
   import { flip } from 'svelte/animate';
+  import { untrack } from 'svelte';
 
   let events = $state(
     createEvents([
@@ -194,6 +195,8 @@
     ])
   );
 
+  let awaitingCopy = $state(false);
+
   // Extracted this to get the linter to shut up. I know the initial state of currentEvents won't update, that's why it's the *initial* state ffs.
   const getFirstEvent = () => events[0];
 
@@ -221,7 +224,7 @@
 
   const removeAction = (removedAction: BotAction) => {
     currentActions = currentActions.filter((action) => action.id !== removedAction.id);
-    actions = [...actions, removedAction];
+    // actions = [...actions, removedAction];
   };
 
   const addEvent = (event: BotEvent) => {
@@ -232,19 +235,13 @@
   const addAction = (action: BotAction) => {
     currentActions = [...currentActions, action];
     actions = actions.filter((a) => a.id !== action.id);
+    awaitingCopy = true;
   };
 
   type DropdownParams<T extends BotEvent | BotAction> = {
     items: T[];
     name: string;
     onItemClick: (item: T) => void;
-  };
-
-  const maxDnDWidth = 768;
-
-  const hasDuplicateId = (items: DropdownParams<BotEvent | BotAction>['items']) => {
-    const ids = items.map((item) => item.id);
-    return ids.length !== new Set(ids).size;
   };
 </script>
 
@@ -357,6 +354,8 @@
     <Card.Content class="space-y-4">
       <DnDZone
         zoneName="actions"
+        duplicateOnDrop
+        bind:awaitingCopy
         bind:items={actions}
         options={{
           type: 'action',

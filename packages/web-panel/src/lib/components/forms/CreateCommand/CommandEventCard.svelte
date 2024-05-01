@@ -80,7 +80,7 @@
 
   {#if params}
     <div class="mt-4">
-      <div class="mt-4">
+      <div class="mt-4 flex flex-col gap-2">
         {#each params as param}
           {@render cardInput(param)}
 
@@ -101,13 +101,10 @@
       placeholder={param.label}
     />
   {:else if param.type === 'toggle'}
-    <Label for={param.id}>{param.label}</Label>
-    <Switch id="airplane-mode" bind:checked={paramValues['toggle'][param.id]} />
-    <!-- <Input
-      type="checkbox"
-      bind:checked={paramValues[param.id]}
-      name={param.label}
-      placeholder={param.label}
-    /> -->
+    <div class="flex items-center gap-2">
+
+      <Label for={param.id} class="align-middle justify-center">{param.label}</Label>
+      <Switch id="airplane-mode" bind:checked={paramValues['toggle'][param.id]} />
+    </div>
   {/if}
 {/snippet}
