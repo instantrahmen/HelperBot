@@ -9,7 +9,7 @@ process.on('uncaughtException', (err) => {
 });
 
 export const initialize = () => {
-  botState._initialize();
+  botState._initialize(true);
 
   generateSlashCommands(botState.client);
 

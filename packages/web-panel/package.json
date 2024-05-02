@@ -13,7 +13,7 @@
     "pb:types": "npx pocketbase-typegen --env --out ./src/lib/types/gen/pocketbase-types.ts"
   },
   "dependencies": {
-    "@helper/common": "workspace:0.2.0",
+    "@helper/config": "workspace:1.0.0",
     "@zerodevx/svelte-json-view": "^1.0.9",
     "bits-ui": "^0.21.6",
     "clsx": "^2.1.1",

@@ -1,23 +1,19 @@
 {
   "folders": [
-	{
-		"name": "✨ helper-bot",
-		"path": "."
-	},
-	{
-		"name": "📦 @helper/common",
-		"path": "packages/common"
-	},
-	{
-		"name": "📦 @helper/server",
-		"path": "packages/server"
-	},
-	{
-		"name": "🚀 @helper/web-panel",
-		"path": "packages/web-panel"
-	}
-],
+    {
+      "name": "✨ helper-bot",
+      "path": ".",
+    },
+    {
+      "name": "📦 @helper/server",
+      "path": "packages/server",
+    },
+    {
+      "name": "🚀 @helper/web-panel",
+      "path": "packages/web-panel",
+    },
+  ],
   "settings": {
-    "typescript.tsserver.experimental.enableProjectDiagnostics": true
-  }
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+  },
 }

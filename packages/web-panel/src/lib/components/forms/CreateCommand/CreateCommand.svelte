@@ -8,207 +8,37 @@
   import { PlusIcon } from 'lucide-svelte';
   import DnDZone, { addItemAsCopy, type DragHandleAction } from '$lib/components/DnDZone.svelte';
   import type { BotEvent, BotAction, BotEventAction, Values } from '$lib/types/commands';
+  import CommandParamInput from './CommandParamInput.svelte';
 
   import { createEvents, createActions } from '$lib/utils/commands';
   import CommandEventCard from './CommandEventCard.svelte';
   import Dropdown from '$lib/components/Dropdown.svelte';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/';
-  import { flip } from 'svelte/animate';
-  import { untrack } from 'svelte';
+  import { events as allEvents, actions as allActions } from './command-blocks/';
 
-  let events = $state(
-    createEvents([
-      {
-        id: 'event__message-includes',
-        label: 'Message inlcudes',
-        value: 'messageIncludes',
-        description: 'When a message is sent that includes a specified string',
-        params: [
-          {
-            label: 'Value',
-            type: 'input',
-            required: true,
-            id: 'value',
-          },
-        ],
-      },
-      {
-        id: 'event__message-starts-with',
-        label: 'Message starts with',
-        value: 'messageStartsWith',
-        description: 'When a message is sent that starts with a specified string',
-        params: [
-          {
-            label: 'Value',
-            type: 'input',
-            required: true,
-            id: 'value',
-          },
-        ],
-      },
-      {
-        id: 'event__slash-command',
-        label: 'Slash Command Invoked',
-        value: 'slashCommand',
-        description: 'Register a slash command',
-        params: [
-          {
-            label: 'Name',
-            type: 'input',
-            required: true,
-            id: 'name',
-          },
-          {
-            label: 'Description',
-            type: 'textarea',
-            required: true,
-            id: 'description',
-          },
-        ],
-      },
-      {
-        id: 'event__app-command-user',
-        label: 'Application User Command Invoked',
-        value: 'appCommandUser',
-        description: 'Register a user command',
-        params: [
-          {
-            label: 'Name',
-            type: 'input',
-            required: true,
-            id: 'name',
-          },
-          {
-            label: 'Description',
-            type: 'textarea',
-            required: true,
-            id: 'description',
-          },
-        ],
-      },
-      {
-        id: 'event__app-command-message',
-        label: 'Application Message Command Invoked',
-        value: 'appCommandMessage',
-        description: 'Register a message command',
-        params: [
-          {
-            label: 'Name',
-            type: 'input',
-            required: true,
-            id: 'name',
-          },
-          {
-            label: 'Description',
-            type: 'textarea',
-            required: true,
-            id: 'description',
-          },
-        ],
-      },
-    ])
-  );
-
-  let actions = $state(
-    createActions([
-      {
-        id: 'action__send-message',
-        description: 'Sends a message to a specified channel.',
-        label: 'Send Message',
-        value: 'sendMessage',
-        params: [
-          {
-            id: 'content',
-            label: 'Response Text',
-            type: 'textarea',
-            required: true,
-          },
-          {
-            id: 'reply',
-            label: 'Reply?',
-            type: 'toggle',
-            required: true,
-          },
-          {
-            id: 'channel',
-            label: 'Channel',
-            type: 'input',
-            description:
-              'The channel to send the message in. Defaults to the channel of the event if not provided.',
-            required: false,
-          },
-        ],
-      },
-
-      {
-        id: 'action__send-image',
-        label: 'Send Image',
-        value: 'sendImage',
-        description: 'Sends an image to a specified channel.',
-        params: [
-          {
-            id: 'url',
-            label: 'Image URL',
-            type: 'input',
-            required: true,
-          },
-          {
-            id: 'reply',
-            label: 'Reply?',
-            type: 'toggle',
-            required: true,
-          },
-          {
-            id: 'channel',
-            label: 'Channel',
-            type: 'input',
-            description:
-              'The channel to send the message in. Defaults to the channel of the event if not provided.',
-            required: false,
-          },
-        ],
-        // params: {
-        //   content: {
-        //     label: 'Response Text',
-        //     type: 'textarea',
-        //     required: true,
-        //   },
-        //   image: {
-        //     label: 'Image URL',
-        //     type: 'input',
-        //     required: true,
-        //   },
-        //   reply: {
-        //     label: 'Reply?',
-        //     type: 'toggle',
-        //     required: true,
-        //   },
-        //   channel: {
-        //     label: 'Channel',
-        //     type: 'input',
-        //     description:
-        //       'The channel to send the message in. Defaults to the channel of the event if not provided.',
-        //     required: false,
-        //   },
-        // },
-      },
-    ])
-  );
+  let events = $state(allEvents);
+  let actions = $state(allActions);
 
   let awaitingCopy = $state(false);
 
-  // Extracted this to get the linter to shut up. I know the initial state of currentEvents won't update, that's why it's the *initial* state ffs.
-  const getFirstEvent = () => events[0];
+  // Silly kinda pointless functions to avoid svelte/eslint from complaining
+  const getExistingItem = <T extends BotEvent | BotAction>(items: T[], index: number = 0): T =>
+    items[index];
+  const getFirstEvent = (): BotEvent => getExistingItem(events);
+  const getFirstAction = (): BotAction => getExistingItem(actions, 1);
 
-  let currentEvents: BotEvent[] = $state(
-    createEvents([
-      {
-        ...getFirstEvent(),
-        id: 'event__message-includes-2',
-      },
-    ])
-  );
-  let currentActions: BotAction[] = $state(createActions([]));
+  let currentEvents: BotEvent[] = $state([
+    {
+      ...getFirstEvent(),
+      id: 'temp-first-event',
+    },
+  ]);
+  let currentActions: BotAction[] = $state([
+    {
+      ...getFirstAction(),
+      id: 'temp-first-action',
+    },
+  ]);
 
   type EventActionParams = {
     [id: string]: Values;
@@ -255,9 +85,23 @@
     </Card.Header>
     <Card.Content class="flex-1 space-y-6">
       <div class="grid grid-cols-2 gap-4">
-        <div class="space-y-2">
+        <!-- <div class="space-y-2">
           <Label for="name">Name</Label>
           <Input id="name" placeholder="Command name" autocomplete="off" />
+        </div> -->
+        <div class="space-y-2">
+          <!-- <Label for="name">Name</Label> -->
+          <CommandParamInput
+            param={{
+              type: 'input',
+              id: 'name',
+              label: 'Name',
+              description: 'Command name',
+              required: true,
+            }}
+            lockable
+            visibleLabel
+          ></CommandParamInput>
         </div>
         <div></div>
         <div class="space-y-2">

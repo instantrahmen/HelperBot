@@ -1,9 +1,11 @@
 import { CommandInteraction } from 'discord.js';
-import { times } from 'lodash';
+import _ from 'lodash';
 import commandState from '../../components/Commands';
 import { createDiceEmbed, rollDice } from '../../components/Dice';
 import { OptionType } from '../../types';
 import { jsonBlock, timeout } from '../../utils';
+
+const { times } = _;
 
 export const initializeToolCommands = () => {
   const { createCommand } = commandState;

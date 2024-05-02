@@ -9,7 +9,7 @@ export default () => {
 
   return createCommand({
     name: 'join',
-    description: 'Join a channel',
+    description: 'Request Helper to join a voice channel.',
     options: [
       {
         type: OptionType.CHANNEL,

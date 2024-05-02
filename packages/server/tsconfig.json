@@ -4,11 +4,13 @@
     "outDir": "dist",
     "strict": true,
     "lib": ["esnext", "dom"],
-    "target": "es5",
+    "target": "esnext",
+    "module": "esnext",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": ["node", "vite/client"]
   }
 }

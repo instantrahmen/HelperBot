@@ -8,7 +8,8 @@ export default () => {
 
   return createCommand({
     name: 'play',
-    description: 'Add a song to the queue',
+    description:
+      'Add a song to the queue. Plays immediately if the queue is empty.',
     options: [
       {
         type: OptionType.STRING,

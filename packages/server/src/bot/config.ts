@@ -1,10 +1,30 @@
-import { config } from '@helper/common';
 import { GatewayIntentBits } from 'discord.js';
+import envConfig from '@helper/config';
+
+export enum NodeEnv {
+  PRODUCTION = 'production',
+  DEVELOPMENT = 'development',
+}
+export type GlobalConfig = typeof envConfig;
+
+const NODE_ENV = (import.meta.env.MODE || 'development') as NodeEnv;
+// const mode = import.meta.env.MODE;
+
+const globalConfig: GlobalConfig = envConfig;
+
+export const getConfigForEnv = (env: NodeEnv) => globalConfig[env];
+
+export const config = {
+  global: globalConfig[NODE_ENV] as GlobalConfig['development'],
+  environment: NODE_ENV,
+  botName: 'helper',
+  botNameFriendly: 'Helper',
+};
 
 const {
   Guilds,
   GuildMembers,
-  GuildBans,
+  GuildModeration,
   GuildEmojisAndStickers,
   GuildIntegrations,
   GuildWebhooks,
@@ -32,7 +52,7 @@ export default {
   intents: [
     Guilds,
     GuildMembers,
-    GuildBans,
+    GuildModeration,
     GuildEmojisAndStickers,
     GuildIntegrations,
     GuildWebhooks,

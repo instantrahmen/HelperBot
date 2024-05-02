@@ -6,7 +6,6 @@ import type {
   BotParamValueTypes,
   Values,
 } from '$lib/types/commands';
-
 export const createEvents = (events: BotEventAction[]): BotEvent[] =>
   events.map((e) => ({ ...e, type: 'event' }));
 export const createActions = (actions: BotEventAction[]): BotAction[] =>
@@ -14,7 +13,7 @@ export const createActions = (actions: BotEventAction[]): BotAction[] =>
 
 export function convertParamsToValues<
   T extends keyof BotParamValueTypes = keyof BotParamValueTypes,
->(params: BotEventParams<T>[]): Values {
+>(params: BotEventParams[]): Values {
   const valueTypes: (keyof BotParamValueTypes)[] = [
     'input',
     'textarea',
@@ -28,7 +27,7 @@ export function convertParamsToValues<
   const defaultValues: Partial<BotParamValueTypes> = {
     input: '',
     textarea: '',
-    select: '',
+    select: { label: '', value: '' },
     toggle: false,
     number: 0,
     slider: 0,
@@ -40,8 +39,8 @@ export function convertParamsToValues<
 
     const typeValues: Values[keyof BotParamValueTypes] = paramsOfType.reduce(
       (typeValues, param) => {
-        const { id, initalValue } = param;
-        const defaultValue = initalValue ?? defaultValues[type];
+        const { id, initialValue } = param;
+        const defaultValue = initialValue ?? defaultValues[type];
 
         return {
           ...typeValues,

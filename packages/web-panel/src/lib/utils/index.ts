@@ -67,7 +67,7 @@ export const getGuildBanner = (guildId: string, bannerId: string) =>
   `https://cdn.discordapp.com/banners/${guildId}/${bannerId}.png`;
 
 export const createBotInviteLink = (clientId: string) =>
-  `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot`;
+  `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot+applications.commands`;
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

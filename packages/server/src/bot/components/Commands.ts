@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, REST } from 'discord.js';
 import { CommandInteraction } from 'discord.js';
-import { snakeCase } from 'lodash';
+import _ from 'lodash';
+const { snakeCase } = _;
 
 import config from '../config';
 import { Command, CommandsArray, APIAppCommand } from '../types';
@@ -66,6 +67,9 @@ export const commandState = {
   },
 
   toJSON(guildId?: string) {
+    if (!guildId)
+      return this.commandsArray().map((command) => command.toJSON());
+
     const postBody = this.commandsArray()
       .filter(this.createFilter(guildId))
       .map((command) => command.toJSON());
@@ -93,10 +97,35 @@ export const commandState = {
     }
   },
 
+  async deployGlobal(destroy: boolean = false) {
+    console.log('deployGlobal', { destroy });
+    try {
+      const res = await rest.put(Routes.applicationCommands(clientID), {
+        body: destroy ? [] : commandState.toJSON(),
+      });
+      console.log('deployed');
+      return res;
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  },
+
   async deployAll(destroy = false) {
-    const deploymentPromises = guilds.map((guildId: string) =>
-      this.deployForGuild(guildId, destroy)
-    );
+    const global = process.argv.includes('--global');
+    const deploymentPromises = !global
+      ? guilds.map((guildId: string) =>
+          this.deployForGuild(guildId, destroy)
+            .then((data) => {
+              console.log('deployed', { guildId, data });
+              return data;
+            })
+            .catch((e) => {
+              console.warn(`Couldn't deploy commands for ${guildId}`, e);
+            })
+        )
+      : [this.deployGlobal(destroy)];
+
+    // const deploymentPromises = [this.deployGlobal(destroy)];
 
     const data = await Promise.all(deploymentPromises).catch((e) => {
       console.warn(`Couldn't deploy commands`, e);

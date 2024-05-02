@@ -2,7 +2,7 @@ import { defineConfig, UserConfig } from 'vite';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import { VitePluginNode } from 'vite-plugin-node';
-import ViteYaml from '@modyfi/vite-plugin-yaml';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
@@ -12,13 +12,14 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
   },
-  resolve: { alias: { src: resolve('src/'), '#root': resolve(__dirname) + '../../' } },
+  resolve: {
+    alias: { src: resolve('src/'), '#root': resolve(__dirname) + '../../' },
+  },
   plugins: [
-    ViteYaml(),
     dts(),
     ...VitePluginNode({
       appPath: 'src/index.ts',
-      adapter: 'express',
+      adapter: 'fastify',
       tsCompiler: 'esbuild',
     }),
   ],

@@ -1,4 +1,4 @@
-import { NodeEnv } from '@helper/common';
+import { NodeEnv } from '../config';
 import config from '../config';
 import { stringify } from '../utils';
 import BaseComponent, { ComponentState } from './BaseComponent';

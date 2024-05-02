@@ -12,16 +12,23 @@
     "prisma-schema-to-graphql": "^1.0.0",
     "rimraf": "^5.0.5",
     "ts-node": "10.9.2",
-    "typescript": "5.4.3"
+    "typescript": "5.4.3",
+    "vite": "^5.2.6",
+    "vite-plugin-dts": "^3.8.1",
+    "vite-plugin-node": "^3.1.0"
   },
   "scripts": {
-    "dev": "nodemon src/index.ts --signal SIGINT",
-    "build": "rimraf ./dist && tsc",
-    "bot-only": "nodemon src/bot/index.ts"
+    "dev": "tsc && vite dev --port 5000",
+    "dev:old": "nodemon src/index.ts --signal SIGINT",
+    "build:old": "rimraf ./dist && tsc",
+    "build": "tsc && vite build",
+    "preview": "vite preview --port 5000",
+    "bot-only": "nodemon src/bot/index.ts",
+    "action:clean": "npx vite-node ./src/actions/action-delete-commands.ts"
   },
   "dependencies": {
     "@discordjs/voice": "^0.16.1",
-    "@helper/common": "workspace:0.2.0",
+    "@helper/config": "workspace:1.0.0",
     "@prisma/client": "4.4.0",
     "@types/dotenv": "^8.2.0",
     "@types/lodash": "^4.17.0",
@@ -41,6 +48,6 @@
     "ytpl": "^2.3.0"
   },
   "engines": {
-    "node": ">=12.2.0"
+    "node": ">=20.0.0"
   }
 }

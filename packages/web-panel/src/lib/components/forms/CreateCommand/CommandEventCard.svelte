@@ -1,4 +1,8 @@
 <script lang="ts" generics="T extends BotEvent | BotAction">
+  import CommandParamInput from './CommandParamInput.svelte';
+
+  import Dropdown from '$lib/components/SelectDropdown.svelte';
+
   import type { DragHandleAction } from '$lib/components/DnDZone.svelte';
 
   import { convertParamsToValues } from '$lib/utils/commands';
@@ -6,6 +10,7 @@
   import { X } from 'lucide-svelte';
   import { Input } from '$lib/components/ui/input';
   import Label from '$lib/components/ui/label/label.svelte';
+  import Textarea from '$lib/components/ui/textarea/textarea.svelte';
   import { Button } from '$lib/components/ui/button';
   import type { BotEvent, BotAction, BotParamValueTypes, Values } from '$lib/types/commands';
   import { cn } from '$lib/utils';
@@ -27,8 +32,6 @@
   const getInitialParamValues = () => {
     return convertParamsToValues(item.params);
   };
-  // const getInitialParamValues = () =>
-  //   Object.fromEntries(params?.map((param) => [param.label, null]));
 
   let paramValues: Values = $state(getInitialParamValues());
 
@@ -92,19 +95,34 @@
 </div>
 
 {#snippet cardInput(param)}
-  {#if param.type === 'input'}
-    <Label for={param.id} class="sr-only">{param.label}</Label>
-    <Input
-      type="text"
-      bind:value={paramValues['input'][param.id]}
-      name={param.label}
-      placeholder={param.label}
-    />
-  {:else if param.type === 'toggle'}
-    <div class="flex items-center gap-2">
-
-      <Label for={param.id} class="align-middle justify-center">{param.label}</Label>
-      <Switch id="airplane-mode" bind:checked={paramValues['toggle'][param.id]} />
-    </div>
+  {#if !param.hidden?.(paramValues)}
+    {#if param.type === 'input'}
+      <CommandParamInput {param} bind:value={paramValues['input'][param.id]} lockable />
+    {:else if param.type === 'toggle'}
+      <div class="flex items-center gap-2">
+        <Label for={param.id} class="justify-center align-middle">{param.label}</Label>
+        <Switch id="airplane-mode" bind:checked={paramValues['toggle'][param.id]} />
+      </div>
+    {:else if param.type === 'textarea'}
+      <Label for={param.id} class="sr-only">{param.label}</Label>
+      <Textarea
+        id={param.id}
+        bind:value={paramValues['textarea'][param.id]}
+        name={param.label}
+        placeholder={param.label}
+        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      />
+    {:else if param.type === 'select'}
+      <div class="flex items-center gap-2">
+        <Label for={param.id} class=" justify-center align-middle">{param.label}</Label>
+        <Dropdown
+          items={param.options}
+          name={param.id}
+          label={param.label}
+          placeholder={param.label}
+          bind:selected={paramValues['select'][param.id]}
+        ></Dropdown>
+      </div>
+    {/if}
   {/if}
 {/snippet}

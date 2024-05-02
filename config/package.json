@@ -2,7 +2,7 @@
   "name": "@helper/config",
   "version": "1.0.0",
   "description": "",
-  "main": "config.cjs",
+  "main": "config.js",
   "exports": {
     "default": "./config.js",
     "types": "./types/config.d.ts",
