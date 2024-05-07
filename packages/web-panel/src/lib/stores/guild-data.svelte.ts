@@ -6,7 +6,7 @@ import { browser } from '$app/environment';
 import type { Fetch } from '$lib/types';
 export const guildDataContext = 'GUILD_DATA_CTX';
 
-type GuildDataState = CompleteGuildDataResponse | 'loading' | null;
+export type GuildDataState = CompleteGuildDataResponse | 'loading' | null;
 export const guildDataStore = createStore<GuildDataState>('loading', guildDataContext);
 
 const mockGuildState = () => ({

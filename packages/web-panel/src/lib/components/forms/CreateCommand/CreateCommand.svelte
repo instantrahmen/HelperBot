@@ -14,9 +14,12 @@
   import CommandEventCard from './CommandEventCard.svelte';
   import Dropdown from '$lib/components/Dropdown.svelte';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/';
-  import { events as allEvents, actions as allActions } from './command-blocks/';
+  import { events as allEvents, actions as allActions } from './command-nodes';
+  import guildDataStore from '$lib/stores/guild-data.svelte';
 
-  let events = $state(allEvents);
+  const guildData = guildDataStore();
+
+  let events = $state(allEvents(guildData.state));
   let actions = $state(allActions);
 
   let awaitingCopy = $state(false);

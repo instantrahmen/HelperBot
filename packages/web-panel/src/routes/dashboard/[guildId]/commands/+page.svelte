@@ -33,10 +33,10 @@
         {@const createdBy = command.expand?.created_by ?? null}
         <Card.Root class="flex flex-col">
           <div class="flex-1 p-4">
-            <h2 class="mb-2 text-lg font-semibold text-muted-foreground">
+            <h2 class="text-muted-foreground mb-2 text-lg font-semibold">
               {#if command.type.includes(CommandsTypeOptions.slash)}
                 <span class="text-primary">/</span>
-                <span class="m-0 text-accent-foreground"> {command.name}</span>{command.type
+                <span class="text-accent-foreground m-0"> {command.name}</span>{command.type
                   .length > 1
                   ? ', '
                   : ''}
@@ -71,8 +71,9 @@
         </Card.Root>
       {/each}
     </div>
-    <div class="mt-8 flex justify-end">
+    <div class="mt-8 flex justify-end gap-2">
       <Button href="/dashboard/{data.guildId}/commands/create">Create new command</Button>
+      <Button href="/dashboard/{data.guildId}/commands/create-v2">Create new command [V2]</Button>
     </div>
   </div>
 

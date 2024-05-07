@@ -1,3 +1,4 @@
+import type { Interaction, Message } from 'discord.js';
 import type { ZodString } from 'zod';
 
 export type CommandAction__Basic = {
@@ -55,6 +56,7 @@ export type BotEventParamsBase<T extends keyof BotParamValueTypes = keyof BotPar
 export type BotEventParamsSelect = BotEventParamsBase<'select'> & {
   type: 'select';
   options: BotParamValueTypes['select'][];
+  value: BotParamValueTypes['select'];
 };
 
 export type BotEventParamsInput = BotEventParamsBase<'input'> & {
@@ -64,11 +66,13 @@ export type BotEventParamsInput = BotEventParamsBase<'input'> & {
   transform?: (value: string) => string;
   imagePreview?: boolean;
   leadingLabel?: string;
+  value: BotParamValueTypes['input'];
 };
 
 export type BotEventParamsToggle = BotEventParamsBase<'toggle'> & {
   type: 'toggle';
   initalValue?: BotParamValueTypes['toggle'];
+  value: BotParamValueTypes['toggle'];
 };
 
 export type BotEventParamsNumber = BotEventParamsBase<'number'> & {
@@ -77,6 +81,7 @@ export type BotEventParamsNumber = BotEventParamsBase<'number'> & {
   min?: number;
   max?: number;
   step?: number;
+  value: BotParamValueTypes['number'];
 };
 
 export type BotEventParamsSlider = BotEventParamsBase<'slider'> & {
@@ -85,19 +90,24 @@ export type BotEventParamsSlider = BotEventParamsBase<'slider'> & {
   min?: number;
   max?: number;
   step?: number;
+  value: BotParamValueTypes['slider'];
 };
 
 export type BotEventParamsDate = BotEventParamsBase<'date'> & {
   type: 'date';
   initialValue?: BotParamValueTypes['date'];
+  value: BotParamValueTypes['date'];
 };
 
 export type BotEventParamsTextarea = BotEventParamsBase<'textarea'> & {
   type: 'textarea';
   initialValue?: BotParamValueTypes['textarea'];
+  validator?: ZodString;
+  transform?: (value: string) => string;
+  value: BotParamValueTypes['textarea'];
 };
 
-type BotEventParamsTypes =
+export type BotEventParams =
   | BotEventParamsInput
   | BotEventParamsTextarea
   | BotEventParamsNumber
@@ -106,13 +116,40 @@ type BotEventParamsTypes =
   | BotEventParamsSelect
   | BotEventParamsToggle;
 
-export type BotEventParams = BotEventParamsTypes;
-// | BotEventParamsBase<keyof BasicParamValueTypes>;
-
+export type BotEventVariableTypes = {
+  string: string;
+};
+export type BotEventVariable<T extends keyof BotEventVariableTypes = keyof BotEventVariableTypes> =
+  {
+    type: T;
+    name: string;
+    label: string;
+  } & (
+    | {
+        commandType: 'message';
+        value(message: Message): BotEventVariableTypes[T];
+      }
+    | {
+        commandType: 'interaction';
+        value(interaction: Interaction): BotEventVariableTypes[T];
+      }
+  );
 export type BotEvent = BotEventAction & {
   type: 'event';
+  variables: BotEventVariable[];
+  childActions: BotAction[] | ControlFlow[];
 };
 
 export type BotAction = BotEventAction & {
   type: 'action';
+};
+
+export type ControlFlow = BotEventAction & {
+  type: 'control-flow';
+  id: string;
+  label: string;
+  description: string;
+  value: string;
+  params: BotEventParams[];
+  childActions: BotAction[] | ControlFlow[];
 };

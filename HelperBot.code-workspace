@@ -15,5 +15,14 @@
   ],
   "settings": {
     "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+    "sqltools.connections": [
+      {
+        "previewLimit": 50,
+        "driver": "SQLite",
+        "name": "Helper Pocketbase",
+        "database": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\erika\\repos\\erika\\HelperBot\\packages\\pocketbase\\pb_data\\data.db"
+      }
+    ],
+    "sqltools.useNodeRuntime": true,
   },
 }

@@ -183,13 +183,15 @@
 </script>
 
 <div
-  class={cn(className)}
+  class={cn('bg-card-level-4 rounded-lg border-2 border-dashed p-2', className)}
   use:dndzone={{
     items,
     flipDurationMs: 200,
     dragDisabled,
     centreDraggedOnCursor: true,
     dropFromOthersDisabled: duplicateOnDrop,
+    dropTargetClasses: ['border-primary'],
+    dropTargetStyle: {},
     ...options,
   }}
   on:consider={useDragHandle ? handleConsiderWithDragHandle : handleSort}
