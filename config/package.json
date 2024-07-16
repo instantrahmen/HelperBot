@@ -2,6 +2,7 @@
   "name": "@helper/config",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "config.js",
   "exports": {
     "default": "./config.js",
@@ -10,7 +11,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "typegen": "tsc"
+    "typegen": "tsc",
+    "transform": "node ./transform-config.js",
+    "predeploy": "node ./predeploy.js"
   },
   "keywords": [],
   "author": "Erika Tho",

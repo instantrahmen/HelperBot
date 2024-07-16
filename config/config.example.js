@@ -1,3 +1,4 @@
+// Copy as config.js and fill out info
 const config = {
   development: {
     DISCORD_CLIENT_ID: 'YOUR_DISCORD_CLIENT_ID',
@@ -20,8 +21,8 @@ const config = {
       user: 'YOUR_USER',
       host: 'YOUR_HOST',
       ref: 'origin/main', // change to your prod branch if you don't want to use main
-      repo: 'YOUR_REPO', // your fork of the repo
-      path: 'YOUR_PATH', // where your app should be deployed on the server
+      repo: 'YOUR_REPO',  // your fork of the repo
+      path: 'YOUR_PATH',  // where your app should be deployed on the server
       'post-deploy': 'YOUR_POST_DEPLOY_COMMAND', // any commands you want to run after deploy
     },
   },
