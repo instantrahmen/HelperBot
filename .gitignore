@@ -120,6 +120,7 @@ dist
 
 # Project-wide config file
 *.env.*
+!*example.env
 
 # Don't ignore example config files
 !example.config.yml
