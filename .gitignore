@@ -120,10 +120,6 @@ dist
 
 # Project-wide config file
 *.env.*
-*config.yml
-*config.mjs
-config/config.js
-config/.config.*
 
 # Don't ignore example config files
 !example.config.yml

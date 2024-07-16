@@ -1,13 +1,5 @@
 import { REST, Routes } from 'discord.js';
-import { getConfigForEnv, NodeEnv } from '../bot/config';
-
-// const { clientID, botToken, guilds } = config;
-
-const env = process.argv.includes('--prod')
-  ? NodeEnv.PRODUCTION
-  : NodeEnv.DEVELOPMENT;
-
-const config = getConfigForEnv(env);
+import config from '@helper/config';
 
 const {
   DISCORD_CLIENT_ID: clientID,
