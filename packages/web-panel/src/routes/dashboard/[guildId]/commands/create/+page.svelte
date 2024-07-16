@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { POST } from './../../../../api/user/active-guild/+server.ts';
   import { Button } from '$lib/components/ui/button/';
   import * as Card from '$lib/components/ui/card/';
   import { Input } from '$lib/components/ui/input';
@@ -129,13 +128,5 @@
         </form>
       </Card.Content>
     </Card.Root>
-    <!-- <div class="flex flex-col items-center gap-1 text-center">
-      <h3 class="text-2xl font-bold tracking-tight">You have no commands yet</h3>
-      <p class="text-sm text-muted-foreground">Get started by creating a new command</p>
-
-    </div> -->
   </div>
 </main>
-
-<style lang="postcss">
-</style>
