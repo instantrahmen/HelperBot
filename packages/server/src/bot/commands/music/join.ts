@@ -28,11 +28,19 @@ export default () => {
 
       const mp = mpState.getComponent(interaction.guildId!) as MusicPlayer;
 
+      if (!mp) {
+        await interaction.reply({
+          content: 'Error: `No music player found in this server.`',
+        });
+        return;
+      }
+
       await interaction.reply({
         content: `I'll tryyyy to join ${channel.toString()}... no promises though.`,
       });
 
       try {
+        ``;
         await mp.connectToChannel(channel);
 
         await interaction.editReply({
@@ -40,9 +48,9 @@ export default () => {
           // files: [gif],
         });
       } catch (e: any) {
-        const replyText = `Darn coudn't join ${channel.toString()}! \n ${
+        const replyText = `Darn coudn't join ${channel.toString()}! \n Error: \`${
           e.message
-        }`;
+        }\` `;
 
         if (interaction.replied) {
           interaction.editReply(replyText);

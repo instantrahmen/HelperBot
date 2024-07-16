@@ -1,6 +1,8 @@
 import ytpl from 'ytpl';
 
 import playdl, { video_basic_info, stream, validate } from 'play-dl';
+import ytdl from '@distube/ytdl-core';
+
 import { CommandInteraction, User, VoiceChannel } from 'discord.js';
 import ON_DEATH from 'death';
 
@@ -13,6 +15,7 @@ import {
   entersState,
   getVoiceConnection,
   joinVoiceChannel,
+  StreamType,
   VoiceConnection,
   VoiceConnectionStatus,
 } from '@discordjs/voice';
@@ -180,15 +183,36 @@ export class MusicPlayer extends BaseComponent {
 
   // Play current song
   async play() {
+    console.log('attempting to play song...');
     const song = this.getCurrentSong();
-    if (!this.canPlay() || !song) return;
+    if (!this.canPlay() || !song) {
+      console.log('cannot play song yet');
+      return;
+    }
 
     try {
-      const musicStream = await stream(song.url);
-      // Get player resource and play it
-      const resource = createAudioResource(musicStream.stream, {
-        inputType: musicStream.type,
+      // Get music stream
+      console.log('getting music stream', { song });
+      // const musicStream = await stream(song.url);
+      const musicStream = ytdl(song.url, {
+        filter: 'audioonly',
+        liveBuffer: 0,
+        quality: 'lowestaudio',
       });
+      // Get player resource and play it
+      console.log('creating player resource', { musicStream });
+
+      if (!musicStream) throw new Error('No stream found');
+
+      const resource = createAudioResource(musicStream, {
+        metadata: this,
+        inlineVolume: true,
+      });
+
+      // const resource = createAudioResource(musicStream.stream, {
+      //   inputType: StreamType.,
+      // });
+
       this.player.play(resource);
     } catch (e: any) {
       Debugger.log({ error: e });
