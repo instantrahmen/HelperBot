@@ -1,9 +1,10 @@
 // Copy required non-commited files to server. Requires filling out deploy.config.js and running `pm2 deploy setup` first
-const { Client } = require('node-scp');
-const { deploy, ssh } = require('./deploy.config');
-const fs = require('fs');
 
-const requiredFiles = ['.config.yml'];
+import { Client } from 'node-scp';
+import { deploy, ssh } from './config';
+import fs from 'fs';
+
+const requiredFiles = ['config/config.js'];
 
 const environment = process.argv[2] || 'production';
 
@@ -45,7 +46,7 @@ const uploadRequiredFiles = async () => {
   try {
     client.close();
   } catch (e) {
-    // Close seems to always error. Shouldn't be a big deal since we exit immediately;
+    // Close seems to always error. Shouldn't be a big deal since we exit immediately anyway
   }
 };
 
