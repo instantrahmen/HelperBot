@@ -3,6 +3,7 @@
   "license": "MIT",
   "version": "1.4.2",
   "devDependencies": {
+    "@swc/core": "^1.6.13",
     "@types/death": "^1.1.5",
     "@types/node": "^20.14.10",
     "@types/node-fetch": "^3.0.3",
@@ -19,8 +20,8 @@
   },
   "scripts": {
     "dev": "tsc && vite dev --port 5000",
-    "start": "node ./dist/index.js",
-    "build": "tsc && vite build",
+    "start": "vite dev --port 5000",
+    "build": "vite build",
     "preview": "vite preview --port 5000",
     "bot-only": "nodemon src/bot/index.ts",
     "action:clean": "npx vite-node ./src/actions/action-delete-commands.ts"

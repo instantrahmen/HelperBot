@@ -6,6 +6,9 @@ import { VitePluginNode } from 'vite-plugin-node';
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    ssr: true,
+    outDir: 'dist',
+    emptyOutDir: true,
     commonjsOptions: { transformMixedEsModules: true },
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
@@ -15,12 +18,17 @@ export default defineConfig({
   resolve: {
     alias: { src: resolve('src/'), '#root': resolve(__dirname) + '../../' },
   },
+  server: {
+    port: 3000,
+  },
   plugins: [
     dts(),
     ...VitePluginNode({
-      appPath: 'src/index.ts',
+      appPath: './src/index.ts',
       adapter: 'fastify',
-      tsCompiler: 'esbuild',
+      tsCompiler: 'swc',
+      initAppOnBoot: true,
+      exportName: 'viteNodeApp',
     }),
   ],
 }) satisfies UserConfig;
