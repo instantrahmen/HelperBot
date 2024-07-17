@@ -20,7 +20,6 @@
   "scripts": {
     "dev": "tsc && vite dev --port 5000",
     "start": "node ./dist/index.js",
-    "build:old": "rimraf ./dist && tsc",
     "build": "tsc && vite build",
     "preview": "vite preview --port 5000",
     "bot-only": "nodemon src/bot/index.ts",
