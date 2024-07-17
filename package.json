@@ -22,7 +22,6 @@
     "build": "npm run build -w ./packages",
     "post-deploy": "pnpm install && pnpm run build"
   },
-  "devDependencies": {},
   "dependencies": {
     "dotenv": "^16.4.5",
     "node-scp": "^0.0.23",
