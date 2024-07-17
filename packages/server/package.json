@@ -19,8 +19,7 @@
   },
   "scripts": {
     "dev": "tsc && vite dev --port 5000",
-    "dev:old": "nodemon src/index.ts --signal SIGINT",
-    "build:old": "rimraf ./dist && tsc",
+    "start": "node ./dist/index.js",
     "build": "tsc && vite build",
     "preview": "vite preview --port 5000",
     "bot-only": "nodemon src/bot/index.ts",

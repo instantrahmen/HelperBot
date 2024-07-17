@@ -1,10 +1,9 @@
 import { botState } from './bot/components/Bot';
-// require('dotenv').config({ path: __dirname + '/.env' });
-
 import { initialize } from './bot';
 import stringify from 'safe-json-stringify';
 import fastify from 'fastify';
 import config from './bot/config';
+import envConfig from '@helper/config';
 
 import { Debugger } from './bot/components/Debugger';
 import commandState from './bot/components/Commands';

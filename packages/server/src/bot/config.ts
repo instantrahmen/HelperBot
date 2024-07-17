@@ -5,17 +5,11 @@ export enum NodeEnv {
   PRODUCTION = 'production',
   DEVELOPMENT = 'development',
 }
-export type GlobalConfig = typeof envConfig;
 
 const NODE_ENV = (import.meta.env.MODE || 'development') as NodeEnv;
-// const mode = import.meta.env.MODE;
-
-const globalConfig: GlobalConfig = envConfig;
-
-export const getConfigForEnv = (env: NodeEnv) => globalConfig[env];
 
 export const config = {
-  global: globalConfig[NODE_ENV] as GlobalConfig['development'],
+  global: envConfig,
   environment: NODE_ENV,
   botName: 'helper',
   botNameFriendly: 'Helper',
