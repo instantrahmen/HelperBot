@@ -16,18 +16,12 @@
   "scripts": {
     "dev": "npm run dev -w @helper/server",
     "web": "npm run dev -w @helper/web-panel",
-    "build-server": "npm run build -w @helper/server",
-    "build-web": "npm run build -w @helper/web-panel",
+    "build:server": "npm run build -w @helper/server",
+    "build:web": "npm run build -w @helper/web-panel",
     "build": "npm run build -w ./packages",
-    "pm2-dev": "pm2 start --env development",
-    "post-deploy": "pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env production",
-    "pre-deploy": "node ./hooks/predeploy.js",
-    "deploy:production": "pnpm run pre-deploy && pm2 deploy production",
-    "deploy:prod": "pnpm run deploy:production"
+    "post-deploy": "pnpm install && pnpm run build"
   },
-  "devDependencies": {
-    "pm2": "^5.3.1"
-  },
+  "devDependencies": {},
   "dependencies": {
     "dotenv": "^16.4.5",
     "node-scp": "^0.0.23",
