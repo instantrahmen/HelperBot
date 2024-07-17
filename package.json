@@ -19,7 +19,6 @@
     "build:server": "pnpm run build -w @helper/server",
     "build:web": "pnpm run build -w @helper/web-panel",
     "start": "pnpm run start -w @helper/server",
-    "build": "pnpm run build:server",
     "post-deploy": "pnpm install && pnpm run build"
   },
   "dependencies": {
