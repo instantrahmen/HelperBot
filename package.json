@@ -18,6 +18,7 @@
     "web": "npm run dev -w @helper/web-panel",
     "build:server": "npm run build -w @helper/server",
     "build:web": "npm run build -w @helper/web-panel",
+    "start": "npm run start -w @helper/server",
     "build": "npm run build -w ./packages",
     "post-deploy": "pnpm install && pnpm run build"
   },
