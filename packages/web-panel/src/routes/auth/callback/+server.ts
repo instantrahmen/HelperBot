@@ -31,7 +31,8 @@ export const GET = async ({ cookies, url, locals, fetch }) => {
     const botGuilds = (await fetchGuilds(fetch)).map((guild) => guild.id);
 
     // filter guilds in which the user has admin permissions and sort them with bot access first
-    const adminPermissionsCodes = ['562949953421311', '1125899906842623'];
+    // TODO: Find a better way to do this. These are "magic strings" and are subject to change at any time, which requires frequent updating.
+    const adminPermissionsCodes = ['562949953421311', '1125899906842623', '2251799813685247'];                      
     const adminGuilds = userGuilds
       .filter((guild) => adminPermissionsCodes.includes(guild.permissions || '0'))
       .map((guild) => ({
